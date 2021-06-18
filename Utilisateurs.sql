@@ -1,0 +1,9 @@
+INSERT INTO users VALUES ('Jean', 'Mark', 'jean.mark@placeholder.com', '158 rue des lilas Lille 59000', '2020/10/25', 'USER';
+INSERT INTO users VALUES ('Léa', 'Smith', 'jean.mark@placeholder.com', '159 rue des lilas Lille 59000', '2020/5/25', 'USER';
+INSERT INTO users VALUES ('Pierre', 'Mark', 'jean.mark@placeholder.com', '157 rue des lilas Lille 59000', '2020/12/23', 'USER';
+INSERT INTO users VALUES ('Antonin', 'Yacob', 'jean.mark@placeholder.com', '156 rue des lilas Lille 59000', '2020/12/12', 'ADMIN';
+INSERT INTO users VALUES ('Louis', 'Mark', 'jean.mark@placeholder.com', '155 rue des lilas Lille 59000', '2021/02/25', 'USER';
+INSERT INTO users VALUES ('Hugo', 'Mark', 'jean.mark@placeholder.com', '154 rue des lilas Lille 59000', '2019/17/25', 'USER';
+INSERT INTO users VALUES ('Elise', 'Mark', 'jean.mark@placeholder.com', '153 rue des lilas Lille 59000', '2018/8/2', 'USER';
+INSERT INTO users VALUES ('Kévin', 'Mark', 'jean.mark@placeholder.com', '152 rue des lilas Lille 59000', '2019/2/3', 'USER';
+INSERT INTO users VALUES ('Marie', 'Mark', 'jean.mark@placeholder.com', '151 rue des lilas Lille 59000', '2020/3/8', 'USER';

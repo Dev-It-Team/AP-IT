@@ -1,0 +1,42 @@
+[
+    {
+        "id": 0,
+        "name": "Page d'acceuil responsive",
+        "description": "Une page d'acceuil réalisée par Antonin Jacob lors de son séminaire au Futuroscope",
+        "link": "http://lien.vers.source",
+        "files": [
+            "http://le.fichier.principal",
+            "http://les.dépendances.du.fichier"
+        ]
+    },
+    {
+        "id": 1,
+        "name": "Bouton like du shop",
+        "description": "Un bouton like, très utile sur les réseaux",
+        "link": "http://lien.vers.source",
+        "files": [
+            "http://le.fichier.principal",
+            "http://la.flemme.de.faire.des.noms.a.chaque.fois"
+        ]
+    },
+    {
+        "id": 2,
+        "name": "ScrollBar automatique",
+        "description": "Une scrollbar qui va à la prochaine section au bout de 5 secondes",
+        "link": "http://lien.vers.source",
+        "files": [
+            "http://le.fichier.principal",
+            "http://les.dépendances.du.fichier"
+        ]
+    },
+    {
+        "id": 3,
+        "name": "Bouton acheter",
+        "description": "Un bouton qui permet de placer une commande chez nos partenaires",
+        "link": "http://lien.vers.source",
+        "files": [
+            "http://le.fichier.principal",
+            "http://les.dépendances.du.fichier"
+        ]
+    }
+]
