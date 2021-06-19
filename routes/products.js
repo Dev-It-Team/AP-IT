@@ -68,7 +68,7 @@ router.put('/:id', function(req, res, next)
 {
     Product.updateOne({ id : req.params.id}, 
     {
-      id : req.body.id,
+      id : req.params.id,
       id_restau : req.body.id_restau,
       name : req.body.name,
       price : req.body.price,

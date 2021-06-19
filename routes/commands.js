@@ -69,7 +69,7 @@ router.put('/:id', function(req, res, next)
 {
     Command.updateOne({ id : req.params.id}, 
     {
-      id : req.body.id,
+      id : req.params.id,
       id_restau : req.body.id_restau,
       id_user : req.body.id_user,
       id_deliver : req.body.id_deliver,

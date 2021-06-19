@@ -60,7 +60,7 @@ router.put('/:id', function(req, res, next)
 {
     Component.updateOne({ id : req.params.id}, 
     {
-      id : req.body.id,
+      id : req.params.id,
       name : req.body.name,
       link : req.body.link,
       files : req.body.files
