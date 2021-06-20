@@ -1,0 +1,41 @@
+name: Docker Build to DockerHub
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  # github.repository as <account>/<repo>
+  IMAGE_NAME: packit/ap-it
+
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Login against a Docker registry except on PR
+      # https://github.com/docker/login-action
+      - name: Log into Docker Hub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          username: antoninjcb
+          password: b5f2437b-daf9-423b-ba4e-121898a93b79
+
+      # Build and push Docker image with Buildx (don't push on PR)
+      - name: Build Docker image
+        if: github.event_name != 'pull_request'
+        run: |
+          docker build ./ -t packit/ap-it:latest
+    
+      - name: Push Docker image
+        if: github.event_name != 'pull_request'
+        run: |
+          docker push packit/ap-it:latest
