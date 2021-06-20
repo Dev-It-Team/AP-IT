@@ -1,0 +1,189 @@
+[
+    {
+        "id": 0,
+        "id_restau": 0,
+        "name": "Hot Dog de ses morts",
+        "description": "Un gros Hot Dog super bon mais bien gras",
+        "pictures": [
+            "http://image.de.hot.dog.png",
+            "http://image.de.hot.dog.trop.bon.jpg"
+        ],
+        "sizes": [
+            {
+                "name": "small",
+                "price": 5
+            },
+            {
+                "name": "large",
+                "price": 9
+            }
+        ],
+        "notes": 15,
+        "notes_number": 4
+    },    
+    {
+        "id": 1,
+        "id_restau": 0,
+        "name": "Hamburger",
+        "description": "Un petit hamburger sans fromage",
+        "pictures": [
+            "http://le.gros.burger.jpg",
+            "http://insta.c.est.d.la.merde.gif"
+        ],
+        "sizes": [
+            {
+                "name": "small",
+                "price": 3
+            },
+            {
+                "name": "large",
+                "price": 6
+            },
+            {
+                "name": "cow boy size",
+                "price": 8
+            },
+            {
+                "name": "xxl",
+                "price": 12
+            }
+        ],
+        "notes": 45,
+        "notes_number": 12
+    },
+    {
+        "id": 2,
+        "id_restau": 1,
+        "name": "Pâtes carbonara",
+        "description": "Des pâtes carbo, putain j'ai la dalle",
+        "pictures": [
+            "http://fromage.415.png",
+            "http://pâtes.fromages.oeuf.png"
+        ],
+        "sizes": [
+            {
+                "name": "assiette",
+                "price": 15
+            },
+            {
+                "name": "à emporter",
+                "price": 12
+            }
+        ],
+        "notes": 8,
+        "notes_number": 2
+    },
+    {
+        "id": 3,
+        "id_restau": 0,
+        "name": "French Fries",
+        "description": "Un cornet de frites enroulées dans un journal spécial!",
+        "pictures": [
+            "http://gare.france.frites.jpg",
+            "http://frites.jpeg"
+        ],
+        "sizes": [
+            {
+                "name": "small",
+                "price": 2
+            },
+            {
+                "name": "large",
+                "price": 4
+            },
+            {
+                "name": "mamooth",
+                "price": 5
+            },
+            {
+                "name": "extra large",
+                "price": 8
+            }
+        ],
+        "notes": 4,
+        "notes_number": 2
+    },
+    {
+        "id": 4,
+        "id_restau": 1,
+        "name": "Ciabatta",
+        "description": "Un petit pain à l'huile d'olive",
+        "pictures": [
+            "http://pain.ciabatta.gif"
+        ],
+        "sizes": [
+            {
+                "name": "baguette",
+                "price": 3
+            },
+            {
+                "name": "faluche",
+                "price": 5
+            },
+            {
+                "name": "grand",
+                "price": 8
+            }
+        ],
+        "notes": 45,
+        "notes_number": 9
+    },
+    {
+        "id": 5,
+        "id_restau": 2,
+        "name": "Moules frites",
+        "description": "Moules saveur sel de mer et algues",
+        "pictures": [
+            "http://moules.algues.jpeg",
+            "http://extension.debile.gif",
+            "http://un.plaisir.de.manger.png"
+        ],
+        "sizes": [
+            {
+                "name": "1 portion",
+                "price": 14
+            },
+            {
+                "name": "2 portions",
+                "price": 25
+            },
+            {
+                "name": "3 portions",
+                "price": 32
+            }
+        ],
+        "notes": 50,
+        "notes_number": 15
+    },    
+    {
+        "id": 6,
+        "id_restau": 0,
+        "name": "Coca",
+        "description": "Pas besoin de décrire ça je pense",
+        "pictures": [
+            "http://gros.coca.bien.frais.jpg",
+            "http://coca.jpeg",
+            "http://bouteille.verre.png"
+        ],
+        "sizes": [
+            {
+                "name": "small",
+                "price": 2
+            },
+            {
+                "name": "large",
+                "price": 4
+            },
+            {
+                "name": "americain",
+                "price": 5
+            },
+            {
+                "name": "xxl",
+                "price": 6
+            }
+        ],
+        "notes": 35,
+        "notes_number": 8
+    }
+]
