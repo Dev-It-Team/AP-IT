@@ -4,11 +4,17 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var productsRouter = require('./routes/products');
-var commandsRouter = require('./routes/commands');
-var componentsRouter = require('./routes/components');
-var menusRouter = require('./routes/menus');
+var indexRouter       = require('./routes/index');
+var productsRouter    = require('./routes/products');
+var commandsRouter    = require('./routes/commands');
+var componentsRouter  = require('./routes/components');
+var menusRouter       = require('./routes/menus');
+var usersRouter       = require('./routes/users');
+var clientsRouter     = require('./routes/clients');
+var restaurantsRouter = require('./routes/restaurants');
+var deliversRouter    = require('./routes/delivers');
+var connectionRouter  = require('./routes/connectionLogs');
+var downloadRouter    = require('./routes/downloadLogs');
 
 const mongoose = require('mongoose');
 const mongoString = "mongodb+srv://admin:admin@js-project.rztwo.mongodb.net/project"
@@ -32,6 +38,42 @@ app.use('/menus', menusRouter);
 app.use('/products', productsRouter);
 app.use('/commands', commandsRouter);
 app.use('/components', componentsRouter);
+app.use('/users', usersRouter);
+app.use('/clients', clientsRouter);
+app.use('/restaurants', restaurantsRouter);
+app.use('/delivers', deliversRouter);
+app.use('/connectionLogs', connectionRouter);
+app.use('/downloadLogs', downloadRouter);
+
+var sql = require('mssql');
+
+var config = {
+    server: 'localhost',
+    database: 'ap\'it',
+    user: 'root',
+    password: 'root',
+    port: 1433
+};
+
+var dbConn = new sql.ConnectionPool(config);
+
+dbConn.connect().then(function () 
+{
+    var request = new sql.Request(dbConn);
+
+    request.query("select * from tests").then(function (recordSet) 
+    {
+        console.log(recordSet);
+        dbConn.close();
+    }).catch(function (err) 
+    {
+        console.log(err);
+        dbConn.close();
+    });
+}).catch(function (err) 
+{
+    console.log(err);
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) 
