@@ -3,13 +3,17 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var { checkTokenMiddleware } = require('./jwtMiddleware');
 
 var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/users');
 var productsRouter = require('./routes/products');
 var commandsRouter = require('./routes/commands');
 var componentsRouter = require('./routes/components');
 var menusRouter = require('./routes/menus');
-
+const dotenv = require('dotenv');
+// get config vars
+dotenv.config();
 const mongoose = require('mongoose');
 const mongoString = "mongodb+srv://admin:admin@js-project.rztwo.mongodb.net/project"
 
@@ -28,6 +32,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/users', usersRouter);
 app.use('/menus', menusRouter);
 app.use('/products', productsRouter);
 app.use('/commands', commandsRouter);
@@ -50,5 +55,8 @@ app.use(function(err, req, res, next)
   res.status(err.status || 500);
   res.render('error');
 });
+
+// jwt checker
+app.use(checkTokenMiddleware);
 
 module.exports = app;
