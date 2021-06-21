@@ -33,10 +33,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/menus', menusRouter);
-app.use('/products', productsRouter);
-app.use('/commands', commandsRouter);
-app.use('/components', componentsRouter);
+app.use('/menus', checkTokenMiddleware, menusRouter);
+app.use('/products', checkTokenMiddleware, productsRouter);
+app.use('/commands', checkTokenMiddleware, commandsRouter);
+app.use('/components', checkTokenMiddleware, componentsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) 
@@ -55,8 +55,5 @@ app.use(function(err, req, res, next)
   res.status(err.status || 500);
   res.render('error');
 });
-
-// jwt checker
-app.use(checkTokenMiddleware);
 
 module.exports = app;
