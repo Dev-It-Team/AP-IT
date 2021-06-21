@@ -1,29 +1,58 @@
 var express = require('express');
 var router = express.Router();
+var config = require('../app.js').configDatabase;
+var sql = require('mssql');
 
-/* GET products listing. */
+
+/* GET download logs listing. */
 router.get('/', function(req, res, next) 
 {
-    Product.find({}, function (err, docs) 
-    {
-      if (err)
+  var dbConn = new sql.ConnectionPool(config);
+  
+  dbConn.connect().then(function () 
+  {
+      var request = new sql.Request(dbConn);
+  
+      request.query("SELECT * FROM DownloadLogs").then(function (recordSet)
+      {
+        res.send(recordSet);
+        dbConn.close();
+      }).catch(function (err) 
+      {
         res.send(err);
-      else
-        res.send(docs);
-    });
+        dbConn.close();
+      });
+  }).catch(function (err) 
+  {
+    res.send(err);
+  });
 });
 
-/* GET products listing by id. */
+
+/* GET download logs listing by id. */
 router.get('/:id', function(req, res, next) 
 {
-    Product.find({ id : req.params.id }, function (err, docs) 
-    {
-      if (err)
+  var dbConn = new sql.ConnectionPool(config);
+  
+  dbConn.connect().then(function () 
+  {
+      var request = new sql.Request(dbConn);
+  
+      request.query("SELECT * FROM DownloadLogs WHERE id = " + req.params.id).then(function (recordSet) 
+      {
+        res.send(recordSet);
+        dbConn.close();
+      }).catch(function (err) 
+      {
         res.send(err);
-      else
-        res.send(docs);
-    });
+        dbConn.close();
+      });
+  }).catch(function (err) 
+  {
+    res.send(err);
+  });
 });
+
 
 /* POST */
 router.post('/', function(req, res, next) 
