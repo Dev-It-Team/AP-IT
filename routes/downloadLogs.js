@@ -57,23 +57,26 @@ router.get('/:id', function(req, res, next)
 /* POST */
 router.post('/', function(req, res, next) 
 {
-    const newProduct = new Product();
+  const dataString = "(" + req.body.datetime + ", " + req.body.component + ")";
 
-    newProduct.id = req.body.id;
-    newProduct.id_restau = req.body.id_restau;
-    newProduct.name = req.body.name;
-    newProduct.description = req.body.description;
-    newProduct.pictures = req.body.pictures;
-    newProduct.sizes = req.body.sizes;
-    newProduct.notes = req.body.notes;
-    newProduct.notes_number = req.body.notes_number;
-
-    newProduct.save(function (err, docs) 
+    var dbConn = new sql.ConnectionPool(config);
+    
+    dbConn.connect().then(function () 
     {
-      if (err)
-        res.send(err);
-      else
-        res.send("product added");
+        var request = new sql.Request(dbConn);
+    
+        request.query("INSERT INTO " + tableName + dataString).then(function (recordSet) 
+        {
+          res.send(recordSet);
+          dbConn.close();
+        }).catch(function (err) 
+        {
+          res.send(err);
+          dbConn.close();
+        });
+    }).catch(function (err) 
+    {
+      res.send(err);
     });
 });
 
@@ -81,37 +84,53 @@ router.post('/', function(req, res, next)
 /* PUT */
 router.put('/:id', function(req, res, next) 
 {
-    Product.updateOne({ id : req.params.id}, 
+  const dataString = "datetime = " + req.body.datetime + ", component =" + req.body.component;
+
+    var dbConn = new sql.ConnectionPool(config);
+    
+    dbConn.connect().then(function () 
     {
-      id : req.params.id,
-      id_restau : req.body.id_restau,
-      name : req.body.name,
-      price : req.body.price,
-      description : req.body.description,
-      pictures : req.body.pictures,
-      sizes : req.body.sizes,
-      notes : req.body.notes,
-      notes_number : req.body.notes_number
-    },
-    function (err, docs) 
+        var request = new sql.Request(dbConn);
+    
+        request.query("UPDATE " + tableName + " SET " + dataString + "WHERE id = " + req.params.id).then(function (recordSet) 
+        {
+          res.send(recordSet);
+          dbConn.close();
+        }).catch(function (err) 
+        {
+          res.send(err);
+          dbConn.close();
+        });
+    }).catch(function (err) 
     {
-      if (err)
-        res.send(err);
-      else
-        res.send("product updated");
+      res.send(err);
     });
 });
+
 
 /* DELETE */
 router.delete('/:id', function(req, res, next)
 {
-    Product.deleteOne({ id : req.params.id }, function (err, docs) 
-    {
-      if (err)
+
+  var dbConn = new sql.ConnectionPool(config);
+  
+  dbConn.connect().then(function () 
+  {
+      var request = new sql.Request(dbConn);
+  
+      request.query("DELETE FROM DownLoadLogs WHERE id = " + req.params.id).then(function (recordSet)
+      {
+        res.send(recordSet);
+        dbConn.close();
+      }).catch(function (err) 
+      {
         res.send(err);
-      else
-        res.send(req.params.id + " deleted");
-    });
+        dbConn.close();
+      });
+  }).catch(function (err) 
+  {
+    res.send(err);
+  });
 });
 
 module.exports = router;

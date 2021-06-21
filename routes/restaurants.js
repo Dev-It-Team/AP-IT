@@ -57,51 +57,79 @@ router.get('/:id', function(req, res, next)
 /* POST */
 router.post('/', function(req, res, next) 
 {
-    const newComponent = new Component();
+  const dataString = "(" + req.body.id_users + ", " + req.body.nom_restaurant + ", " + req.body.adresse_restaurant + ", " + req.body.image_baniere + ")";
 
-    newComponent.id = req.body.id;
-    newComponent.name = req.body.name;
-    newComponent.link = req.body.link;
-    newComponent.files = req.body.files;
-
-    newComponent.save(function (err, docs) 
+    var dbConn = new sql.ConnectionPool(config);
+    
+    dbConn.connect().then(function () 
     {
-      if (err)
-        res.send(err);
-      else
-        res.send("component added");
+        var request = new sql.Request(dbConn);
+    
+        request.query("INSERT INTO " + tableName + dataString).then(function (recordSet) 
+        {
+          res.send(recordSet);
+          dbConn.close();
+        }).catch(function (err) 
+        {
+          res.send(err);
+          dbConn.close();
+        });
+    }).catch(function (err) 
+    {
+      res.send(err);
     });
 });
+
 
 /* PUT */
 router.put('/:id', function(req, res, next) 
 {
-    Component.updateOne({ id : req.params.id}, 
+  const dataString = "id_users = " + req.body.id_users + ", nom_restaurant =" + req.body.nom_restaurant + "adresse_restaurant = " + req.body.adresse_restaurant + ", image_banniere =" + req.body.image_banniere;
+
+    var dbConn = new sql.ConnectionPool(config);
+    
+    dbConn.connect().then(function () 
     {
-      id : req.params.id,
-      name : req.body.name,
-      link : req.body.link,
-      files : req.body.files
-    },
-    function (err, docs) 
+        var request = new sql.Request(dbConn);
+    
+        request.query("UPDATE " + tableName + " SET " + dataString + "WHERE id = " + req.params.id).then(function (recordSet) 
+        {
+          res.send(recordSet);
+          dbConn.close();
+        }).catch(function (err) 
+        {
+          res.send(err);
+          dbConn.close();
+        });
+    }).catch(function (err) 
     {
-      if (err)
-        res.send(err);
-      else
-        res.send("component updated");
+      res.send(err);
     });
 });
+
 
 /* DELETE */
 router.delete('/:id', function(req, res, next)
 {
-    Component.deleteOne({ id : req.params.id }, function (err, docs) 
-    {
-      if (err)
+  var dbConn = new sql.ConnectionPool(config);
+  
+  dbConn.connect().then(function () 
+  {
+      var request = new sql.Request(dbConn);
+  
+      request.query("DELETE FROM Restaurants WHERE id = " + req.params.id).then(function (recordSet)
+      {
+        res.send(recordSet);
+        dbConn.close();
+      }).catch(function (err) 
+      {
         res.send(err);
-      else
-        res.send(req.params.id + " deleted");
-    });
+        dbConn.close();
+      });
+  }).catch(function (err) 
+  {
+    res.send(err);
+  });
 });
 
 module.exports = router;

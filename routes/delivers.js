@@ -57,61 +57,78 @@ router.get('/:id', function(req, res, next)
 /* POST */
 router.post('/', function(req, res, next) 
 {
-    const newMenu = new Menu();
+  const dataString = "(" + req.body.id_user + ", " + req.body.adresse_recu + ", " + req.body.type_vehicule + ", " + req.body.notes + ", " + req.body.nb_notes + ")";
 
-    newMenu.id = req.body.id;
-    newMenu.id_restau = req.body.id_restau;
-    newMenu.name = req.body.name;
-    newMenu.price = req.body.price;
-    newMenu.description = req.body.description;
-    newMenu.products = req.body.products;
-    newMenu.pictures = req.body.pictures;
-    newMenu.notes = req.body.notes;
-    newMenu.notes_number = req.body.notes_number;
-
-    newMenu.save(function (err, docs) 
+    var dbConn = new sql.ConnectionPool(config);
+    
+    dbConn.connect().then(function () 
     {
-      if (err)
-        res.send(err);
-      else
-        res.send("menu added");
+        var request = new sql.Request(dbConn);
+    
+        request.query("INSERT INTO " + tableName + dataString).then(function (recordSet) 
+        {
+          res.send(recordSet);
+          dbConn.close();
+        }).catch(function (err) 
+        {
+          res.send(err);
+          dbConn.close();
+        });
+    }).catch(function (err) 
+    {
+      res.send(err);
     });
 });
+
 
 /* PUT */
 router.put('/:id', function(req, res, next) 
 {
-    Menu.updateOne({ id : req.params.id}, 
+  const dataString = "id_user = " + req.body.id_user + ", adresse_recu =" + req.body.adresse_recu + ", type_vehicule = " + req.body.type_vehicule + ", notes = " + req.body.notes+ ", nb_notes = " + req.body.nb_notes;
+
+    var dbConn = new sql.ConnectionPool(config);
+    
+    dbConn.connect().then(function () 
     {
-      id : req.params.id,
-      id_restau : req.body.id_restau,
-      name : req.body.name,
-      price : req.body.price,
-      description : req.body.description,
-      products : req.body.products,
-      pictures : req.body.pictures,
-      notes : req.body.notes,
-      notes_number : req.body.notes_number
-    },
-    function (err, docs) 
+        var request = new sql.Request(dbConn);
+    
+        request.query("UPDATE " + tableName + " SET " + dataString + "WHERE id = " + req.params.id).then(function (recordSet) 
+        {
+          res.send(recordSet);
+          dbConn.close();
+        }).catch(function (err) 
+        {
+          res.send(err);
+          dbConn.close();
+        });
+    }).catch(function (err) 
     {
-      if (err)
-        res.send(err);
-      else
-        res.send("menu updated");
+      res.send(err);
     });
 });
 
 /* DELETE */
 router.delete('/:id', function(req, res, next)
 {
-    Menu.deleteOne({ id : req.params.id }, function (err, docs) 
-    {
-      if (err)
+  var dbConn = new sql.ConnectionPool(config);
+  
+  dbConn.connect().then(function () 
+  {
+      var request = new sql.Request(dbConn);
+  
+      request.query("DELETE FROM Delivers WHERE id = " + req.params.id).then(function (recordSet)
+      {
+        res.send(recordSet);
+        dbConn.close();
+      }).catch(function (err) 
+      {
         res.send(err);
-      else
-        res.send(req.params.id + " deleted");
-    });
+        dbConn.close();
+      });
+  }).catch(function (err) 
+  {
+    res.send(err);
+  });
 });
 
 module.exports = router;

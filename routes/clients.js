@@ -3,6 +3,7 @@ var router = express.Router();
 var config = require('../app.js').configDatabase;
 var sql = require('mssql');
 
+const tableName = "Clients";
 
 /* GET commands listing. */
 router.get('/', function(req, res, next) 
@@ -13,7 +14,7 @@ router.get('/', function(req, res, next)
   {
       var request = new sql.Request(dbConn);
   
-      request.query("SELECT * FROM Clients").then(function (recordSet)
+      request.query("SELECT * FROM " + tableName).then(function (recordSet)
       {
         res.send(recordSet);
         dbConn.close();
@@ -38,7 +39,7 @@ router.get('/:id', function(req, res, next)
   {
       var request = new sql.Request(dbConn);
   
-      request.query("SELECT * FROM Clients WHERE id = " + req.params.id).then(function (recordSet) 
+      request.query("SELECT * FROM " + tableName + " WHERE id = " + req.params.id).then(function (recordSet) 
       {
         res.send(recordSet);
         dbConn.close();
@@ -57,24 +58,26 @@ router.get('/:id', function(req, res, next)
 /* POST */
 router.post('/', function(req, res, next) 
 {
-    const newCommand = new Command();
+  const dataString = "(" + req.body.id_user + ", " + req.body.adresse_facturation + ", " + req.body.code_parainage + ", " + req.body.nb_parainages + ")";
 
-    newCommand.id = req.body.id;
-    newCommand.id_restau = req.body.id_restau;
-    newCommand.id_user = req.body.id_user;
-    newCommand.id_deliver = req.body.id_deliver;
-    newCommand.start_datetime = req.body.start_datetime;
-    newCommand.end_datetime = req.body.end_datetime;
-    newCommand.price = req.body.price;
-    newCommand.products = req.body.products;
-    newCommand.status = req.body.status;
-
-    newCommand.save(function (err, docs) 
+    var dbConn = new sql.ConnectionPool(config);
+    
+    dbConn.connect().then(function () 
     {
-      if (err)
-        res.send(err);
-      else
-        res.send("command added");
+        var request = new sql.Request(dbConn);
+    
+        request.query("INSERT INTO " + tableName + dataString).then(function (recordSet) 
+        {
+          res.send(recordSet);
+          dbConn.close();
+        }).catch(function (err) 
+        {
+          res.send(err);
+          dbConn.close();
+        });
+    }).catch(function (err) 
+    {
+      res.send(err);
     });
 });
 
@@ -82,24 +85,26 @@ router.post('/', function(req, res, next)
 /* PUT */
 router.put('/:id', function(req, res, next) 
 {
-    Command.updateOne({ id : req.params.id}, 
+  const dataString = "id_user = " + req.body.id_user + ", adresse_facturation =" + req.body.adresse_facturation + ", code_parainage = " + req.body.code_parainage + ", nb_parainages = " + req.body.nb_parainages;
+
+    var dbConn = new sql.ConnectionPool(config);
+    
+    dbConn.connect().then(function () 
     {
-      id : req.params.id,
-      id_restau : req.body.id_restau,
-      id_user : req.body.id_user,
-      id_deliver : req.body.id_deliver,
-      start_datetime : req.body.start_datetime,
-      end_datetime : req.body.end_datetime,
-      price : req.body.price,
-      products : req.body.products,
-      status : req.body.status
-    },
-    function (err, docs) 
+        var request = new sql.Request(dbConn);
+    
+        request.query("UPDATE " + tableName + " SET " + dataString + "WHERE id = " + req.params.id).then(function (recordSet) 
+        {
+          res.send(recordSet);
+          dbConn.close();
+        }).catch(function (err) 
+        {
+          res.send(err);
+          dbConn.close();
+        });
+    }).catch(function (err) 
     {
-      if (err)
-        res.send(err);
-      else
-        res.send("command updated");
+      res.send(err);
     });
 });
 
@@ -107,13 +112,25 @@ router.put('/:id', function(req, res, next)
 /* DELETE */
 router.delete('/:id', function(req, res, next)
 {
-    Command.deleteOne({ id : req.params.id }, function (err, docs) 
-    {
-      if (err)
+  var dbConn = new sql.ConnectionPool(config);
+  
+  dbConn.connect().then(function () 
+  {
+      var request = new sql.Request(dbConn);
+  
+      request.query("DELETE FROM " + tableName + " WHERE id = " + req.params.id).then(function (recordSet)
+      {
+        res.send(recordSet);
+        dbConn.close();
+      }).catch(function (err) 
+      {
         res.send(err);
-      else
-        res.send(req.params.id + " deleted");
-    });
+        dbConn.close();
+      });
+  }).catch(function (err) 
+  {
+    res.send(err);
+  });
 });
 
 module.exports = router;
