@@ -53,18 +53,28 @@ app.use('/downloadLogs',  checkTokenMiddleware, require('./routes/downloadLogs')
 // catch 404 and forward to error handler
 app.use(function(req, res, next) 
 {
-  next(createError(404));
+  res.status(404);
+  res.send({ "error": "Route not found" });
 });
 
 // error handler
 app.use(function(err, req, res, next) 
 {
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  if (req.app.get('env') === 'development')
+  {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+  
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
+  }
+  else 
+  {
+    res.status(500);
+    res.send({ "error": "Internal Error" });
+  }
 });
 
 module.exports = app;
