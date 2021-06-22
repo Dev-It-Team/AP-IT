@@ -21,9 +21,9 @@ router.get('/', function(req, res, next)
     Product.find({}, function (err, docs) 
     {
       if (err)
-        res.status(401).send(err);
+        res.status(401).json({ message: "Could not get Products" });
       else
-        res.status(200).send(docs);
+        res.status(200).json(docs);
     });
 });
 
@@ -33,9 +33,9 @@ router.get('/:id', function(req, res, next)
     Product.find({ id : req.params.id }, function (err, docs) 
     {
       if (err)
-        res.status(401).send(err);
+        res.status(401).json({ message: "Could not get one Products" });
       else
-        res.status(200).send(docs);
+        res.status(200).json(docs);
     });
 });
 
@@ -56,9 +56,9 @@ router.post('/', function(req, res, next)
     newProduct.save(function (err, docs) 
     {
       if (err)
-        res.status(401).send(err);
+        res.status(401).json({ message: "Could not create Products" });
       else
-        res.status(201).send("product added");
+        res.status(201).json({ message: "Products added" });
     });
 });
 
@@ -81,9 +81,9 @@ router.put('/:id', function(req, res, next)
     function (err, docs) 
     {
       if (err)
-        res.status(401).send(err);
+        res.status(401).json({ message: "Could not update Products" });
       else
-        res.status(202).send("product updated");
+        res.status(202).json({ message: "Products updated" });
     });
 });
 
@@ -93,9 +93,9 @@ router.delete('/:id', function(req, res, next)
     Product.deleteOne({ id : req.params.id }, function (err, docs) 
     {
       if (err)
-        res.status(401).send(err);
+        res.status(401).json({ message: "Could not delete Products" });
       else
-        res.status(203).send(req.params.id + " deleted");
+        res.status(203).json({ message: "Products deleted" });
     });
 });
 

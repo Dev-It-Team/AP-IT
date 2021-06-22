@@ -22,9 +22,9 @@ router.get('/', function(req, res, next)
     Command.find({}, function (err, docs) 
     {
       if (err)
-        res.status(401).send(err);
+        res.status(401).json({ message: "Could not get Commands" });
       else
-        res.status(200).send(docs);
+        res.status(200).json(docs);
     });
 });
 
@@ -34,9 +34,9 @@ router.get('/:id', function(req, res, next)
     Command.find({ id : req.params.id }, function (err, docs) 
     {
       if (err)
-        res.status(401).send(err);
+        res.status(401).json({ message: "Could not get one Command" });
       else
-        res.status(200).send(docs);
+        res.status(200).json(docs);
     });
 });
 
@@ -58,9 +58,9 @@ router.post('/', function(req, res, next)
     newCommand.save(function (err, docs) 
     {
       if (err)
-        res.status(401).send(err);
+        res.status(401).json({ message: "Could not create Commands" });
       else
-        res.status(201).send("command added");
+        res.status(201).json({ message: "Commands created" });
     });
 });
 
@@ -82,9 +82,9 @@ router.put('/:id', function(req, res, next)
     function (err, docs) 
     {
       if (err)
-        res.status(401).send(err);
+        res.status(401).json({ message: "Could not update Commands" });
       else
-        res.status(202).send("command updated");
+        res.status(202).json({ message: "Commands updated" });
     });
 });
 
@@ -94,9 +94,9 @@ router.delete('/:id', function(req, res, next)
     Command.deleteOne({ id : req.params.id }, function (err, docs) 
     {
       if (err)
-        res.status(401).send(err);
+        res.status(401).json({ message: "Could not delete Commands" });
       else
-        res.status(203).send(req.params.id + " deleted");
+        res.status(203).json({ message: "Commands deleted" });
     });
 });
 

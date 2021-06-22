@@ -130,9 +130,9 @@ router.get('/', function(req, res, next)
   const allDocs = getAll();
 
   if (allDocs !== null)
-    res.status(200).send(JSON.stringify(allDocs, null, 2));
+    res.status(200).json(allDocs);
   else 
-    res.status(401).send("Could not get " + entityName);
+    res.status(401).json({ message: "Could not get " + entityName });
 });
 
 
@@ -142,9 +142,9 @@ router.get('/:id', function(req, res, next)
   const doc = getOne(req.params.id);
 
   if (doc !== null)
-    res.status(200).send(JSON.stringify(doc, null, 2));
+    res.status(200).json(doc);
   else 
-    res.status(401).send("Could not get one " + entityName);
+    res.status(401).json({ message: "Could not get one " + entityName });
 });
 
 
@@ -152,9 +152,9 @@ router.get('/:id', function(req, res, next)
 router.post('/', function(req, res, next) 
 {
   if (creation(req.body) !== null)
-    res.status(201).send(entityName + " created");
+    res.status(201).json({ message: entityName + " created" });
   else 
-    res.status(401).send("Could not create " + entityName);
+    res.status(401).json({ message: "Could not create " + entityName });
 });
 
 
@@ -162,9 +162,9 @@ router.post('/', function(req, res, next)
 router.put('/:id', function(req, res, next) 
 {
   if (update(req.body, req.params.id) !== null)
-    res.status(202).send(entityName + " id: " + req.params.id + " updated");
+    res.status(202).json({ message: entityName + " updated" });
   else 
-    res.status(401).send("Could not update " + entityName);
+    res.status(401).json({ message: "Could not update " + entityName });
 });
 
 
@@ -172,9 +172,9 @@ router.put('/:id', function(req, res, next)
 router.delete('/:id', function(req, res, next)
 {
   if (deletion(req.params.id) !== null)
-    res.status(203).send(entityName + " id: " + req.params.id + " deleted");
+    res.status(203).json({ message: entityName + "deleted" });
   else 
-    res.status(401).send("Could not delete " + entityName);
+    res.status(401).json({ message: "Could not delete " + entityName });
 });
 
 module.exports = router;

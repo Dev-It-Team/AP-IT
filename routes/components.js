@@ -18,9 +18,9 @@ router.get('/', function(req, res, next)
     Component.find({}, function (err, docs) 
     {
       if (err)
-        res.status(401).send(err);
+        res.status(401).json({ message: "Could not get Components" });
       else
-        res.status(200).send(docs);
+        res.status(200).json(docs);
     });
 });
 
@@ -30,9 +30,9 @@ router.get('/:id', function(req, res, next)
     Component.find({ id : req.params.id }, function (err, docs) 
     {
       if (err)
-        res.status(401).send(err);
+        res.status(401).json({ message: "Could not get one Components" });
       else
-        res.status(200).send(docs);
+        res.status(200).json(docs);
     });
 });
 
@@ -49,9 +49,9 @@ router.post('/', function(req, res, next)
     newComponent.save(function (err, docs) 
     {
       if (err)
-        res.status(401).send(err);
+        res.status(401).json({ message: "Could not create Components" });
       else
-        res.status(201).send("component added");
+        res.status(201).json({ message: "Components created" });
     });
 });
 
@@ -68,9 +68,9 @@ router.put('/:id', function(req, res, next)
     function (err, docs) 
     {
       if (err)
-        res.status(401).send(err);
+        res.status(401).json({ message: "Could not update Components" });
       else
-        res.status(202).send("component updated");
+        res.status(202).json({ message: "Components updated" });
     });
 });
 
@@ -80,9 +80,9 @@ router.delete('/:id', function(req, res, next)
     Component.deleteOne({ id : req.params.id }, function (err, docs) 
     {
       if (err)
-        res.status(401).send(err);
+        res.status(401).json({ message: "Could not delete Components" });
       else
-        res.status(203).send(req.params.id + " deleted");
+        res.status(203).json({ message: "Components deleted" });
     });
 });
 
