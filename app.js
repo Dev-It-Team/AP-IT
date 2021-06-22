@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const { Sequelize } = require('sequelize');
 
 const mongoString = "mongodb+srv://admin:admin@js-project.rztwo.mongodb.net/project";
 
@@ -20,17 +21,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-var config = {
-    server: 'localhost',
-    database: 'Test',
-    user: 'sa',
-    password: 'Str0ng_p4ssw0rd',
-    port: 1433,
-    options: {
-      trustedConnection: true,
-      trustServerCertificate: true
-    }
-};
+const config = new Sequelize('Test', 'sa', 'Str0ng_p4ssw0rd', {
+  host: 'localhost',
+  dialect: 'mssql',
+  port: '1433',
+  logging: false
+});
 
 exports.configDatabase = config;
 

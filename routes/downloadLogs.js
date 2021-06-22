@@ -1,136 +1,174 @@
 var express = require('express');
 var router = express.Router();
-var config = require('../app.js').configDatabase;
-var sql = require('mssql');
+var sequelize = require('../app.js').configDatabase;
+const entityName = "DownloadLogs";
+const { DataTypes } = require('sequelize');
+
+const DownLoagLogs = sequelize.define(entityName, {
+  id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    primaryKey: true
+  },
+  datetime: {
+    type: DataTypes.DATE,
+    allowNull: false
+  },
+  component: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+}, {
+    tableName: entityName
+});
+
+async function authentification()
+{
+  try {
+    await sequelize.authenticate();
+  } catch (error) {
+    console.error('Unable to connect to the database');
+  }
+}
+
+async function synchronisation()
+{
+  try {
+    await DownLoagLogs.sync();
+  } catch(error) {
+    console.log(entityName + " could not synchronize");
+  }
+}
+
+async function creation(body)
+{
+  try 
+  {
+    await DownLoagLogs.create({
+      datetime: body.datetime,
+      component: body.component
+    });
+    return true;
+  } catch(error) {
+    return null;
+  }
+}
+
+async function update(body, idLog)
+{
+  try 
+  {
+    await DownLoagLogs.update({
+      datetime: body.datetime,
+      component: body.component
+    }, {
+      where: {
+        id: idLog
+      }
+    });
+    return true;
+  } catch(error) {
+    return null;
+  }
+}
+
+async function deletion(idLog)
+{
+  try 
+  {
+    await DownLoagLogs.destroy({ 
+      where: {
+        id: idLog
+    }});
+    return true;
+  } catch(error) {
+    return null;
+  }
+}
+
+async function getAll()
+{
+  try 
+  {
+      return await DownLoagLogs.findAll();
+  } catch(error) {
+    return null;
+  }
+}
+
+async function getOne(idLog)
+{
+  try 
+  {
+      return await DownLoagLogs.findAll({ 
+        where: {
+          id: idLog
+      }});
+  } catch(error) {
+    return null;
+  }
+}
+
+async function startConnection()
+{
+  await authentification();
+  await synchronisation();
+}
+
+startConnection();
 
 
-/* GET download logs listing. */
+/* GET commands listing. */
 router.get('/', function(req, res, next) 
 {
-  var dbConn = new sql.ConnectionPool(config);
-  
-  dbConn.connect().then(function () 
-  {
-      var request = new sql.Request(dbConn);
-  
-      request.query("SELECT * FROM DownloadLogs").then(function (recordSet)
-      {
-        res.send(recordSet);
-        dbConn.close();
-      }).catch(function (err) 
-      {
-        res.send(err);
-        dbConn.close();
-      });
-  }).catch(function (err) 
-  {
-    res.send(err);
-  });
+  const allDocs = getAll();
+
+  if (allDocs !== null)
+    res.send(JSON.stringify(allDocs, null, 2));
+  else 
+    res.send("Could not get " + entityName);
 });
 
 
-/* GET download logs listing by id. */
+/* GET commands listing by id. */
 router.get('/:id', function(req, res, next) 
 {
-  var dbConn = new sql.ConnectionPool(config);
-  
-  dbConn.connect().then(function () 
-  {
-      var request = new sql.Request(dbConn);
-  
-      request.query("SELECT * FROM DownloadLogs WHERE id = " + req.params.id).then(function (recordSet) 
-      {
-        res.send(recordSet);
-        dbConn.close();
-      }).catch(function (err) 
-      {
-        res.send(err);
-        dbConn.close();
-      });
-  }).catch(function (err) 
-  {
-    res.send(err);
-  });
+  const doc = getOne(req.params.id);
+
+  if (doc !== null)
+    res.send(JSON.stringify(doc, null, 2));
+  else 
+    res.send("Could not get one " + entityName);
 });
 
 
 /* POST */
 router.post('/', function(req, res, next) 
 {
-  const dataString = "(" + req.body.datetime + ", " + req.body.component + ")";
-
-    var dbConn = new sql.ConnectionPool(config);
-    
-    dbConn.connect().then(function () 
-    {
-        var request = new sql.Request(dbConn);
-    
-        request.query("INSERT INTO " + tableName + dataString).then(function (recordSet) 
-        {
-          res.send(recordSet);
-          dbConn.close();
-        }).catch(function (err) 
-        {
-          res.send(err);
-          dbConn.close();
-        });
-    }).catch(function (err) 
-    {
-      res.send(err);
-    });
+  if (creation(req.body) !== null)
+    res.send(entityName + " created");
+  else 
+    res.send("Could not create " + entityName);
 });
 
 
 /* PUT */
 router.put('/:id', function(req, res, next) 
 {
-  const dataString = "datetime = " + req.body.datetime + ", component =" + req.body.component;
-
-    var dbConn = new sql.ConnectionPool(config);
-    
-    dbConn.connect().then(function () 
-    {
-        var request = new sql.Request(dbConn);
-    
-        request.query("UPDATE " + tableName + " SET " + dataString + "WHERE id = " + req.params.id).then(function (recordSet) 
-        {
-          res.send(recordSet);
-          dbConn.close();
-        }).catch(function (err) 
-        {
-          res.send(err);
-          dbConn.close();
-        });
-    }).catch(function (err) 
-    {
-      res.send(err);
-    });
+  if (update(req.body, req.params.id) !== null)
+    res.send(entityName + " id: " + req.params.id + " updated");
+  else 
+    res.send("Could not update " + entityName);
 });
 
 
 /* DELETE */
 router.delete('/:id', function(req, res, next)
 {
-
-  var dbConn = new sql.ConnectionPool(config);
-  
-  dbConn.connect().then(function () 
-  {
-      var request = new sql.Request(dbConn);
-  
-      request.query("DELETE FROM DownLoadLogs WHERE id = " + req.params.id).then(function (recordSet)
-      {
-        res.send(recordSet);
-        dbConn.close();
-      }).catch(function (err) 
-      {
-        res.send(err);
-        dbConn.close();
-      });
-  }).catch(function (err) 
-  {
-    res.send(err);
-  });
+  if (deletion(req.params.id) !== null)
+    res.send(entityName + " id: " + req.params.id + " deleted");
+  else 
+    res.send("Could not delete " + entityName);
 });
 
 module.exports = router;
