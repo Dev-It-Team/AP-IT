@@ -12,32 +12,74 @@ const componentScheam = new Schema({
 })
 const Component = mongoose.model('Component', componentScheam);
 
-/* GET components listing. */
-router.get('/', function(req, res, next) 
+/**
+ * @api {get} /components Request Components information
+ * @apiName GetComponents
+ * @apiGroup Component
+ *
+ * @apiSuccess {Number} id id of the component.
+ * @apiSuccess {String} name  Name of the component.
+ * @apiSuccess {String} description Description of the component.
+ * @apiSuccess {String} link  Link of the component.
+ * @apiSuccess {Array} files  Files inside this component.
+ *
+ * @apiError ComponentNotAccessible The model is inaccessible due to server fault.
+ * 
+ */
+router.get('/', function(req, res) 
 {
     Component.find({}, function (err, docs) 
     {
-      if (err)
-        res.status(401).json({ message: "Could not get Components" });
+      if (err || docs.length == 0)
+        res.status(500).json({ message: "ComponentNotAccessible" });
       else
         res.status(200).json(docs);
     });
 });
 
-/* GET components listing by id. */
-router.get('/:id', function(req, res, next) 
+
+/**
+ * @api {get} /components/:id Request specific Component information
+ * @apiName GetComponent
+ * @apiGroup Component
+ *
+ * @apiParam {Number} id Component unique ID.
+ *
+ * @apiSuccess {Number} id id of the component.
+ * @apiSuccess {String} name  Name of the component.
+ * @apiSuccess {String} description Description of the component.
+ * @apiSuccess {String} link  Link of the component.
+ * @apiSuccess {Array} files  Files inside this component.
+ *
+ * @apiError ComponentNotFound The component was not found.
+ */
+router.get('/:id', function(req, res) 
 {
     Component.find({ id : req.params.id }, function (err, docs) 
     {
-      if (err)
-        res.status(401).json({ message: "Could not get one Components" });
+      if (err || docs.length == 0)
+        res.status(401).json({ message: "ComponentNotFound" });
       else
         res.status(200).json(docs);
     });
 });
 
-/* POST */
-router.post('/', function(req, res, next) 
+
+/**
+ * @api {post} /components/ Create a new Component
+ * @apiName PostComponent
+ * @apiGroup Component
+ *
+ * @apiParam {String} name  Name of the component.
+ * @apiParam {String} description Description of the component.
+ * @apiParam {String} link  Link of the component.
+ * @apiParam {Array} files  Files inside this component.
+ * 
+ * @apiSuccess {String} message  Components created.
+ *
+ * @apiError ComponentNotCreated The component cannot be created.
+ */
+router.post('/', function(req, res) 
 {
     const newComponent = new Component();
 
@@ -49,14 +91,30 @@ router.post('/', function(req, res, next)
     newComponent.save(function (err, docs) 
     {
       if (err)
-        res.status(401).json({ message: "Could not create Components" });
+        res.status(401).json({ message: "ComponentNotCreated" });
       else
         res.status(201).json({ message: "Components created" });
     });
 });
 
-/* PUT */
-router.put('/:id', function(req, res, next) 
+
+/**
+ * @api {put} /components/:id Update a Component
+ * @apiName PutComponent
+ * @apiGroup Component
+ *
+ * @apiParam {Number} id id of the component.
+ * 
+ * @apiParam {String} name  Name of the component.
+ * @apiParam {String} description Description of the component.
+ * @apiParam {String} link  Link of the component.
+ * @apiParam {Array} files  Files inside this component.
+ * 
+ * @apiSuccess {String} message  Components updated.
+ *
+ * @apiError ComponentNotUpdated The component cannot be updated.
+ */
+router.put('/:id', function(req, res) 
 {
     Component.updateOne({ id : req.params.id}, 
     {
@@ -68,19 +126,30 @@ router.put('/:id', function(req, res, next)
     function (err, docs) 
     {
       if (err)
-        res.status(401).json({ message: "Could not update Components" });
+        res.status(401).json({ message: "ComponentNotUpdated" });
       else
         res.status(202).json({ message: "Components updated" });
     });
 });
 
-/* DELETE */
-router.delete('/:id', function(req, res, next)
+
+/**
+ * @api {deleted} /components/:id Delete a Component
+ * @apiName DeletedComponent
+ * @apiGroup Component
+ *
+ * @apiParam {Number} id id of the component.
+ * 
+ * @apiSuccess {String} message  Components deleted.
+ *
+ * @apiError ComponentNotDeleted The component cannot be deleted.
+ */
+router.delete('/:id', function(req, res)
 {
     Component.deleteOne({ id : req.params.id }, function (err, docs) 
     {
       if (err)
-        res.status(401).json({ message: "Could not delete Components" });
+        res.status(401).json({ message: "ComponentNotDeleted" });
       else
         res.status(203).json({ message: "Components deleted" });
     });

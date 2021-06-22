@@ -124,57 +124,116 @@ async function startConnection()
 startConnection();
 
 
-/* GET commands listing. */
+/**
+ * @api {get} /connectionLogs/ Request Connection Logs information
+ * @apiName GetConnectionLogs
+ * @apiGroup ConnectionLogs
+ *
+ * @apiSuccess {Number} IdLog  Unique id of the log.
+ * @apiSuccess {Number} IdUser  Unique id of the user related to this log.
+ * @apiSuccess {Date} Date  Date when the log was saved.
+ * @apiSuccess {String} Description  Description of the log.
+ *
+ * @apiError ConnectionsNotAccessible The model is inaccessible due to server fault.
+ */
 router.get('/', function(req, res, next) 
 {
   const allDocs = getAll();
 
-  if (allDocs !== null)
+  if (allDocs !== null || docs.length == 0)
     res.status(200).json(allDocs);
   else 
-    res.status(401).json({ message: "Could not get " + entityName });
+    res.status(500).json({ message: "ConnectionsNotAccessible" });
 });
 
 
-/* GET commands listing by id. */
+/**
+ * @api {get} /connectionLogs/:id Request Connection Logs information
+ * @apiName GetConnectionLogs
+ * @apiGroup ConnectionLogs
+ *
+ * @apiParam {Number} id  Unique id of the log.
+ * 
+ * @apiSuccess {Number} IdLog  Unique id of the log.
+ * @apiSuccess {Number} IdUser  Unique id of the user related to this log.
+ * @apiSuccess {Date} Date  Date when the log was saved.
+ * @apiSuccess {String} Description  Description of the log.
+ *
+ * @apiError ConnectionNotFound The log was not found.
+ */
 router.get('/:id', function(req, res, next) 
 {
   const doc = getOne(req.params.id);
 
-  if (doc !== null)
+  if (doc !== null || doc.length == 0)
     res.status(200).json(doc);
   else 
-    res.status(401).json({ message: "Could not get one " + entityName });
+    res.status(401).json({ message: "ConnectionNotFound" });
 });
 
 
-/* POST */
-router.post('/', function(req, res, next) 
+/**
+ * @api {post} /connectionLogs/ Create Connection Logs information
+ * @apiName PostConnectionLogs
+ * @apiGroup ConnectionLogs
+ *
+ * @apiParam {Number} IdUser  Unique id of the user related to this log.
+ * @apiParam {Date} Date  Date when the log was saved.
+ * @apiParam {String} Description  Description of the log.
+ * 
+ * @apiSuccess {String} message  ConnectionLogs created.
+ *
+ * @apiError ConnectionNotCreated The log was not created.
+ */
+router.post('/', function(req, res) 
 {
   if (creation(req.body) !== null)
     res.status(201).json({ message: entityName + " created" });
   else 
-    res.status(401).json({ message: "Could not create " + entityName });
+    res.status(401).json({ message: "ConnectionNotCreated" });
 });
 
 
-/* PUT */
-router.put('/:id', function(req, res, next) 
+/**
+ * @api {put} /connectionLogs/:id Update Connection Logs information
+ * @apiName PutConnectionLogs
+ * @apiGroup ConnectionLogs
+ *
+ * @apiParam {Number} id  Unique id of the log.
+ * @apiParam {Number} IdUser  Unique id of the user related to this log.
+ * @apiParam {Date} Date  Date when the log was saved.
+ * @apiParam {String} Description  Description of the log.
+ * 
+ * @apiSuccess {String} message  ConnectionLogs updated.
+ *
+ * @apiError ConnectionNotUpdated The log was not updated.
+ */
+router.put('/:id', function(req, res) 
 {
   if (update(req.body, req.params.id) !== null)
     res.status(202).json({ message: entityName + " updated" });
   else 
-    res.status(401).json({ message: "Could not update " + entityName });
+    res.status(401).json({ message: "ConnectionNotUpdated" });
 });
 
 
-/* DELETE */
-router.delete('/:id', function(req, res, next)
+/**
+ * @api {delete} /connectionLogs/:id Delete Connection Logs information
+ * @apiName DeleteConnectionLogs
+ * @apiGroup ConnectionLogs
+ *
+ * @apiParam {Number} id  Unique id of the log.
+ * 
+ * @apiSuccess {String} message  ConnectionLogs deleted.
+ *
+ * @apiError ConnectionNotDeleted The log was not deleted.
+ */
+router.delete('/:id', function(req, res)
 {
   if (deletion(req.params.id) !== null)
     res.status(203).json({ message: entityName + "deleted" });
   else 
-    res.status(401).json({ message: "Could not delete " + entityName });
+    res.status(401).json({ message: "ConnectionNotDeleted" });
 });
 
 module.exports = router;

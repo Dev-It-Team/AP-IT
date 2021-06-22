@@ -126,57 +126,114 @@ async function startConnection()
 startConnection();
 
 
-/* GET commands listing. */
-router.get('/', function(req, res, next) 
+/**
+ * @api {get} /clients/ Get Clients information
+ * @apiName GetClients
+ * @apiGroup Clients
+ *
+ * @apiSuccess {Number} IdClient  Unique id of the client.
+ * @apiSuccess {Number} IdUser Unique id of the user connected to this client.
+ * @apiSuccess {String} AdresseFecturation  Adress where this client is facturated.
+ *
+ * @apiError ClientsNotAccessible The table is inaccessible due to server fault.
+ */
+router.get('/', function(req, res) 
 {
   const allDocs = getAll();
 
-  if (allDocs !== null)
+  if (allDocs !== null || allDocs.length == 0)
     res.status(200).json(allDocs);
   else 
-    res.status(401).json({ message: "Could not get " + entityName });
+    res.status(500).json({ message: "ClientsNotAccessible" });
 });
 
 
-/* GET commands listing by id. */
-router.get('/:id', function(req, res, next) 
+/**
+ * @api {get} /clients/:id Get specific Client information
+ * @apiName GetClient
+ * @apiGroup Clients
+ *
+ * @apiParam {Number} id Client unique ID.
+ * 
+ * @apiSuccess {Number} IdClient  Unique id of the client.
+ * @apiSuccess {Number} IdUser Unique id of the user connected to this client.
+ * @apiSuccess {String} AdresseFecturation  Adress where this client is facturated.
+ *
+ * @apiError ClientNotFound The client seeked was not found.
+ */
+router.get('/:id', function(req, res) 
 {
   const doc = getOne(req.params.id);
 
-  if (doc !== null)
+  if (doc !== null || doc.length == 0)
     res.status(200).json(doc);
   else 
-    res.status(401).json({ message: "Could not get one " + entityName });
+    res.status(401).json({ message: "ClientNotFound "});
 });
 
 
-/* POST */
-router.post('/', function(req, res, next) 
+/**
+ * @api {post} /clients/ Create Client information
+ * @apiName PostClient
+ * @apiGroup Clients
+ *
+ * @apiParam {Number} IdClient  Unique id of the client.
+ * @apiParam {Number} IdUser Unique id of the user connected to this client.
+ * @apiParam {String} AdresseFecturation  Adress where this client is facturated.
+ * 
+ * @apiSuccess {String} message  Clients created.
+ *
+ * @apiError ClientNotCreated The client cannot be created.
+ */
+router.post('/', function(req, res) 
 {
   if (creation(req.body) !== null)
     res.status(201).json({ message: entityName + " created" });
   else 
-    res.status(401).json({message: "Could not create " + entityName });
+    res.status(401).json({message: "ClientNotCreated" });
 });
 
 
-/* PUT */
-router.put('/:id', function(req, res, next) 
+/**
+ * @api {put} /clients/:id Update Client information
+ * @apiName PutClient
+ * @apiGroup Clients
+ *
+ * @apiParam {Number} id Client unique ID.
+ * @apiParam {Number} IdClient  Unique id of the client.
+ * @apiParam {Number} IdUser Unique id of the user connected to this client.
+ * @apiParam {String} AdresseFecturation  Adress where this client is facturated.
+ * 
+ * @apiSuccess {String} message  Clients updated.
+ *
+ * @apiError ClientNotUpdated The client cannot be updated.
+ */
+router.put('/:id', function(req, res) 
 {
   if (update(req.body, req.params.id) !== null)
     res.status(202).json({ message: entityName + " updated" });
   else 
-    res.status(401).json({ message: "Could not update " + entityName });
+    res.status(401).json({ message: "ClientNotUpdated" });
 });
 
 
-/* DELETE */
-router.delete('/:id', function(req, res, next)
+/**
+ * @api {delete} /clients/ Delete Client information
+ * @apiName DeleteClient
+ * @apiGroup Clients
+ *
+ * @apiParam {Number} id Client unique ID.
+ * 
+ * @apiSuccess {String} message  Clients deleted.
+ *
+ * @apiError ClientNotCreated The client cannot be deleted.
+ */
+router.delete('/:id', function(req, res)
 {
   if (deletion(req.params.id) !== null)
     res.status(203).json({ message: entityName + " deleted" });
   else 
-    res.status(401).json({ message: "Could not delete " + entityName });
+    res.status(401).json({ message: "ClientNotDeleted" });
 });
 
 module.exports = router;
