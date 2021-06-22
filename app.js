@@ -10,7 +10,6 @@ const dotenv = require('dotenv');
 //Config for NoSQL ORM
 require('mongoose').connect("mongodb+srv://admin:admin@js-project.rztwo.mongodb.net/project", { useNewUrlParser: true, useUnifiedTopology: true });
 
-
 // get config vars
 dotenv.config();
 var app = express();
