@@ -40,15 +40,15 @@ app.use('/',                require('./routes/index'));
 app.use('/users',           require('./routes/users'));
 
 //Routes secured by login
-app.use('/menus',         checkTokenMiddleware, require('./routes/menus'));
-app.use('/products',      checkTokenMiddleware, require('./routes/products'));
-app.use('/commands',      checkTokenMiddleware, require('./routes/commands'));
-app.use('/components',    checkTokenMiddleware, require('./routes/components'));
-app.use('/clients',       checkTokenMiddleware, require('./routes/clients'));
-app.use('/restaurants',   checkTokenMiddleware, require('./routes/restaurants'));
-app.use('/delivers',      checkTokenMiddleware, require('./routes/delivers'));
-app.use('/connectionLogs',checkTokenMiddleware, require('./routes/connectionLogs'));
-app.use('/downloadLogs',  checkTokenMiddleware, require('./routes/downloadLogs'));
+app.use('/menus',           checkTokenMiddleware, require('./routes/menus'));
+app.use('/products',        checkTokenMiddleware, require('./routes/products'));
+app.use('/commands',        checkTokenMiddleware, require('./routes/commands'));
+app.use('/components',      checkTokenMiddleware, require('./routes/components'));
+app.use('/clients',         checkTokenMiddleware, require('./routes/clients'));
+app.use('/restaurants',     checkTokenMiddleware, require('./routes/restaurants'));
+app.use('/deliveryDrivers', checkTokenMiddleware, require('./routes/deliveryDrivers'));
+app.use('/connectionLogs',  checkTokenMiddleware, require('./routes/connectionLogs'));
+app.use('/downloadLogs',    checkTokenMiddleware, require('./routes/downloadLogs'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) 

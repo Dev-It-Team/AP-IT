@@ -7,7 +7,7 @@ const commandSchema = new Schema({
     id : Number,
     id_restau: Number,
     id_user: Number,
-    id_deliver: Number,
+    id_deliveryDriver: Number,
     start_datetime: String,
     end_datetime: String,
     price: Number,
@@ -25,7 +25,7 @@ const Command = mongoose.model('Command', commandSchema);
  * @apiSuccess {Number} id  Unique id of the command.
  * @apiSuccess {Number} id_restau  Unique id of the restaurant related to this command.
  * @apiSuccess {Number} id_user  Unique id of the user related to this command.
- * @apiSuccess {Number} id_deliver  Unique id of the deliver related to this command.
+ * @apiSuccess {Number} id_deliveryDriver  Unique id of the delivery driver related to this command.
  * @apiSuccess {Date} start_datetime  Start date time of the command.
  * @apiSuccess {Date} end_datetime  End date time of the command.
  * @apiSuccess {Number} price  Price of the command.
@@ -56,7 +56,7 @@ router.get('/', function(req, res, next)
  * @apiSuccess {Number} id  Unique id of the command.
  * @apiSuccess {Number} id_restau  Unique id of the restaurant related to this command.
  * @apiSuccess {Number} id_user  Unique id of the user related to this command.
- * @apiSuccess {Number} id_deliver  Unique id of the deliver related to this command.
+ * @apiSuccess {Number} id_deliveryDriver  Unique id of the delivery driver related to this command.
  * @apiSuccess {Date} start_datetime  Start date time of the command.
  * @apiSuccess {Date} end_datetime  End date time of the command.
  * @apiSuccess {Number} price  Price of the command.
@@ -84,7 +84,7 @@ router.get('/:id', function(req, res, next)
  *
  * @apiParam {Number} id_restau  Unique id of the restaurant related to this command.
  * @apiParam {Number} id_user  Unique id of the user related to this command.
- * @apiParam {Number} id_deliver  Unique id of the deliver related to this command.
+ * @apiParam {Number} id_deliveryDriver  Unique id of the delivery driver related to this command.
  * @apiParam {Date} start_datetime  Start date time of the command.
  * @apiParam {Date} end_datetime  End date time of the command.
  * @apiParam {Number} price  Price of the command.
@@ -102,7 +102,7 @@ router.post('/', function(req, res, next)
     newCommand.id = req.body.id;
     newCommand.id_restau = req.body.id_restau;
     newCommand.id_user = req.body.id_user;
-    newCommand.id_deliver = req.body.id_deliver;
+    newCommand.id_deliveryDriver = req.body.id_deliveryDriver;
     newCommand.start_datetime = req.body.start_datetime;
     newCommand.end_datetime = req.body.end_datetime;
     newCommand.price = req.body.price;
@@ -127,7 +127,7 @@ router.post('/', function(req, res, next)
  * @apiParam {Number} id  Unique id of the command.
  * @apiParam {Number} id_restau  Unique id of the restaurant related to this command.
  * @apiParam {Number} id_user  Unique id of the user related to this command.
- * @apiParam {Number} id_deliver  Unique id of the deliver related to this command.
+ * @apiParam {Number} id_deliveryDriver  Unique id of the delivery driver related to this command.
  * @apiParam {Date} start_datetime  Start date time of the command.
  * @apiParam {Date} end_datetime  End date time of the command.
  * @apiParam {Number} price  Price of the command.
@@ -145,7 +145,7 @@ router.put('/:id', function(req, res, next)
       id : req.params.id,
       id_restau : req.body.id_restau,
       id_user : req.body.id_user,
-      id_deliver : req.body.id_deliver,
+      id_deliveryDriver : req.body.id_deliveryDriver,
       start_datetime : req.body.start_datetime,
       end_datetime : req.body.end_datetime,
       price : req.body.price,
