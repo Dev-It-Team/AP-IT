@@ -5,11 +5,12 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var { checkTokenMiddleware } = require('./jwtMiddleware');
 const { Sequelize } = require('sequelize');
+const dotenv = require('dotenv');
 
 //Config for NoSQL ORM
 require('mongoose').connect("mongodb+srv://admin:admin@js-project.rztwo.mongodb.net/project", { useNewUrlParser: true, useUnifiedTopology: true });
 
-const dotenv = require('dotenv');
+
 // get config vars
 dotenv.config();
 var app = express();
@@ -35,17 +36,20 @@ const config = new Sequelize('Test', 'sa', 'Str0ng_p4ssw0rd', {
 exports.configDatabase = config;
 
 //Every routes for the API
+//Routes not secured by login
 app.use('/',                require('./routes/index'));
-app.use('/menus',           require('./routes/menus'));
-app.use('/products',        require('./routes/products'));
-app.use('/commands',        require('./routes/commands'));
-app.use('/components',      require('./routes/components'));
 app.use('/users',           require('./routes/users'));
-app.use('/clients',         require('./routes/clients'));
-app.use('/restaurants',     require('./routes/restaurants'));
-app.use('/delivers',        require('./routes/delivers'));
-app.use('/connectionLogs',  require('./routes/connectionLogs'));
-app.use('/downloadLogs',    require('./routes/downloadLogs'));
+
+//Routes secured by login
+app.use('/menus',         checkTokenMiddleware, require('./routes/menus'));
+app.use('/products',      checkTokenMiddleware, require('./routes/products'));
+app.use('/commands',      checkTokenMiddleware, require('./routes/commands'));
+app.use('/components',    checkTokenMiddleware, require('./routes/components'));
+app.use('/clients',       checkTokenMiddleware, require('./routes/clients'));
+app.use('/restaurants',   checkTokenMiddleware, require('./routes/restaurants'));
+app.use('/delivers',      checkTokenMiddleware, require('./routes/delivers'));
+app.use('/connectionLogs',checkTokenMiddleware, require('./routes/connectionLogs'));
+app.use('/downloadLogs',  checkTokenMiddleware, require('./routes/downloadLogs'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) 
