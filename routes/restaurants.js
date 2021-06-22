@@ -5,20 +5,20 @@ const entityName = "Restaurants";
 const { DataTypes } = require('sequelize');
 
 const Restaurants = sequelize.define(entityName, {
-  id: {
+  IdRestaurant: {
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true
   },
-  id_user: {
+  idUser: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  restaurant_name: {
+  Nom: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  restaurant_adresse: {
+  AdresseRestaurant: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -53,9 +53,9 @@ async function creation(body)
   try 
   {
     await Restaurants.create({
-      id_user: body.id_user,
-      restaurant_name: body.restaurant_name,
-      restaurant_adresse: body.restaurant_adresse,
+      idUser: body.idUser,
+      Nom: body.Nom,
+      AdresseRestaurant: body.AdresseRestaurant,
       image_banniere: body.image_banniere,
     });
     return true;
@@ -69,13 +69,13 @@ async function update(body, idRestaurant)
   try 
   {
     await Restaurants.update({
-      id_user: body.id_user,
-      restaurant_name: body.restaurant_name,
-      restaurant_adresse: body.restaurant_adresse,
+      idUser: body.idUser,
+      Nom: body.Nom,
+      AdresseRestaurant: body.AdresseRestaurant,
       image_banniere: body.image_banniere,
     }, {
       where: {
-        id: idRestaurant
+        IdRestaurant: idRestaurant
       }
     });
     return true;
@@ -90,7 +90,7 @@ async function deletion(idRestaurant)
   {
     await Restaurants.destroy({ 
       where: {
-        id: idRestaurant
+        IdRestaurant: idRestaurant
     }});
     return true;
   } catch(error) {
@@ -114,7 +114,7 @@ async function getOne(idRestaurant)
   {
       return await Restaurants.findAll({ 
         where: {
-          id: idRestaurant
+          IdRestaurant: idRestaurant
       }});
   } catch(error) {
     return null;

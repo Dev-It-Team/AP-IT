@@ -1,33 +1,33 @@
 var express = require('express');
 var router = express.Router();
 var sequelize = require('../app.js').configDatabase;
-const entityName = "Delivers";
+const entityName = "Livreurs";
 const { DataTypes } = require('sequelize');
 
-const Delivers = sequelize.define(entityName, {
-  id: {
+const Livreurs = sequelize.define(entityName, {
+  IdLivreur: {
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true
   },
-  id_user: {
+  idUser: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  adresse_recu: {
+  AdresseFacturation: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  vehicule_type: {
+  TypeVehicule: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  notes: {
+  Note: {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0
   },
-  nb_notes: {
+  NbVotes: {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0
@@ -48,7 +48,7 @@ async function authentification()
 async function synchronisation()
 {
   try {
-    await Delivers.sync();
+    await Livreurs.sync();
   } catch(error) {
     console.log(entityName + " could not synchronize");
   }
@@ -58,12 +58,12 @@ async function creation(body)
 {
   try 
   {
-    await Delivers.create({
-      id_user: body.id_user,
-      adresse_recu: body.adresse_recu,
-      vehicule_type: body.vehicule_type,
-      notes: body.notes,
-      nb_notes: body.nb_notes,
+    await Livreurs.create({
+      idUser: body.idUser,
+      AdresseFacturation: body.AdresseFacturation,
+      TypeVehicule: body.TypeVehicule,
+      Note: body.Note,
+      NbVotes: body.NbVotes,
     });
     return true;
   } catch(error) {
@@ -75,15 +75,15 @@ async function update(body, idDeliver)
 {
   try 
   {
-    await Delivers.update({
-      id_user: body.id_user,
-      adresse_recu: body.adresse_recu,
-      vehicule_type: body.vehicule_type,
-      notes: body.notes,
-      nb_notes: body.nb_notes,
+    await Livreurs.update({
+      idUser: body.idUser,
+      AdresseFacturation: body.AdresseFacturation,
+      TypeVehicule: body.TypeVehicule,
+      Note: body.Note,
+      NbVotes: body.NbVotes,
     }, {
       where: {
-        id: idDeliver
+        IdLivreur: idDeliver
       }
     });
     return true;
@@ -96,9 +96,9 @@ async function deletion(idDeliver)
 {
   try 
   {
-    await Delivers.destroy({ 
+    await Livreurs.destroy({ 
       where: {
-        id: idDeliver
+        IdLivreur: idDeliver
     }});
     return true;
   } catch(error) {
@@ -110,7 +110,7 @@ async function getAll()
 {
   try 
   {
-      return await Delivers.findAll();
+      return await Livreurs.findAll();
   } catch(error) {
     return null;
   }
@@ -120,9 +120,9 @@ async function getOne(idDeliver)
 {
   try 
   {
-      return await Delivers.findAll({ 
+      return await Livreurs.findAll({ 
         where: {
-          id: idDeliver
+          IdLivreur: idDeliver
       }});
   } catch(error) {
     return null;

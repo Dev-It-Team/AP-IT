@@ -5,16 +5,16 @@ const entityName = "DownloadLogs";
 const { DataTypes } = require('sequelize');
 
 const DownLoagLogs = sequelize.define(entityName, {
-  id: {
+  IdLog: {
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true
   },
-  datetime: {
+  Date: {
     type: DataTypes.DATE,
     allowNull: false
   },
-  component: {
+  Component: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
@@ -45,8 +45,8 @@ async function creation(body)
   try 
   {
     await DownLoagLogs.create({
-      datetime: body.datetime,
-      component: body.component
+      Date: body.Date,
+      Component: body.Component
     });
     return true;
   } catch(error) {
@@ -59,11 +59,11 @@ async function update(body, idLog)
   try 
   {
     await DownLoagLogs.update({
-      datetime: body.datetime,
-      component: body.component
+      Date: body.Date,
+      Component: body.Component
     }, {
       where: {
-        id: idLog
+        IdLog: idLog
       }
     });
     return true;
@@ -78,7 +78,7 @@ async function deletion(idLog)
   {
     await DownLoagLogs.destroy({ 
       where: {
-        id: idLog
+        IdLog: idLog
     }});
     return true;
   } catch(error) {
@@ -102,7 +102,7 @@ async function getOne(idLog)
   {
       return await DownLoagLogs.findAll({ 
         where: {
-          id: idLog
+          IdLog: idLog
       }});
   } catch(error) {
     return null;

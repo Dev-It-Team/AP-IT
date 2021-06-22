@@ -4,44 +4,57 @@ const {checkTokenMiddleware, extractBearerToken} = require('../jwtMiddleware');
 const jwt = require('jsonwebtoken');
 var sequelize = require('../app.js').configDatabase;
 const { DataTypes } = require('sequelize');
-const entityName = "Users";
+const entityName = "Utilisateurs";
 const users = [
-    { id: 1, username: 'admin', password: 'password123' }
+    { IdUser: 1, username: 'admin', password: 'password123' }
 ]
 
-const Users = sequelize.define(entityName, {
-  id: {
+const Utilisateurs = sequelize.define(entityName, {
+  IdUser: {
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true
   },
-  name: {
+  Nom: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  firstName: {
+  Prenom: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  email: {
+  Email: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  adresse: {
+  Adresse: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  age: {
-    type: DataTypes.INTEGER,
+  MotDePasse: {
+    type: DataTypes.STRING,
     allowNull: false
   },
-  date_inscription: {
+  DateDeNaissance: {
+    type: DataTypes.DATE,
+    allowNull: false
+  },
+  DateInscription: {
     type: DataTypes.DATE,
     allowNull: false,
   },
-  user_flag: {
+  UserFlag: {
     type: DataTypes.STRING,
     allowNull: false
+  },
+  CodeParainage: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  NbParainages: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0
   },
   }, {
     tableName: entityName
@@ -59,7 +72,7 @@ async function authentification()
 async function synchronisation()
 {
   try {
-    await Users.sync();
+    await Utilisateurs.sync();
   } catch(error) {
     console.log(entityName + " could not synchronize");
   }
@@ -69,14 +82,17 @@ async function creation(body)
 {
   try 
   {
-    await Users.create({
-      name: body.name,
-      firstName: body.firstName,
-      email: body.email,
-      adresse: body.adresse,
-      age: body.age,
-      date_inscription: body.date_inscription,
-      user_flag: body.user_flag,
+    await Utilisateurs.create({
+      Nom: body.Nom,
+      Prenom: body.Prenom,
+      Email: body.Email,
+      Adresse: body.Adresse,
+      MotDePasse: body.MotDePasse,
+      DateDeNaissance: body.DateDeNaissance,
+      DateInscription: body.DateInscription,
+      UserFlag: body.UserFlag,
+      CodeParainage: body.CodeParainage,
+      NbParainages: body.NbParainages,
     });
     return true;
   } catch(error) {
@@ -84,21 +100,24 @@ async function creation(body)
   }
 }
 
-async function update(body, idLog)
+async function update(body, idUser)
 {
   try 
   {
-    await Users.update({
-      name: body.name,
-      firstName: body.firstName,
-      email: body.email,
-      adresse: body.adresse,
-      age: body.age,
-      date_inscription: body.date_inscription,
-      user_flag: body.user_flag,
+    await Utilisateurs.update({
+      Nom: body.Nom,
+      Prenom: body.Prenom,
+      Email: body.Email,
+      Adresse: body.Adresse,
+      MotDePasse: body.MotDePasse,
+      DateDeNaissance: body.DateDeNaissance,
+      DateInscription: body.DateInscription,
+      UserFlag: body.UserFlag,
+      CodeParainage: body.CodeParainage,
+      NbParainages: body.NbParainages,
     }, {
       where: {
-        id: idLog
+        IdUser: idUser
       }
     });
     return true;
@@ -107,13 +126,13 @@ async function update(body, idLog)
   }
 }
 
-async function deletion(idLog)
+async function deletion(idUser)
 {
   try 
   {
-    await Users.destroy({ 
+    await Utilisateurs.destroy({ 
       where: {
-        id: idLog
+        IdUser: idUser
     }});
     return true;
   } catch(error) {
@@ -125,19 +144,19 @@ async function getAll()
 {
   try 
   {
-      return await Users.findAll();
+      return await Utilisateurs.findAll();
   } catch(error) {
     return null;
   }
 }
 
-async function getOne(idLog)
+async function getOne(idUser)
 {
   try 
   {
-      return await Users.findAll({ 
+      return await Utilisateurs.findAll({ 
         where: {
-          id: idLog
+          IdUser: idUser
       }});
   } catch(error) {
     return null;
@@ -171,7 +190,7 @@ router.post('/login', (req, res) => {
   }
 
   const token = jwt.sign({
-      id: user.id,
+      IdUser: user.IdUser,
       username: user.username
   }, process.env.TOKEN_SECRET, { expiresIn: '3 hours' });
 
@@ -199,15 +218,15 @@ router.post('/register', (req, res) => {
   }
 
   // Insert new user
-  const id = users[users.length - 1].id + 1
+  const IdUser = users[users.length - 1].IdUser + 1
   const newUser = {
-      id: id,
+      IdUser: IdUser,
       username: req.body.username,
       password: req.body.password
   }
   users.push(newUser);
 
-  return res.status(201).json({ message: `User ${id} created` });
+  return res.status(201).json({ message: `User ${IdUser} created` });
 });
 
 

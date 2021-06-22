@@ -6,27 +6,18 @@ const { DataTypes } = require('sequelize');
 
 //ORM entity config
 const Clients = sequelize.define(entityName, {
-  id: {
+  IdClient: {
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true
   },
-  id_user: {
+  idUser: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  adresse_facturation: {
+  AdresseFacturation: {
     type: DataTypes.STRING,
     allowNull: false
-  },
-  code_parainage: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  nb_parainages: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 0
   },
 }, {
     tableName: entityName
@@ -58,10 +49,8 @@ async function creation(body)
   try 
   {
     await Clients.create({
-      id_user: body.id_user,
-      adresse_facturation: body.adresse_facturation,
-      code_parainage: body.code_parainage,
-      nb_parainages: body.nb_parainages
+      idUser: body.idUser,
+      AdresseFacturation: body.AdresseFacturation,
     });
     return true;
   } catch(error) {
@@ -70,18 +59,16 @@ async function creation(body)
 }
 
 //PUT request are fowarded here
-async function update(body, idClient)
+async function update(body, IdClient)
 {
   try 
   {
     await Clients.update({
-      id_user: body.id_user,
-      adresse_facturation: body.adresse_facturation,
-      code_parainage: body.code_parainage,
-      nb_parainages: body.nb_parainages
+      idUser: body.idUser,
+      AdresseFacturation: body.AdresseFacturation,
     }, {
       where: {
-        id: idClient
+        id: IdClient
       }
     });
     return true;
@@ -91,13 +78,13 @@ async function update(body, idClient)
 }
 
 //DELETE request are fowarded here
-async function deletion(idClient)
+async function deletion(IdClient)
 {
   try 
   {
     await Clients.destroy({ 
       where: {
-        id: idClient
+        IdClient: IdClient
     }});
     return true;
   } catch(error) {
@@ -117,13 +104,13 @@ async function getAll()
 }
 
 //GET request are fowarded here
-async function getOne(idClient)
+async function getOne(IdClient)
 {
   try 
   {
       return await Clients.findAll({ 
         where: {
-          id: idClient
+          IdClient: IdClient
       }});
   } catch(error) {
     return null;

@@ -41,8 +41,8 @@ router.post('/', function(req, res, next)
 {
     const newComponent = new Component();
 
-    newComponent.id = req.body.id;
     newComponent.name = req.body.name;
+    newComponent.description = req.body.description;
     newComponent.link = req.body.link;
     newComponent.files = req.body.files;
 
