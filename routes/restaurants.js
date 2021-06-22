@@ -64,7 +64,7 @@ async function creation(body)
   }
 }
 
-async function update(body, idLog)
+async function update(body, idRestaurant)
 {
   try 
   {
@@ -75,7 +75,7 @@ async function update(body, idLog)
       image_banniere: body.image_banniere,
     }, {
       where: {
-        id: idLog
+        id: idRestaurant
       }
     });
     return true;
@@ -84,13 +84,13 @@ async function update(body, idLog)
   }
 }
 
-async function deletion(idLog)
+async function deletion(idRestaurant)
 {
   try 
   {
     await Restaurants.destroy({ 
       where: {
-        id: idLog
+        id: idRestaurant
     }});
     return true;
   } catch(error) {
@@ -108,13 +108,13 @@ async function getAll()
   }
 }
 
-async function getOne(idLog)
+async function getOne(idRestaurant)
 {
   try 
   {
       return await Restaurants.findAll({ 
         where: {
-          id: idLog
+          id: idRestaurant
       }});
   } catch(error) {
     return null;
@@ -136,9 +136,9 @@ router.get('/', function(req, res, next)
   const allDocs = getAll();
 
   if (allDocs !== null)
-    res.send(JSON.stringify(allDocs, null, 2));
+    res.status(200).json(allDocs);
   else 
-    res.send("Could not get " + entityName);
+    res.status(401).json({ message: "Could not get " + entityName });
 });
 
 
@@ -148,9 +148,9 @@ router.get('/:id', function(req, res, next)
   const doc = getOne(req.params.id);
 
   if (doc !== null)
-    res.send(JSON.stringify(doc, null, 2));
+    res.status(200).json(doc);
   else 
-    res.send("Could not get one " + entityName);
+    res.status(401).json({ message: "Could not get one " + entityName });
 });
 
 
@@ -158,9 +158,9 @@ router.get('/:id', function(req, res, next)
 router.post('/', function(req, res, next) 
 {
   if (creation(req.body) !== null)
-    res.send(entityName + " created");
+    res.status(201).json({ message: entityName + "created" });
   else 
-    res.send("Could not create " + entityName);
+    res.status(401).json({ message: "Could not create " + entityName });
 });
 
 
@@ -168,9 +168,9 @@ router.post('/', function(req, res, next)
 router.put('/:id', function(req, res, next) 
 {
   if (update(req.body, req.params.id) !== null)
-    res.send(entityName + " id: " + req.params.id + " updated");
+    res.status(202).json({ message: entityName + "updated" });
   else 
-    res.send("Could not update " + entityName);
+    res.status(401).json({ message: "Could not update " + entityName });
 });
 
 
@@ -178,9 +178,9 @@ router.put('/:id', function(req, res, next)
 router.delete('/:id', function(req, res, next)
 {
   if (deletion(req.params.id) !== null)
-    res.send(entityName + " id: " + req.params.id + " deleted");
+    res.status(203).json({ message: entityName + " deleted" });
   else 
-    res.send("Could not delete " + entityName);
+    res.status(401).json({ message: "Could not delete " + entityName });
 });
 
 module.exports = router;

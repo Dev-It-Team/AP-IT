@@ -22,9 +22,9 @@ router.get('/', function(req, res, next)
     Menu.find({}, function (err, docs) 
     {
       if (err)
-        res.send(err);  
+        res.status(401).json({ message: "Could not get Menus" });  
       else
-        res.send(docs);
+        res.status(200).json(docs);
     });
 });
 
@@ -34,9 +34,9 @@ router.get('/:id', function(req, res, next)
     Menu.find({ id : req.params.id }, function (err, docs) 
     {
       if (err)
-        res.send(err);
+        res.status(401).json({ message: "Could not get one Menus" });
       else
-        res.send(docs);
+        res.status(200).json(docs);
     });
 });
 
@@ -58,9 +58,9 @@ router.post('/', function(req, res, next)
     newMenu.save(function (err, docs) 
     {
       if (err)
-        res.send(err);
+        res.status(401).json({ message: "Could not create Menus" });
       else
-        res.send("menu added");
+        res.status(201).json({ message: "Menus added" });
     });
 });
 
@@ -82,9 +82,9 @@ router.put('/:id', function(req, res, next)
     function (err, docs) 
     {
       if (err)
-        res.send(err);
+        res.status(401).json({ message: "Could not update Menus" });
       else
-        res.send("menu updated");
+        res.status(202).json({ message: "Menus updated" });
     });
 });
 
@@ -94,9 +94,9 @@ router.delete('/:id', function(req, res, next)
     Menu.deleteOne({ id : req.params.id }, function (err, docs) 
     {
       if (err)
-        res.send(err);
+        res.status(401).json({ message: "Could not deleted Menus" });
       else
-        res.send(req.params.id + " deleted");
+        res.status(203).json({ message: "Menus deleted" });
     });
 });
 
