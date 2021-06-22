@@ -3,11 +3,15 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var { checkTokenMiddleware } = require('./jwtMiddleware');
 const { Sequelize } = require('sequelize');
 
 //Config for NoSQL ORM
 require('mongoose').connect("mongodb+srv://admin:admin@js-project.rztwo.mongodb.net/project", { useNewUrlParser: true, useUnifiedTopology: true });
 
+const dotenv = require('dotenv');
+// get config vars
+dotenv.config();
 var app = express();
 
 app.set('views', path.join(__dirname, 'views'));
