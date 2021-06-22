@@ -5,13 +5,11 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const { Sequelize } = require('sequelize');
 
-const mongoString = "mongodb+srv://admin:admin@js-project.rztwo.mongodb.net/project";
-
-require('mongoose').connect(mongoString, { useNewUrlParser: true, useUnifiedTopology: true });
+//Config for NoSQL ORM
+require('mongoose').connect("mongodb+srv://admin:admin@js-project.rztwo.mongodb.net/project", { useNewUrlParser: true, useUnifiedTopology: true });
 
 var app = express();
 
-// view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
@@ -21,6 +19,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//Config for SQL ORM
 const config = new Sequelize('Test', 'sa', 'Str0ng_p4ssw0rd', {
   host: 'localhost',
   dialect: 'mssql',
@@ -28,8 +27,10 @@ const config = new Sequelize('Test', 'sa', 'Str0ng_p4ssw0rd', {
   logging: false
 });
 
+//Export here because of routes
 exports.configDatabase = config;
 
+//Every routes for the API
 app.use('/',                require('./routes/index'));
 app.use('/menus',           require('./routes/menus'));
 app.use('/products',        require('./routes/products'));
@@ -51,7 +52,6 @@ app.use(function(req, res, next)
 // error handler
 app.use(function(err, req, res, next) 
 {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 

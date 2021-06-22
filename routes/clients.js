@@ -4,6 +4,7 @@ var sequelize = require('../app.js').configDatabase;
 const entityName = "Clients";
 const { DataTypes } = require('sequelize');
 
+//ORM entity config
 const Clients = sequelize.define(entityName, {
   id: {
     type: DataTypes.INTEGER,
@@ -31,6 +32,7 @@ const Clients = sequelize.define(entityName, {
     tableName: entityName
 });
 
+//Authentification method in async
 async function authentification()
 {
   try {
@@ -40,6 +42,7 @@ async function authentification()
   }
 }
 
+//Synchronisation method, used to create table if needed
 async function synchronisation()
 {
   try {
@@ -49,6 +52,7 @@ async function synchronisation()
   }
 }
 
+//POST request are fowarded here
 async function creation(body)
 {
   try 
@@ -65,6 +69,7 @@ async function creation(body)
   }
 }
 
+//PUT request are fowarded here
 async function update(body, idUser)
 {
   try 
@@ -85,6 +90,7 @@ async function update(body, idUser)
   }
 }
 
+//DELETE request are fowarded here
 async function deletion(idUser)
 {
   try 
@@ -99,6 +105,7 @@ async function deletion(idUser)
   }
 }
 
+//GET request are fowarded here
 async function getAll()
 {
   try 
@@ -109,6 +116,7 @@ async function getAll()
   }
 }
 
+//GET request are fowarded here
 async function getOne(idUser)
 {
   try 
