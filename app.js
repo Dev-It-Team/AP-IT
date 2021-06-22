@@ -3,21 +3,13 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const { Sequelize } = require('sequelize');
 
-var indexRouter = require('./routes/index');
-var productsRouter = require('./routes/products');
-var commandsRouter = require('./routes/commands');
-var componentsRouter = require('./routes/components');
-var menusRouter = require('./routes/menus');
-
-const mongoose = require('mongoose');
-const mongoString = "mongodb+srv://admin:admin@js-project.rztwo.mongodb.net/project"
-
-mongoose.connect(mongoString, { useNewUrlParser: true, useUnifiedTopology: true });
+//Config for NoSQL ORM
+require('mongoose').connect("mongodb+srv://admin:admin@js-project.rztwo.mongodb.net/project", { useNewUrlParser: true, useUnifiedTopology: true });
 
 var app = express();
 
-// view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
@@ -27,11 +19,29 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/menus', menusRouter);
-app.use('/products', productsRouter);
-app.use('/commands', commandsRouter);
-app.use('/components', componentsRouter);
+//Config for SQL ORM
+const config = new Sequelize('Test', 'sa', 'Str0ng_p4ssw0rd', {
+  host: 'localhost',
+  dialect: 'mssql',
+  port: '1433',
+  logging: false
+});
+
+//Export here because of routes
+exports.configDatabase = config;
+
+//Every routes for the API
+app.use('/',                require('./routes/index'));
+app.use('/menus',           require('./routes/menus'));
+app.use('/products',        require('./routes/products'));
+app.use('/commands',        require('./routes/commands'));
+app.use('/components',      require('./routes/components'));
+app.use('/users',           require('./routes/users'));
+app.use('/clients',         require('./routes/clients'));
+app.use('/restaurants',     require('./routes/restaurants'));
+app.use('/delivers',        require('./routes/delivers'));
+app.use('/connectionLogs',  require('./routes/connectionLogs'));
+app.use('/downloadLogs',    require('./routes/downloadLogs'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) 
@@ -42,7 +52,6 @@ app.use(function(req, res, next)
 // error handler
 app.use(function(err, req, res, next) 
 {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
