@@ -9,7 +9,7 @@ const users = [
     { id: 1, username: 'admin', password: 'password123' }
 ]
 
-const ConnectionLogs = sequelize.define(entityName, {
+const Users = sequelize.define(entityName, {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -59,7 +59,7 @@ async function authentification()
 async function synchronisation()
 {
   try {
-    await ConnectionLogs.sync();
+    await Users.sync();
   } catch(error) {
     console.log(entityName + " could not synchronize");
   }
@@ -69,7 +69,7 @@ async function creation(body)
 {
   try 
   {
-    await ConnectionLogs.create({
+    await Users.create({
       name: body.name,
       firstName: body.firstName,
       email: body.email,
@@ -88,7 +88,7 @@ async function update(body, idLog)
 {
   try 
   {
-    await ConnectionLogs.update({
+    await Users.update({
       name: body.name,
       firstName: body.firstName,
       email: body.email,
@@ -111,7 +111,7 @@ async function deletion(idLog)
 {
   try 
   {
-    await ConnectionLogs.destroy({ 
+    await Users.destroy({ 
       where: {
         id: idLog
     }});
@@ -125,7 +125,7 @@ async function getAll()
 {
   try 
   {
-      return await ConnectionLogs.findAll();
+      return await Users.findAll();
   } catch(error) {
     return null;
   }
@@ -135,7 +135,7 @@ async function getOne(idLog)
 {
   try 
   {
-      return await ConnectionLogs.findAll({ 
+      return await Users.findAll({ 
         where: {
           id: idLog
       }});
