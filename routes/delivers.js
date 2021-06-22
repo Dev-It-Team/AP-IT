@@ -144,9 +144,9 @@ router.get('/', function(req, res, next)
   const allDocs = getAll();
 
   if (allDocs !== null)
-    res.send(JSON.stringify(allDocs, null, 2));
+    res.status(200).send(JSON.stringify(allDocs, null, 2));
   else 
-    res.send("Could not get " + entityName);
+    res.status(401).send("Could not get " + entityName);
 });
 
 
@@ -156,9 +156,9 @@ router.get('/:id', function(req, res, next)
   const doc = getOne(req.params.id);
 
   if (doc !== null)
-    res.send(JSON.stringify(doc, null, 2));
+    res.status(200).send(JSON.stringify(doc, null, 2));
   else 
-    res.send("Could not get one " + entityName);
+    res.status(401).send("Could not get one " + entityName);
 });
 
 
@@ -166,9 +166,9 @@ router.get('/:id', function(req, res, next)
 router.post('/', function(req, res, next) 
 {
   if (creation(req.body) !== null)
-    res.send(entityName + " created");
+    res.status(201).send(entityName + " created");
   else 
-    res.send("Could not create one" + entityName);
+    res.status(401).send("Could not create one" + entityName);
 });
 
 
@@ -176,9 +176,9 @@ router.post('/', function(req, res, next)
 router.put('/:id', function(req, res, next) 
 {
   if (update(req.body, req.params.id) !== null)
-    res.send(entityName + " id: " + req.params.id + " updated");
+    res.status(202).send(entityName + " id: " + req.params.id + " updated");
   else 
-    res.send("Could not update " + entityName);
+    res.status(401).send("Could not update " + entityName);
 });
 
 
@@ -186,9 +186,9 @@ router.put('/:id', function(req, res, next)
 router.delete('/:id', function(req, res, next)
 {
   if (deletion(req.params.id) !== null)
-    res.send(entityName + " id: " + req.params.id + " deleted");
+    res.status(203).send(entityName + " id: " + req.params.id + " deleted");
   else 
-    res.send("Could not delete " + entityName);
+    res.status(401).send("Could not delete " + entityName);
 });
 
 module.exports = router;
