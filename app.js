@@ -42,16 +42,15 @@ app.use('/users',           require('./routes/users'));
 //Routes secured by login
 app.use('/menus',           checkTokenMiddleware, require('./routes/menus'));
 app.use('/products',        checkTokenMiddleware, require('./routes/products'));
-app.use('/commands',        checkTokenMiddleware, require('./routes/commands'));
+app.use('/orders',          checkTokenMiddleware, require('./routes/orders'));
 app.use('/components',      checkTokenMiddleware, require('./routes/components'));
-app.use('/clients',         checkTokenMiddleware, require('./routes/clients'));
 app.use('/restaurants',     checkTokenMiddleware, require('./routes/restaurants'));
 app.use('/deliveryDrivers', checkTokenMiddleware, require('./routes/deliveryDrivers'));
-app.use('/connectionLogs',  checkTokenMiddleware, require('./routes/connectionLogs'));
-app.use('/downloadLogs',    checkTokenMiddleware, require('./routes/downloadLogs'));
+app.use('/connectionLogs',  checkTokenMiddleware, require('./routes/logsConnection'));
+app.use('/downloadLogs',    checkTokenMiddleware, require('./routes/logsDownload'));
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) 
+app.use(function(req, res) 
 {
   res.status(404);
   res.send({ "error": "Route not found" });

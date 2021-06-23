@@ -1,244 +1,192 @@
 var express = require('express');
 var router = express.Router();
-var sequelize = require('../app.js').configDatabase;
-const entityName = "Clients";
-const { DataTypes } = require('sequelize');
+const mongoose = require('mongoose');
 
-//ORM entity config
-const Clients = sequelize.define(entityName, {
-  IdClient: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    primaryKey: true
-  },
-  idUser: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
-  AdresseFacturation: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-}, {
-    tableName: entityName
-});
+const { Schema } = mongoose;
+const commandSchema = new Schema({
+    id : Number,
+    id_restau: Number,
+    id_user: Number,
+    id_deliveryDriver: Number,
+    start_datetime: String,
+    end_datetime: String,
+    price: Number,
+    products: Array,
+    status: String
+})
+const Command = mongoose.model('Command', commandSchema);
 
-//Authentification method in async
-async function authentification()
+
+/**
+ * @api {get} /commands/ Request Commands information
+ * @apiVersion 1.0.0
+ * @apiName GetCommands
+ * @apiGroup Commands
+ *
+ * @apiSuccess {Number} id  Unique id of the command.
+ * @apiSuccess {Number} id_restau  Unique id of the restaurant related to this command.
+ * @apiSuccess {Number} id_user  Unique id of the user related to this command.
+ * @apiSuccess {Number} id_deliveryDriver  Unique id of the delivery driver related to this command.
+ * @apiSuccess {Date} start_datetime  Start date time of the command.
+ * @apiSuccess {Date} end_datetime  End date time of the command.
+ * @apiSuccess {Number} price  Price of the command.
+ * @apiSuccess {Array} products List of products inside this command.
+ * @apiSuccess {String} status  Current command status.
+ *
+ * @apiError CommandsNotAccessible The model is inaccessible due to server fault.
+ */
+router.get('/', function(req, res, next) 
 {
-  try {
-    await sequelize.authenticate();
-  } catch (error) {
-    console.error('Unable to connect to the database');
-  }
-}
-
-//Synchronisation method, used to create table if needed
-async function synchronisation()
-{
-  try {
-    await Clients.sync();
-  } catch(error) {
-    console.log(entityName + " could not synchronize");
-  }
-}
-
-//POST request are fowarded here
-async function creation(body)
-{
-  try 
-  {
-    await Clients.create({
-      idUser: body.idUser,
-      AdresseFacturation: body.AdresseFacturation,
+    Command.find({}, function (err, docs) 
+    {
+      if (err || docs.length == 0)
+        res.status(500).json({ message: "CommandsNotAccessible" });
+      else
+        res.status(200).json(docs);
     });
-    return true;
-  } catch(error) {
-    return null;
-  }
-}
+});
 
-//PUT request are fowarded here
-async function update(body, IdClient)
+
+/**
+ * @api {get} /commands/:id Request specific Command information
+ * @apiVersion 1.0.0
+ * @apiName GetCommands
+ * @apiGroup Commands
+ *
+ * @apiParam {Number} id  Unique id of the command.
+ * 
+ * @apiSuccess {Number} id  Unique id of the command.
+ * @apiSuccess {Number} id_restau  Unique id of the restaurant related to this command.
+ * @apiSuccess {Number} id_user  Unique id of the user related to this command.
+ * @apiSuccess {Number} id_deliveryDriver  Unique id of the delivery driver related to this command.
+ * @apiSuccess {Date} start_datetime  Start date time of the command.
+ * @apiSuccess {Date} end_datetime  End date time of the command.
+ * @apiSuccess {Number} price  Price of the command.
+ * @apiSuccess {Array} products List of products inside this command.
+ * @apiSuccess {String} status  Current command status.
+ *
+ * @apiError CommandNotFound The command was not found.
+ */
+router.get('/:id', function(req, res, next) 
 {
-  try 
-  {
-    await Clients.update({
-      idUser: body.idUser,
-      AdresseFacturation: body.AdresseFacturation,
-    }, {
-      where: {
-        id: IdClient
-      }
+    Command.find({ id : req.params.id }, function (err, docs) 
+    {
+      if (err || docs.length == 0)
+        res.status(401).json({ message: "CommandNotFound" });
+      else
+        res.status(200).json(docs);
     });
-    return true;
-  } catch(error) {
-    return null;
-  }
-}
-
-//DELETE request are fowarded here
-async function deletion(IdClient)
-{
-  try 
-  {
-    await Clients.destroy({ 
-      where: {
-        IdClient: IdClient
-    }});
-    return true;
-  } catch(error) {
-    return null;
-  }
-}
-
-//GET request are fowarded here
-async function getAll()
-{
-  try 
-  {
-      return await Clients.findAll();
-  } catch(error) {
-    return null;
-  }
-}
-
-//GET request are fowarded here
-async function getOne(IdClient)
-{
-  try 
-  {
-      return await Clients.findAll({ 
-        where: {
-          IdClient: IdClient
-      }});
-  } catch(error) {
-    return null;
-  }
-}
-
-async function startConnection()
-{
-  await authentification();
-  await synchronisation();
-}
-
-startConnection();
-
-
-/**
- * @api {get} /clients/ Get Clients information
- * @apiVersion 1.0.0
- * @apiName GetClients
- * @apiGroup Clients
- *
- * @apiSuccess {Number} IdClient  Unique id of the client.
- * @apiSuccess {Number} IdUser Unique id of the user connected to this client.
- * @apiSuccess {String} AdresseFecturation  Adress where this client is facturated.
- *
- * @apiError ClientsNotAccessible The table is inaccessible due to server fault.
- */
-router.get('/', function(req, res) 
-{
-  const allDocs = getAll();
-
-  if (allDocs !== null || allDocs.length == 0)
-    res.status(200).json(allDocs);
-  else 
-    res.status(500).json({ message: "ClientsNotAccessible" });
 });
 
 
 /**
- * @api {get} /clients/:id Get specific Client information
+ * @api {post} /commands/ Create Command information
  * @apiVersion 1.0.0
- * @apiName GetClient
- * @apiGroup Clients
+ * @apiName PostCommands
+ * @apiGroup Commands
  *
- * @apiParam {Number} id Client unique ID.
+ * @apiParam {Number} id_restau  Unique id of the restaurant related to this command.
+ * @apiParam {Number} id_user  Unique id of the user related to this command.
+ * @apiParam {Number} id_deliveryDriver  Unique id of the delivery driver related to this command.
+ * @apiParam {Date} start_datetime  Start date time of the command.
+ * @apiParam {Date} end_datetime  End date time of the command.
+ * @apiParam {Number} price  Price of the command.
+ * @apiParam {Array} products List of products inside this command.
+ * @apiParam {String} status  Current command status.
  * 
- * @apiSuccess {Number} IdClient  Unique id of the client.
- * @apiSuccess {Number} IdUser Unique id of the user connected to this client.
- * @apiSuccess {String} AdresseFecturation  Adress where this client is facturated.
+ * @apiSuccess {String} message  Command created.
  *
- * @apiError ClientNotFound The client seeked was not found.
+ * @apiError CommandsNotCreated The command can not be created.
  */
-router.get('/:id', function(req, res) 
+router.post('/', function(req, res, next) 
 {
-  const doc = getOne(req.params.id);
+    const newCommand = new Command();
 
-  if (doc !== null || doc.length == 0)
-    res.status(200).json(doc);
-  else 
-    res.status(401).json({ message: "ClientNotFound "});
+    newCommand.id = req.body.id;
+    newCommand.id_restau = req.body.id_restau;
+    newCommand.id_user = req.body.id_user;
+    newCommand.id_deliveryDriver = req.body.id_deliveryDriver;
+    newCommand.start_datetime = req.body.start_datetime;
+    newCommand.end_datetime = req.body.end_datetime;
+    newCommand.price = req.body.price;
+    newCommand.products = req.body.products;
+    newCommand.status = req.body.status;
+
+    newCommand.save(function (err, docs) 
+    {
+      if (err)
+        res.status(401).json({ message: "CommandsNotCreated" });
+      else
+        res.status(201).json({ message: "Commands created" });
+    });
 });
 
 
 /**
- * @api {post} /clients/ Create Client information
+ * @api {put} /commands/:id Update Command information
  * @apiVersion 1.0.0
- * @apiName PostClient
- * @apiGroup Clients
+ * @apiName PutCommands
+ * @apiGroup Commands
  *
- * @apiParam {Number} IdClient  Unique id of the client.
- * @apiParam {Number} IdUser Unique id of the user connected to this client.
- * @apiParam {String} AdresseFecturation  Adress where this client is facturated.
+ * @apiParam {Number} id  Unique id of the command.
+ * @apiParam {Number} id_restau  Unique id of the restaurant related to this command.
+ * @apiParam {Number} id_user  Unique id of the user related to this command.
+ * @apiParam {Number} id_deliveryDriver  Unique id of the delivery driver related to this command.
+ * @apiParam {Date} start_datetime  Start date time of the command.
+ * @apiParam {Date} end_datetime  End date time of the command.
+ * @apiParam {Number} price  Price of the command.
+ * @apiParam {Array} products List of products inside this command.
+ * @apiParam {String} status  Current command status.
  * 
- * @apiSuccess {String} message  Clients created.
+ * @apiSuccess {String} message  Command updated.
  *
- * @apiError ClientNotCreated The client cannot be created.
+ * @apiError CommandsNotUpdated The command can not be updated.
  */
-router.post('/', function(req, res) 
+router.put('/:id', function(req, res, next) 
 {
-  if (creation(req.body) !== null)
-    res.status(201).json({ message: entityName + " created" });
-  else 
-    res.status(401).json({message: "ClientNotCreated" });
+    Command.updateOne({ id : req.params.id}, 
+    {
+      id : req.params.id,
+      id_restau : req.body.id_restau,
+      id_user : req.body.id_user,
+      id_deliveryDriver : req.body.id_deliveryDriver,
+      start_datetime : req.body.start_datetime,
+      end_datetime : req.body.end_datetime,
+      price : req.body.price,
+      products : req.body.products,
+      status : req.body.status
+    },
+    function (err, docs) 
+    {
+      if (err)
+        res.status(401).json({ message: "CommandsNotUpdated" });
+      else
+        res.status(202).json({ message: "Commands updated" });
+    });
 });
 
 
 /**
- * @api {put} /clients/:id Update Client information
+ * @api {delete} /commands/:id Delete Command information
  * @apiVersion 1.0.0
- * @apiName PutClient
- * @apiGroup Clients
+ * @apiName DeleteCommands
+ * @apiGroup Commands
  *
- * @apiParam {Number} id Client unique ID.
- * @apiParam {Number} IdClient  Unique id of the client.
- * @apiParam {Number} IdUser Unique id of the user connected to this client.
- * @apiParam {String} AdresseFecturation  Adress where this client is facturated.
+ * @apiParam {Number} id  Unique id of the command.
  * 
- * @apiSuccess {String} message  Clients updated.
+ * @apiSuccess {String} message  Command deleted.
  *
- * @apiError ClientNotUpdated The client cannot be updated.
+ * @apiError CommandsNotDeleted The command can not be deleted.
  */
-router.put('/:id', function(req, res) 
+router.delete('/:id', function(req, res, next)
 {
-  if (update(req.body, req.params.id) !== null)
-    res.status(202).json({ message: entityName + " updated" });
-  else 
-    res.status(401).json({ message: "ClientNotUpdated" });
-});
-
-
-/**
- * @api {delete} /clients/ Delete Client information
- * @apiVersion 1.0.0
- * @apiName DeleteClient
- * @apiGroup Clients
- *
- * @apiParam {Number} id Client unique ID.
- * 
- * @apiSuccess {String} message  Clients deleted.
- *
- * @apiError ClientNotCreated The client cannot be deleted.
- */
-router.delete('/:id', function(req, res)
-{
-  if (deletion(req.params.id) !== null)
-    res.status(203).json({ message: entityName + " deleted" });
-  else 
-    res.status(401).json({ message: "ClientNotDeleted" });
+    Command.deleteOne({ id : req.params.id }, function (err, docs) 
+    {
+      if (err)
+        res.status(401).json({ message: "CommandsNotDeleted" });
+      else
+        res.status(203).json({ message: "Commands deleted" });
+    });
 });
 
 module.exports = router;

@@ -10,19 +10,15 @@ const Restaurants = sequelize.define(entityName, {
     allowNull: false,
     primaryKey: true
   },
-  idUser: {
+  IdUser: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  Nom: {
+  NameRestaurant: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  AdresseRestaurant: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  image_banniere: {
+  Banner: {
     type: DataTypes.STRING,
     allowNull: true
   },
@@ -53,10 +49,9 @@ async function creation(body)
   try 
   {
     await Restaurants.create({
-      idUser: body.idUser,
-      Nom: body.Nom,
-      AdresseRestaurant: body.AdresseRestaurant,
-      image_banniere: body.image_banniere,
+      IdUser: body.IdUser,
+      Name: body.Name,
+      Banner: body.Banner,
     });
     return true;
   } catch(error) {
@@ -69,10 +64,9 @@ async function update(body, idRestaurant)
   try 
   {
     await Restaurants.update({
-      idUser: body.idUser,
-      Nom: body.Nom,
-      AdresseRestaurant: body.AdresseRestaurant,
-      image_banniere: body.image_banniere,
+      IdUser: body.IdUser,
+      Name: body.Name,
+      Banner: body.Banner,
     }, {
       where: {
         IdRestaurant: idRestaurant
@@ -129,7 +123,6 @@ async function startConnection()
 
 startConnection();
 
-
 /**
  * @api {get} /restaurants/ Get Restaurants Information
  * @apiVersion 1.0.0
@@ -141,6 +134,19 @@ startConnection();
  * @apiSuccess {String} Nom  Name of this restaurant.
  * @apiSuccess {String} AdresseRestaurant  Address of this restaurant.
  * @apiSuccess {String} image_banniere  Pictures of the restaurant.
+ *
+ * @apiError RestaurantsNotAccessible The table is inaccessible due to server fault.
+ */
+/**
+ * @api {get} /restaurants/ Get Restaurants Information
+ * @apiVersion 1.1.0
+ * @apiName GetRestaurants
+ * @apiGroup Restaurants
+ * 
+ * @apiSuccess {Number} IdRestaurant  Restaurant's unique id.
+ * @apiSuccess {Number} IdUser  User's id related to this restaurant.
+ * @apiSuccess {String} NameRestaurant  Name of this restaurant.
+ * @apiSuccess {String} Banner  Pictures of the restaurant.
  *
  * @apiError RestaurantsNotAccessible The table is inaccessible due to server fault.
  */
@@ -171,6 +177,21 @@ router.get('/', function(req, res)
  *
  * @apiError RestaurantNotFound The wanted restaurant cannot be found.
  */
+/**
+ * @api {get} /restaurants/:id Get specific Restaurant Information
+ * @apiVersion 1.1.0
+ * @apiName GetRestaurant
+ * @apiGroup Restaurants
+ * 
+ * @apiParam {Number} IdRestaurant  Restaurant's unique id.
+ * 
+ * @apiSuccess {Number} IdRestaurant  Restaurant's unique id.
+ * @apiSuccess {Number} IdUser  User's id related to this restaurant.
+ * @apiSuccess {String} NameRestaurant  Name of this restaurant.
+ * @apiSuccess {String} Banner  Pictures of the restaurant.
+ *
+ * @apiError RestaurantNotFound The wanted restaurant cannot be found.
+ */
 router.get('/:id', function(req, res) 
 {
   const doc = getOne(req.params.id);
@@ -193,6 +214,21 @@ router.get('/:id', function(req, res)
  * @apiParam {String} Nom  Name of this restaurant.
  * @apiParam {String} AdresseRestaurant  Address of this restaurant.
  * @apiParam {String} image_banniere  Pictures of the restaurant.
+ * 
+ * @apiSuccess {String} message  Restaurants created.
+ *
+ * @apiError RestaurantNotCreated The restaurant was not created.
+ */
+/**
+ * @api {post} /restaurants/ Create Restaurant Information
+ * @apiVersion 1.1.0
+ * @apiName PostRestaurants
+ * @apiGroup Restaurants
+ * 
+ * @apiParam {Number} IdRestaurant  Restaurant's unique id.
+ * @apiParam {Number} IdUser  User's id related to this restaurant.
+ * @apiParam {String} NameRestaurant  Name of this restaurant.
+ * @apiParam {String} Banner  Pictures of the restaurant.
  * 
  * @apiSuccess {String} message  Restaurants created.
  *
@@ -224,6 +260,22 @@ router.post('/', function(req, res)
  *
  * @apiError RestaurantNotUpdated The restaurant was not updated.
  */
+/**
+ * @api {put} /restaurants/:id Update Restaurant Information
+ * @apiVersion 1.1.0
+ * @apiName PutRestaurants
+ * @apiGroup Restaurants
+ * 
+ * @apiParam {Number} IdRestaurant  Restaurant's unique id.
+ * 
+ * @apiParam {Number} IdUser  User's id related to this restaurant.
+ * @apiParam {String} NameRestaurant  Name of this restaurant.
+ * @apiParam {String} Banner  Pictures of the restaurant.
+ * 
+ * @apiSuccess {String} message  Restaurants updated.
+ *
+ * @apiError RestaurantNotUpdated The restaurant was not updated.
+ */
 router.put('/:id', function(req, res) 
 {
   if (update(req.body, req.params.id) !== null)
@@ -236,6 +288,18 @@ router.put('/:id', function(req, res)
 /**
  * @api {delete} /restaurants/:id Delete Restaurant Information
  * @apiVersion 1.0.0
+ * @apiName DeleteRestaurants
+ * @apiGroup Restaurants
+ * 
+ * @apiParam {Number} IdRestaurant  Restaurant's unique id.
+ * 
+ * @apiSuccess {String} message  Restaurants deleted.
+ *
+ * @apiError RestaurantNotDeleted The restaurant was not deleted.
+ */
+/**
+ * @api {delete} /restaurants/:id Delete Restaurant Information
+ * @apiVersion 1.1.0
  * @apiName DeleteRestaurants
  * @apiGroup Restaurants
  * 

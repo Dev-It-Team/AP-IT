@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var sequelize = require('../app.js').configDatabase;
-const entityName = "ConnectionLogs";
+const entityName = "LogsConnection";
 const { DataTypes } = require('sequelize');
 
-const ConnectionLogs = sequelize.define(entityName, {
+const LogsConnection = sequelize.define(entityName, {
   IdLog: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -38,7 +38,7 @@ async function authentification()
 async function synchronisation()
 {
   try {
-    await ConnectionLogs.sync();
+    await LogsConnection.sync();
   } catch(error) {
     console.log(entityName + " could not synchronize");
   }
@@ -48,7 +48,7 @@ async function creation(body)
 {
   try 
   {
-    await ConnectionLogs.create({
+    await LogsConnection.create({
       Date: body.Date,
       Description: body.Description,
       IdUser: body.IdUser
@@ -63,7 +63,7 @@ async function update(body, idLog)
 {
   try 
   {
-    await ConnectionLogs.update({
+    await LogsConnection.update({
       Date: body.Date,
       Description: body.Description,
       IdUser: body.IdUser
@@ -82,7 +82,7 @@ async function deletion(idLog)
 {
   try 
   {
-    await ConnectionLogs.destroy({ 
+    await LogsConnection.destroy({ 
       where: {
         IdLog: idLog
     }});
@@ -96,7 +96,7 @@ async function getAll()
 {
   try 
   {
-      return await ConnectionLogs.findAll();
+      return await LogsConnection.findAll();
   } catch(error) {
     return null;
   }
@@ -106,7 +106,7 @@ async function getOne(idLog)
 {
   try 
   {
-      return await ConnectionLogs.findAll({ 
+      return await LogsConnection.findAll({ 
         where: {
           IdLog: idLog
       }});
@@ -128,7 +128,7 @@ startConnection();
  * @api {get} /connectionLogs/ Request Connection Logs information
  * @apiVersion 1.0.0
  * @apiName GetConnectionLogs
- * @apiGroup ConnectionLogs
+ * @apiGroup LogsConnection
  *
  * @apiSuccess {Number} IdLog  Unique id of the log.
  * @apiSuccess {Number} IdUser  Unique id of the user related to this log.
@@ -137,7 +137,20 @@ startConnection();
  *
  * @apiError ConnectionsNotAccessible The model is inaccessible due to server fault.
  */
-router.get('/', function(req, res, next) 
+/**
+ * @api {get} /connectionLogs/ Request Connection Logs information
+ * @apiVersion 1.1.0
+ * @apiName GetConnectionLogs
+ * @apiGroup LogsConnection
+ *
+ * @apiSuccess {Number} IdLog  Unique id of the log.
+ * @apiSuccess {Number} IdUser  Unique id of the user related to this log.
+ * @apiSuccess {Date} Date  Date when the log was saved.
+ * @apiSuccess {String} Description  Description of the log.
+ *
+ * @apiError ConnectionsNotAccessible The model is inaccessible due to server fault.
+ */
+router.get('/', function(req, res) 
 {
   const allDocs = getAll();
 
@@ -152,7 +165,7 @@ router.get('/', function(req, res, next)
  * @api {get} /connectionLogs/:id Request Connection Logs information
  * @apiVersion 1.0.0
  * @apiName GetConnectionLogs
- * @apiGroup ConnectionLogs
+ * @apiGroup LogsConnection
  *
  * @apiParam {Number} id  Unique id of the log.
  * 
@@ -163,7 +176,22 @@ router.get('/', function(req, res, next)
  *
  * @apiError ConnectionNotFound The log was not found.
  */
-router.get('/:id', function(req, res, next) 
+/**
+ * @api {get} /connectionLogs/:id Request Connection Logs information
+ * @apiVersion 1.1.0
+ * @apiName GetConnectionLogs
+ * @apiGroup LogsConnection
+ *
+ * @apiParam {Number} id  Unique id of the log.
+ * 
+ * @apiSuccess {Number} IdLog  Unique id of the log.
+ * @apiSuccess {Number} IdUser  Unique id of the user related to this log.
+ * @apiSuccess {Date} Date  Date when the log was saved.
+ * @apiSuccess {String} Description  Description of the log.
+ *
+ * @apiError ConnectionNotFound The log was not found.
+ */
+router.get('/:id', function(req, res) 
 {
   const doc = getOne(req.params.id);
 
@@ -178,13 +206,27 @@ router.get('/:id', function(req, res, next)
  * @api {post} /connectionLogs/ Create Connection Logs information
  * @apiVersion 1.0.0
  * @apiName PostConnectionLogs
- * @apiGroup ConnectionLogs
+ * @apiGroup LogsConnection
  *
  * @apiParam {Number} IdUser  Unique id of the user related to this log.
  * @apiParam {Date} Date  Date when the log was saved.
  * @apiParam {String} Description  Description of the log.
  * 
- * @apiSuccess {String} message  ConnectionLogs created.
+ * @apiSuccess {String} message  LogsConnection created.
+ *
+ * @apiError ConnectionNotCreated The log was not created.
+ */
+/**
+ * @api {post} /connectionLogs/ Create Connection Logs information
+ * @apiVersion 1.1.0
+ * @apiName PostConnectionLogs
+ * @apiGroup LogsConnection
+ *
+ * @apiParam {Number} IdUser  Unique id of the user related to this log.
+ * @apiParam {Date} Date  Date when the log was saved.
+ * @apiParam {String} Description  Description of the log.
+ * 
+ * @apiSuccess {String} message  LogsConnection created.
  *
  * @apiError ConnectionNotCreated The log was not created.
  */
@@ -201,14 +243,29 @@ router.post('/', function(req, res)
  * @api {put} /connectionLogs/:id Update Connection Logs information
  * @apiVersion 1.0.0
  * @apiName PutConnectionLogs
- * @apiGroup ConnectionLogs
+ * @apiGroup LogsConnection
  *
  * @apiParam {Number} id  Unique id of the log.
  * @apiParam {Number} IdUser  Unique id of the user related to this log.
  * @apiParam {Date} Date  Date when the log was saved.
  * @apiParam {String} Description  Description of the log.
  * 
- * @apiSuccess {String} message  ConnectionLogs updated.
+ * @apiSuccess {String} message  LogsConnection updated.
+ *
+ * @apiError ConnectionNotUpdated The log was not updated.
+ */
+/**
+ * @api {put} /connectionLogs/:id Update Connection Logs information
+ * @apiVersion 1.1.0
+ * @apiName PutConnectionLogs
+ * @apiGroup LogsConnection
+ *
+ * @apiParam {Number} id  Unique id of the log.
+ * @apiParam {Number} IdUser  Unique id of the user related to this log.
+ * @apiParam {Date} Date  Date when the log was saved.
+ * @apiParam {String} Description  Description of the log.
+ * 
+ * @apiSuccess {String} message  LogsConnection updated.
  *
  * @apiError ConnectionNotUpdated The log was not updated.
  */
@@ -225,11 +282,23 @@ router.put('/:id', function(req, res)
  * @api {delete} /connectionLogs/:id Delete Connection Logs information
  * @apiVersion 1.0.0
  * @apiName DeleteConnectionLogs
- * @apiGroup ConnectionLogs
+ * @apiGroup LogsConnection
  *
  * @apiParam {Number} id  Unique id of the log.
  * 
- * @apiSuccess {String} message  ConnectionLogs deleted.
+ * @apiSuccess {String} message  LogsConnection deleted.
+ *
+ * @apiError ConnectionNotDeleted The log was not deleted.
+ */
+/**
+ * @api {delete} /connectionLogs/:id Delete Connection Logs information
+ * @apiVersion 1.1.0
+ * @apiName DeleteConnectionLogs
+ * @apiGroup LogsConnection
+ *
+ * @apiParam {Number} id  Unique id of the log.
+ * 
+ * @apiSuccess {String} message  LogsConnection deleted.
  *
  * @apiError ConnectionNotDeleted The log was not deleted.
  */

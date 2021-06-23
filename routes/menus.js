@@ -4,15 +4,15 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 const menuSchema = new Schema({
-    id : Number,
-    id_restau: Number,
-    name: String,
-    price: Number,
-    description: String,
-    products: Array,
-    pictures: Array,
-    notes: Number,
-    notes_number: Number
+    IdMenu : Number,
+    IdRestaurant: Number,
+    Name: String,
+    Description: String,
+    Products: Array,
+    Picture: Array,
+    Price: Number,
+    Notes: Number,
+    VoteNb: Number
 })
 const Menu = mongoose.model('Menu', menuSchema);
 
@@ -32,6 +32,24 @@ const Menu = mongoose.model('Menu', menuSchema);
  * @apiSuccess {Array} pictures List of pictures for this menu.
  * @apiSuccess {Number} notes  Total of every notes on this menu.
  * @apiSuccess {Number} notes_number Number of notes for this menu.
+ *
+ * @apiError MenusNotAccessible The model is inaccessible due to server fault.
+ */
+/**
+ * @api {get} /menus/ Recover Menus information
+ * @apiVersion 1.1.0
+ * @apiName GetMenus
+ * @apiGroup Menus
+ * 
+ * @apiSuccess {Number} IdMenu  Menu's unique id.
+ * @apiSuccess {Number} IdRestaurant  Restaurant's id related to this menu.
+ * @apiSuccess {String} Name  Name of this menu.
+ * @apiSuccess {String} Description  Menu's description.
+ * @apiSuccess {Array} Products  List of products inside this menu.
+ * @apiSuccess {Array} Picture List of pictures for this menu.
+ * @apiSuccess {Number} Price  Menu's price.
+ * @apiSuccess {Number} Notes  Total of every notes on this menu.
+ * @apiSuccess {Number} VoteNb Number of notes for this menu.
  *
  * @apiError MenusNotAccessible The model is inaccessible due to server fault.
  */
@@ -67,9 +85,29 @@ router.get('/', function(req, res)
  *
  * @apiError MenuNotFound The wanted menu was not found.
  */
+/**
+ * @api {get} /menus/:id Recover specific Menu information
+ * @apiVersion 1.1.0
+ * @apiName GetMenu
+ * @apiGroup Menus
+ * 
+ * @apiParam {Number} id  Menu's unique id.
+ * 
+ * @apiSuccess {Number} IdMenu  Menu's unique id.
+ * @apiSuccess {Number} IdRestaurant  Restaurant's id related to this menu.
+ * @apiSuccess {String} Name  Name of this menu.
+ * @apiSuccess {String} Description  Menu's description.
+ * @apiSuccess {Array} Products  List of products inside this menu.
+ * @apiSuccess {Array} Picture List of pictures for this menu.
+ * @apiSuccess {Number} Price  Menu's price.
+ * @apiSuccess {Number} Notes  Total of every notes on this menu.
+ * @apiSuccess {Number} VoteNb Number of notes for this menu.
+ *
+ * @apiError MenuNotFound The wanted menu was not found.
+ */
 router.get('/:id', function(req, res) 
 {
-    Menu.find({ id : req.params.id }, function (err, docs) 
+    Menu.find({ IdMenu : req.params.id }, function (err, docs) 
     {
       if (err)
         res.status(401).json({ message: "MenuNotFound" });
@@ -98,19 +136,37 @@ router.get('/:id', function(req, res)
  *
  * @apiError MenuNotCreated The menu cannot be created.
  */
+/**
+ * @api {post} /menus/ Create Menu information
+ * @apiVersion 1.1.0
+ * @apiName PostMenus
+ * @apiGroup Menus
+ * 
+ * @apiParam {Number} IdRestaurant  Restaurant's id related to this menu.
+ * @apiParam {String} Name  Name of this menu.
+ * @apiParam {String} Description  Menu's description.
+ * @apiParam {Array} Products  List of products inside this menu.
+ * @apiParam {Array} Picture List of pictures for this menu.
+ * @apiParam {Number} Price  Menu's price.
+ * @apiParam {Number} Notes  Total of every notes on this menu.
+ * @apiParam {Number} VoteNb Number of notes for this menu.
+ * 
+ * @apiSuccess {String} message  Menus added.
+ *
+ * @apiError MenuNotCreated The menu cannot be created.
+ */
 router.post('/', function(req, res) 
 {
     const newMenu = new Menu();
 
-    newMenu.id = req.body.id;
-    newMenu.id_restau = req.body.id_restau;
-    newMenu.name = req.body.name;
-    newMenu.price = req.body.price;
-    newMenu.description = req.body.description;
-    newMenu.products = req.body.products;
-    newMenu.pictures = req.body.pictures;
-    newMenu.notes = req.body.notes;
-    newMenu.notes_number = req.body.notes_number;
+    newMenu.IdRestaurant = req.body.IdRestaurant;
+    newMenu.Name = req.body.Name;
+    newMenu.Description = req.body.Description;
+    newMenu.Products = req.body.Products;
+    newMenu.Picture = req.body.Picture;
+    newMenu.Price = req.body.Price;
+    newMenu.Notes = req.body.Notes;
+    newMenu.VoteNb = req.body.VoteNb;
 
     newMenu.save(function (err, docs) 
     {
@@ -142,19 +198,38 @@ router.post('/', function(req, res)
  *
  * @apiError MenuNotUpdated The menu cannot be updated.
  */
+/**
+ * @api {put} /menus/:id Update Menu information
+ * @apiVersion 1.1.0
+ * @apiName PutMenus
+ * @apiGroup Menus
+ * 
+ * @apiParam {Number} id  Menu's unique id.
+ * @apiParam {Number} IdRestaurant  Restaurant's id related to this menu.
+ * @apiParam {String} Name  Name of this menu.
+ * @apiParam {String} Description  Menu's description.
+ * @apiParam {Array} Products  List of products inside this menu.
+ * @apiParam {Array} Picture List of pictures for this menu.
+ * @apiParam {Number} Price  Menu's price.
+ * @apiParam {Number} Notes  Total of every notes on this menu.
+ * @apiParam {Number} VoteNb Number of notes for this menu.
+ * 
+ * @apiSuccess {String} message  Menus updated.
+ *
+ * @apiError MenuNotUpdated The menu cannot be updated.
+ */
 router.put('/:id', function(req, res) 
 {
-    Menu.updateOne({ id : req.params.id}, 
+    Menu.updateOne({ IdMenu : req.params.id}, 
     {
-      id : req.params.id,
-      id_restau : req.body.id_restau,
-      name : req.body.name,
-      price : req.body.price,
-      description : req.body.description,
-      products : req.body.products,
-      pictures : req.body.pictures,
-      notes : req.body.notes,
-      notes_number : req.body.notes_number
+      IdRestaurant : req.body.IdRestaurant,
+      Name : req.body.Name,
+      Description : req.body.Description,
+      Products : req.body.Products,
+      Picture : req.body.Picture,
+      Price : req.body.Price,
+      Notes : req.body.Notes,
+      VoteNb : req.body.VoteNb
     },
     function (err, docs) 
     {
@@ -178,9 +253,21 @@ router.put('/:id', function(req, res)
  *
  * @apiError MenuNotDeleted The menu cannot be deleted.
  */
+/**
+ * @api {delete} /menus/:id Delete Menu information
+ * @apiVersion 1.1.0
+ * @apiName DeleteMenus
+ * @apiGroup Menus
+ * 
+ * @apiParam {Number} id  Menu's unique id.
+ * 
+ * @apiSuccess {String} message  Menus deleted.
+ *
+ * @apiError MenuNotDeleted The menu cannot be deleted.
+ */
 router.delete('/:id', function(req, res)
 {
-    Menu.deleteOne({ id : req.params.id }, function (err, docs) 
+    Menu.deleteOne({ IdMenu : req.params.id }, function (err, docs) 
     {
       if (err)
         res.status(401).json({ message: "MenuNotDeleted" });

@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var sequelize = require('../app.js').configDatabase;
-const entityName = "DownloadLogs";
+const entityName = "LogsDownload";
 const { DataTypes } = require('sequelize');
 
-const DownloadLogs = sequelize.define(entityName, {
+const LogsDownload = sequelize.define(entityName, {
   IdLog: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -44,7 +44,7 @@ async function creation(body)
 {
   try 
   {
-    await DownloadLogs.create({
+    await LogsDownload.create({
       Date: body.Date,
       Component: body.Component
     });
@@ -58,7 +58,7 @@ async function update(body, idLog)
 {
   try 
   {
-    await DownloadLogs.update({
+    await LogsDownload.update({
       Date: body.Date,
       Component: body.Component
     }, {
@@ -76,7 +76,7 @@ async function deletion(idLog)
 {
   try 
   {
-    await DownloadLogs.destroy({ 
+    await LogsDownload.destroy({ 
       where: {
         IdLog: idLog
     }});
@@ -90,7 +90,7 @@ async function getAll()
 {
   try 
   {
-      return await DownloadLogs.findAll();
+      return await LogsDownload.findAll();
   } catch(error) {
     return null;
   }
@@ -100,7 +100,7 @@ async function getOne(idLog)
 {
   try 
   {
-      return await DownloadLogs.findAll({ 
+      return await LogsDownload.findAll({ 
         where: {
           IdLog: idLog
       }});
@@ -120,9 +120,9 @@ startDownload();
 
 /**
  * @api {get} /downloadLogs/ Request Download Logs information
- * @apiVersion 1.0.0
+ * @apiVersion 1.1.0
  * @apiName GetDownloadLogs
- * @apiGroup DownloadLogs
+ * @apiGroup LogsDownload
  *
  * @apiSuccess {Number} IdLog  Unique id of the log.
  * @apiSuccess {Date} Date  Date at which the log was issued.
@@ -144,9 +144,9 @@ router.get('/', function(req, res)
 
 /**
  * @api {get} /downloadLogs/:id Request specific Download Logs information
- * @apiVersion 1.0.0
+ * @apiVersion 1.1.0
  * @apiName GetDownloadLogs
- * @apiGroup DownloadLogs
+ * @apiGroup LogsDownload
  *
  * @apiParam {Number} id  Unique id of the log.
  * 
@@ -170,14 +170,14 @@ router.get('/:id', function(req, res)
 
 /**
  * @api {post} /downloadLogs/ Create Download Logs information
- * @apiVersion 1.0.0
+ * @apiVersion 1.1.0
  * @apiName PostDownloadLogs
- * @apiGroup DownloadLogs
+ * @apiGroup LogsDownload
  *
  * @apiParam {Number} Component's id.
  * @apiParam {String} Description  Description of the log.
  * 
- * @apiSuccess {String} message  DownloadLogs created.
+ * @apiSuccess {String} message  LogsDownload created.
  *
  * @apiError DownloadNotCreated The log was not created.
  */
@@ -192,15 +192,15 @@ router.post('/', function(req, res)
 
 /**
  * @api {put} /downloadLogs/:id Update Download Logs information
- * @apiVersion 1.0.0
+ * @apiVersion 1.1.0
  * @apiName PutDownloadLogs
- * @apiGroup DownloadLogs
+ * @apiGroup LogsDownload
  *
  * @apiParam {Number} IdLog  Unique id of the log.
  * @apiParam {Number} Component's id.
  * @apiParam {String} Description  Description of the log.
  * 
- * @apiSuccess {String} message  DownloadLogs updated.
+ * @apiSuccess {String} message  LogsDownload updated.
  *
  * @apiError DownloadNotUpdated The log was not updated.
  */
@@ -215,13 +215,13 @@ router.put('/:id', function(req, res)
 
 /**
  * @api {delete} /downloadLogs/:id Delete Download Logs information
- * @apiVersion 1.0.0
+ * @apiVersion 1.1.0
  * @apiName DeleteDownloadLogs
- * @apiGroup DownloadLogs
+ * @apiGroup LogsDownload
  *
  * @apiParam {Number} id  Unique id of the log.
  * 
- * @apiSuccess {String} message  DownloadLogs deleted.
+ * @apiSuccess {String} message  LogsDownload deleted.
  *
  * @apiError DownloadNotDeleted The log was not deleted.
  */

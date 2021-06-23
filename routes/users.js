@@ -15,11 +15,11 @@ const Utilisateurs = sequelize.define(entityName, {
     allowNull: false,
     primaryKey: true
   },
-  Nom: {
+  Name: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  Prenom: {
+  FirstName: {
     type: DataTypes.STRING,
     allowNull: false
   },
@@ -27,34 +27,38 @@ const Utilisateurs = sequelize.define(entityName, {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  Adresse: {
+  Address: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  MotDePasse: {
+  Password: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  DateDeNaissance: {
+  BirthDate: {
     type: DataTypes.DATE,
     allowNull: false
   },
-  DateInscription: {
+  Address: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  InscriptionDate: {
     type: DataTypes.DATE,
     allowNull: false,
+  },
+  PatronageCode: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  PatronageNb: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0
   },
   UserFlag: {
     type: DataTypes.STRING,
     allowNull: false
-  },
-  CodeParainage: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  NbParainages: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 0
   },
   }, {
     tableName: entityName
@@ -83,16 +87,16 @@ async function creation(body)
   try 
   {
     await Utilisateurs.create({
-      Nom: body.Nom,
-      Prenom: body.Prenom,
+      Name: body.Name,
+      FirstName: body.FirstName,
       Email: body.Email,
-      Adresse: body.Adresse,
-      MotDePasse: body.MotDePasse,
-      DateDeNaissance: body.DateDeNaissance,
-      DateInscription: body.DateInscription,
+      Password: body.Password,
+      BirthDate: body.BirthDate,
+      Address: body.Address,
+      InscriptionDate: body.InscriptionDate,
+      PatronageCode: body.PatronageCode,
+      PatronageNb: body.PatronageNb,
       UserFlag: body.UserFlag,
-      CodeParainage: body.CodeParainage,
-      NbParainages: body.NbParainages,
     });
     return true;
   } catch(error) {
@@ -105,16 +109,16 @@ async function update(body, idUser)
   try 
   {
     await Utilisateurs.update({
-      Nom: body.Nom,
-      Prenom: body.Prenom,
+      Name: body.Name,
+      FirstName: body.FirstName,
       Email: body.Email,
-      Adresse: body.Adresse,
-      MotDePasse: body.MotDePasse,
-      DateDeNaissance: body.DateDeNaissance,
-      DateInscription: body.DateInscription,
+      Password: body.Password,
+      BirthDate: body.BirthDate,
+      Address: body.Address,
+      InscriptionDate: body.InscriptionDate,
+      PatronageCode: body.PatronageCode,
+      PatronageNb: body.PatronageNb,
       UserFlag: body.UserFlag,
-      CodeParainage: body.CodeParainage,
-      NbParainages: body.NbParainages,
     }, {
       where: {
         IdUser: idUser
@@ -229,7 +233,6 @@ router.post('/register', (req, res) => {
   return res.status(201).json({ message: `User ${IdUser} created` });
 });
 
-
 /**
  * @api {get} /users/ Recover Users information
  * @apiVersion 1.0.0
@@ -246,6 +249,26 @@ router.post('/register', (req, res) => {
  * @apiSuccess {Date} DateInscription Date when the user create its account.
  * @apiSuccess {String} CodeParainage  Unique code that permits the user to patron someone.
  * @apiSuccess {Number} NbParainages Number of patronage.
+ * @apiSuccess {String} UserFlag  Type of user.
+ *
+ * @apiError UsersNotAccessible The table is inaccessible due to server fault.
+ */
+/**
+ * @api {get} /users/ Recover Users information
+ * @apiVersion 1.1.0
+ * @apiName GetUsers
+ * @apiGroup Users
+ *
+ * @apiSuccess {Number} IdUser  Unique id of the user.
+ * @apiSuccess {String} Name User's name.
+ * @apiSuccess {String} FirstName  User's firstname.
+ * @apiSuccess {String} Email  Email of the user.
+ * @apiSuccess {String} Password User's password.
+ * @apiSuccess {Date} BirthDate  Birthdate of the user.
+ * @apiSuccess {String} Address  User's address.
+ * @apiSuccess {Date} InscriptionDate Date when the user create its account.
+ * @apiSuccess {String} PatronageCode  Unique code that permits the user to patron someone.
+ * @apiSuccess {Number} PatronageNb Number of patronage.
  * @apiSuccess {String} UserFlag  Type of user.
  *
  * @apiError UsersNotAccessible The table is inaccessible due to server fault.
@@ -283,6 +306,28 @@ router.get('/', function(req, res)
  *
  * @apiError UserNotFound The wanted user was not found.
  */
+/**
+ * @api {get} /users/ Recover specific Users information
+ * @apiVersion 1.1.0
+ * @apiName GetUser
+ * @apiGroup Users
+ *
+ * @apiParam {Number} id  User's unique id.
+ * 
+ * @apiSuccess {Number} IdUser  Unique id of the user.
+ * @apiSuccess {String} Name User's name.
+ * @apiSuccess {String} FirstName  User's firstname.
+ * @apiSuccess {String} Email  Email of the user.
+ * @apiSuccess {String} Password User's password.
+ * @apiSuccess {Date} BirthDate  Birthdate of the user.
+ * @apiSuccess {String} Address  User's address.
+ * @apiSuccess {Date} InscriptionDate Date when the user create its account.
+ * @apiSuccess {String} PatronageCode  Unique code that permits the user to patron someone.
+ * @apiSuccess {Number} PatronageNb Number of patronage.
+ * @apiSuccess {String} UserFlag  Type of user.
+ *
+ * @apiError UserNotFound The wanted user was not found.
+ */
 router.get('/:id', function(req, res) 
 {
   const doc = getOne(req.params.id);
@@ -310,6 +355,27 @@ router.get('/:id', function(req, res)
  * @apiParam {Date} DateInscription Date when the user create its account.
  * @apiParam {String} CodeParainage  Unique code that permits the user to patron someone.
  * @apiParam {Number} NbParainages Number of patronage.
+ * @apiParam {String} UserFlag  Type of user.
+ * 
+ * @apiSuccess {String} message  Users created.
+ *
+ * @apiError UserNotCreated The user cannot be created.
+ */
+/**
+ * @api {post} /users/ Create Users information
+ * @apiVersion 1.1.0
+ * @apiName PostUsers
+ * @apiGroup Users
+ * 
+ * @apiParam {String} Name User's name.
+ * @apiParam {String} FirstName  User's firstname.
+ * @apiParam {String} Email  Email of the user.
+ * @apiParam {String} Password User's password.
+ * @apiParam {Date} BirthDate  Birthdate of the user.
+ * @apiParam {String} Address  User's address.
+ * @apiParam {Date} InscriptionDate Date when the user create its account.
+ * @apiParam {String} PatronageCode  Unique code that permits the user to patron someone.
+ * @apiParam {Number} PatronageNb Number of patronage.
  * @apiParam {String} UserFlag  Type of user.
  * 
  * @apiSuccess {String} message  Users created.
@@ -348,6 +414,29 @@ router.post('/', function(req, res)
  *
  * @apiError UserNotUpdated The user cannot be updated.
  */
+/**
+ * @api {put} /users/ Update Users information
+ * @apiVersion 1.1.0
+ * @apiName PutUsers
+ * @apiGroup Users
+ * 
+ * @apiParam {Number} IdUser  Unique id of the user.
+ * 
+ * @apiParam {String} Name User's name.
+ * @apiParam {String} FirstName  User's firstname.
+ * @apiParam {String} Email  Email of the user.
+ * @apiParam {String} Password User's password.
+ * @apiParam {Date} BirthDate  Birthdate of the user.
+ * @apiParam {String} Address  User's address.
+ * @apiParam {Date} InscriptionDate Date when the user create its account.
+ * @apiParam {String} PatronageCode  Unique code that permits the user to patron someone.
+ * @apiParam {Number} PatronageNb Number of patronage.
+ * @apiParam {String} UserFlag  Type of user.
+ * 
+ * @apiSuccess {String} message  Users updated.
+ *
+ * @apiError UserNotUpdated The user cannot be updated.
+ */
 router.put('/:id', function(req, res) 
 {
   if (update(req.body, req.params.id) !== null)
@@ -360,6 +449,18 @@ router.put('/:id', function(req, res)
 /**
  * @api {delete} /users/ Delete Users information
  * @apiVersion 1.0.0
+ * @apiName DeleteUsers
+ * @apiGroup Users
+ * 
+ * @apiParam {Number} IdUser  Unique id of the user.
+ * 
+ * @apiSuccess {String} message  Users deleted.
+ *
+ * @apiError UserNotDeleted The user cannot be deleted.
+ */
+/**
+ * @api {delete} /users/ Delete Users information
+ * @apiVersion 1.1.0
  * @apiName DeleteUsers
  * @apiGroup Users
  * 
