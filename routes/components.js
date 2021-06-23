@@ -46,7 +46,7 @@ router.get('/', function(req, res)
 {
     Components.find({}, function (err, docs) 
     {
-      if (err || docs.length == 0)
+      if (err)
         res.status(500).json({ message: "ComponentNotAccessible" });
       else
         res.status(200).json(docs);
