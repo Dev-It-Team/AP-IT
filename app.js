@@ -24,7 +24,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //Config for SQL ORM
-const config = new Sequelize('Test', 'sa', 'Str0ng_p4ssw0rd', {
+const config = new Sequelize('BaseSQL', 'sa', 'Password', {
   host: 'localhost',
   dialect: 'mssql',
   port: '1433',
@@ -37,17 +37,21 @@ exports.configDatabase = config;
 //Every routes for the API
 //Routes not secured by login
 app.use('/',                require('./routes/index'));
-app.use('/users',           require('./routes/users'));
+app.use('/login',           require('./routes/users/login'));
 
 //Routes secured by login
-app.use('/menus',           checkTokenMiddleware, require('./routes/menus'));
-app.use('/products',        checkTokenMiddleware, require('./routes/products'));
-app.use('/orders',          checkTokenMiddleware, require('./routes/orders'));
-app.use('/components',      checkTokenMiddleware, require('./routes/components'));
-app.use('/restaurants',     checkTokenMiddleware, require('./routes/restaurants'));
-app.use('/deliveryDrivers', checkTokenMiddleware, require('./routes/deliveryDrivers'));
-app.use('/connectionLogs',  checkTokenMiddleware, require('./routes/logsConnection'));
-app.use('/downloadLogs',    checkTokenMiddleware, require('./routes/logsDownload'));
+app.use('/users/', checkTokenMiddleware, require(`./routes/users/users`));
+[
+    '/menus',
+    '/products',
+    '/commands',
+    '/components',
+    '/clients',
+    '/restaurants',
+    '/deliveryDrivers',
+    '/logsConnection',
+    '/logsDownload',
+].forEach((protectedRoute) => app.use(protectedRoute, checkTokenMiddleware, require(`./routes${protectedRoute}`)));
 
 // catch 404 and forward to error handler
 app.use(function(req, res) 
