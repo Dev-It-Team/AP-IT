@@ -230,57 +230,151 @@ router.post('/register', (req, res) => {
 });
 
 
-/* GET commands listing. */
-router.get('/', function(req, res, next) 
+/**
+ * @api {get} /users/ Recover Users information
+ * @apiVersion 1.0
+ * @apiName GetUsers
+ * @apiGroup Users
+ *
+ * @apiSuccess {Number} IdUser  Unique id of the user.
+ * @apiSuccess {String} Nom User's name.
+ * @apiSuccess {String} Prenom  User's firstname.
+ * @apiSuccess {String} Email  Email of the user.
+ * @apiSuccess {String} MotDePasse User's password.
+ * @apiSuccess {Date} DateDeNaissance  Birthdate of the user.
+ * @apiSuccess {String} Adresse  User's address.
+ * @apiSuccess {Date} DateInscription Date when the user create its account.
+ * @apiSuccess {String} CodeParainage  Unique code that permits the user to patron someone.
+ * @apiSuccess {Number} NbParainages Number of patronage.
+ * @apiSuccess {String} UserFlag  Type of user.
+ *
+ * @apiError UsersNotAccessible The table is inaccessible due to server fault.
+ */
+router.get('/', function(req, res) 
 {
   const allDocs = getAll();
 
   if (allDocs !== null)
     res.status(200).json(allDocs);
   else 
-    res.status(401).json({ message: "Could not get " + entityName });
+    res.status(500).json({ message: "UsersNotAccessible" });
 });
 
 
-/* GET commands listing by id. */
-router.get('/:id', function(req, res, next) 
+/**
+ * @api {get} /users/ Recover specific Users information
+ * @apiVersion 1.0
+ * @apiName GetUser
+ * @apiGroup Users
+ *
+ * @apiParam {Number} id  User's unique id.
+ * 
+ * @apiSuccess {Number} IdUser  Unique id of the user.
+ * @apiSuccess {String} Nom User's name.
+ * @apiSuccess {String} Prenom  User's firstname.
+ * @apiSuccess {String} Email  Email of the user.
+ * @apiSuccess {String} MotDePasse User's password.
+ * @apiSuccess {Date} DateDeNaissance  Birthdate of the user.
+ * @apiSuccess {String} Adresse  User's address.
+ * @apiSuccess {Date} DateInscription Date when the user create its account.
+ * @apiSuccess {String} CodeParainage  Unique code that permits the user to patron someone.
+ * @apiSuccess {Number} NbParainages Number of patronage.
+ * @apiSuccess {String} UserFlag  Type of user.
+ *
+ * @apiError UserNotFound The wanted user was not found.
+ */
+router.get('/:id', function(req, res) 
 {
   const doc = getOne(req.params.id);
 
   if (doc !== null)
     res.status(200).json(doc);
   else 
-    res.status(401).json({ message: "Could not get " + entityName });
+    res.status(401).json({ message: "UserNotFound " + entityName });
 });
 
 
-/* POST */
-router.post('/', function(req, res, next) 
+
+/**
+ * @api {post} /users/ Create Users information
+ * @apiVersion 1.0
+ * @apiName PostUser
+ * @apiGroup Users
+ * 
+ * @apiParam {String} Nom User's name.
+ * @apiParam {String} Prenom  User's firstname.
+ * @apiParam {String} Email  Email of the user.
+ * @apiParam {String} MotDePasse User's password.
+ * @apiParam {Date} DateDeNaissance  Birthdate of the user.
+ * @apiParam {String} Adresse  User's address.
+ * @apiParam {Date} DateInscription Date when the user create its account.
+ * @apiParam {String} CodeParainage  Unique code that permits the user to patron someone.
+ * @apiParam {Number} NbParainages Number of patronage.
+ * @apiParam {String} UserFlag  Type of user.
+ * 
+ * @apiSuccess {String} message  Users created.
+ *
+ * @apiError UserNotCreated The user cannot be created.
+ */
+router.post('/', function(req, res) 
 {
   if (creation(req.body) !== null)
     res.status(201).json({ message: entityName + " created" });
   else 
-    res.status(401).json({ message: "Could not create " + entityName });
+    res.status(401).json({ message: "UserNotCreated" });
 });
 
 
-/* PUT */
-router.put('/:id', function(req, res, next) 
+/**
+ * @api {put} /users/ Update Users information
+ * @apiVersion 1.0
+ * @apiName PutUser
+ * @apiGroup Users
+ * 
+ * @apiParam {Number} IdUser  Unique id of the user.
+ * 
+ * @apiParam {String} Nom User's name.
+ * @apiParam {String} Prenom  User's firstname.
+ * @apiParam {String} Email  Email of the user.
+ * @apiParam {String} MotDePasse User's password.
+ * @apiParam {Date} DateDeNaissance  Birthdate of the user.
+ * @apiParam {String} Adresse  User's address.
+ * @apiParam {Date} DateInscription Date when the user create its account.
+ * @apiParam {String} CodeParainage  Unique code that permits the user to patron someone.
+ * @apiParam {Number} NbParainages Number of patronage.
+ * @apiParam {String} UserFlag  Type of user.
+ * 
+ * @apiSuccess {String} message  Users updated.
+ *
+ * @apiError UserNotUpdated The user cannot be updated.
+ */
+router.put('/:id', function(req, res) 
 {
   if (update(req.body, req.params.id) !== null)
     res.status(202).json({ message: entityName + " updated"});
   else 
-    res.status(401).json({ message: "Could not update " + entityName });
+    res.status(401).json({ message: "UserNotUpdated" });
 });
 
 
-/* DELETE */
-router.delete('/:id', function(req, res, next)
+/**
+ * @api {delete} /users/ Delete Users information
+ * @apiVersion 1.0
+ * @apiName DeleteUser
+ * @apiGroup Users
+ * 
+ * @apiParam {Number} IdUser  Unique id of the user.
+ * 
+ * @apiSuccess {String} message  Users deleted.
+ *
+ * @apiError UserNotDeleted The user cannot be deleted.
+ */
+router.delete('/:id', function(req, res)
 {
   if (deletion(req.params.id) !== null)
     res.status(203).json({ message: entityName + " deleted" });
   else 
-    res.status(401).json({ message: "Could not delete " + entityName });
+    res.status(401).json({ message: "UserNotDeleted" });
 });
 
 module.exports = router;
