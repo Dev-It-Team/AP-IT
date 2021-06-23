@@ -27,10 +27,6 @@ const Utilisateurs = sequelize.define(entityName, {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  Address: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
   Password: {
     type: DataTypes.STRING,
     allowNull: false
