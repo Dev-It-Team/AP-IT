@@ -126,7 +126,7 @@ startConnection();
 
 /**
  * @api {get} /connectionLogs/ Request Connection Logs information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName GetConnectionLogs
  * @apiGroup ConnectionLogs
  *
@@ -150,7 +150,7 @@ router.get('/', function(req, res, next)
 
 /**
  * @api {get} /connectionLogs/:id Request Connection Logs information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName GetConnectionLogs
  * @apiGroup ConnectionLogs
  *
@@ -176,7 +176,7 @@ router.get('/:id', function(req, res, next)
 
 /**
  * @api {post} /connectionLogs/ Create Connection Logs information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName PostConnectionLogs
  * @apiGroup ConnectionLogs
  *
@@ -199,7 +199,7 @@ router.post('/', function(req, res)
 
 /**
  * @api {put} /connectionLogs/:id Update Connection Logs information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName PutConnectionLogs
  * @apiGroup ConnectionLogs
  *
@@ -223,7 +223,7 @@ router.put('/:id', function(req, res)
 
 /**
  * @api {delete} /connectionLogs/:id Delete Connection Logs information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName DeleteConnectionLogs
  * @apiGroup ConnectionLogs
  *

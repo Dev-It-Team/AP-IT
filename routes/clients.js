@@ -128,7 +128,7 @@ startConnection();
 
 /**
  * @api {get} /clients/ Get Clients information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName GetClients
  * @apiGroup Clients
  *
@@ -151,7 +151,7 @@ router.get('/', function(req, res)
 
 /**
  * @api {get} /clients/:id Get specific Client information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName GetClient
  * @apiGroup Clients
  *
@@ -176,7 +176,7 @@ router.get('/:id', function(req, res)
 
 /**
  * @api {post} /clients/ Create Client information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName PostClient
  * @apiGroup Clients
  *
@@ -199,7 +199,7 @@ router.post('/', function(req, res)
 
 /**
  * @api {put} /clients/:id Update Client information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName PutClient
  * @apiGroup Clients
  *
@@ -223,7 +223,7 @@ router.put('/:id', function(req, res)
 
 /**
  * @api {delete} /clients/ Delete Client information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName DeleteClient
  * @apiGroup Clients
  *

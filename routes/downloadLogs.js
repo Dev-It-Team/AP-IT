@@ -120,7 +120,7 @@ startDownload();
 
 /**
  * @api {get} /downloadLogs/ Request Download Logs information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName GetDownloadLogs
  * @apiGroup DownloadLogs
  *
@@ -144,7 +144,7 @@ router.get('/', function(req, res)
 
 /**
  * @api {get} /downloadLogs/:id Request specific Download Logs information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName GetDownloadLogs
  * @apiGroup DownloadLogs
  *
@@ -170,7 +170,7 @@ router.get('/:id', function(req, res)
 
 /**
  * @api {post} /downloadLogs/ Create Download Logs information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName PostDownloadLogs
  * @apiGroup DownloadLogs
  *
@@ -192,7 +192,7 @@ router.post('/', function(req, res)
 
 /**
  * @api {put} /downloadLogs/:id Update Download Logs information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName PutDownloadLogs
  * @apiGroup DownloadLogs
  *
@@ -215,7 +215,7 @@ router.put('/:id', function(req, res)
 
 /**
  * @api {delete} /downloadLogs/:id Delete Download Logs information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName DeleteDownloadLogs
  * @apiGroup DownloadLogs
  *

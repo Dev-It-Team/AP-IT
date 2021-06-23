@@ -140,7 +140,7 @@ startConnection();
 
 /**
  * @api {get} /deliveryDrivers/ Request Delivery Drivers information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName GetDeliveryDrivers
  * @apiGroup DeliveryDrivers
  *
@@ -166,7 +166,7 @@ router.get('/', function(req, res)
 
 /**
  * @api {get} /deliveryDrivers/:id Request specific delivery driver information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName GetDeliveryDriver
  * @apiGroup DeliveryDrivers
  *
@@ -194,7 +194,7 @@ router.get('/:id', function(req, res)
 
 /**
  * @api {post} /deliveryDrivers/ Create delivery driver information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName PostDeliveryDriver
  * @apiGroup DeliveryDrivers
  *
@@ -219,7 +219,7 @@ router.post('/', function(req, res)
 
 /**
  * @api {put} /deliveryDrivers/:id Update delivery driver information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName PutDeliveryDriver
  * @apiGroup DeliveryDrivers
  *
@@ -246,7 +246,7 @@ router.put('/:id', function(req, res)
 
 /**
  * @api {delete} /deliveryDrivers/:id Delete delivery driver information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName DeleteDeliveryDriver
  * @apiGroup DeliveryDrivers
  *

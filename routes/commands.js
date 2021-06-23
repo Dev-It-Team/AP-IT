@@ -19,7 +19,7 @@ const Command = mongoose.model('Command', commandSchema);
 
 /**
  * @api {get} /commands/ Request Commands information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName GetCommands
  * @apiGroup Commands
  *
@@ -49,7 +49,7 @@ router.get('/', function(req, res, next)
 
 /**
  * @api {get} /commands/:id Request specific Command information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName GetCommands
  * @apiGroup Commands
  *
@@ -81,7 +81,7 @@ router.get('/:id', function(req, res, next)
 
 /**
  * @api {post} /commands/ Create Command information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName PostCommands
  * @apiGroup Commands
  *
@@ -124,7 +124,7 @@ router.post('/', function(req, res, next)
 
 /**
  * @api {put} /commands/:id Update Command information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName PutCommands
  * @apiGroup Commands
  *
@@ -168,7 +168,7 @@ router.put('/:id', function(req, res, next)
 
 /**
  * @api {delete} /commands/:id Delete Command information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName DeleteCommands
  * @apiGroup Commands
  *

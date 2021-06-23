@@ -18,7 +18,7 @@ const Product = mongoose.model('Product', productSchema);
 
 /**
  * @api {get} /products/ Recover Products Information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName GetProducts
  * @apiGroup Products
  * 
@@ -47,7 +47,7 @@ router.get('/', function(req, res)
 
 /**
  * @api {get} /products/:id Recover specific Product Information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName GetProduct
  * @apiGroup Products
  * 
@@ -78,7 +78,7 @@ router.get('/:id', function(req, res)
 
 /**
  * @api {post} /products/ Create Product Information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName PostProducts
  * @apiGroup Products
  * 
@@ -119,7 +119,7 @@ router.post('/', function(req, res)
 
 /**
  * @api {put} /products/:id Update Product Information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName PutProducts
  * @apiGroup Products
  * 
@@ -162,7 +162,7 @@ router.put('/:id', function(req, res)
 
 /**
  * @api {delete} /products/:id Delete Product Information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName DeleteProducts
  * @apiGroup Products
  * 

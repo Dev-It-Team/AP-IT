@@ -232,7 +232,7 @@ router.post('/register', (req, res) => {
 
 /**
  * @api {get} /users/ Recover Users information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName GetUsers
  * @apiGroup Users
  *
@@ -263,7 +263,7 @@ router.get('/', function(req, res)
 
 /**
  * @api {get} /users/ Recover specific Users information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName GetUser
  * @apiGroup Users
  *
@@ -297,7 +297,7 @@ router.get('/:id', function(req, res)
 
 /**
  * @api {post} /users/ Create Users information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName PostUsers
  * @apiGroup Users
  * 
@@ -327,7 +327,7 @@ router.post('/', function(req, res)
 
 /**
  * @api {put} /users/ Update Users information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName PutUsers
  * @apiGroup Users
  * 
@@ -359,7 +359,7 @@ router.put('/:id', function(req, res)
 
 /**
  * @api {delete} /users/ Delete Users information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName DeleteUsers
  * @apiGroup Users
  * 

@@ -19,7 +19,7 @@ const Menu = mongoose.model('Menu', menuSchema);
 
 /**
  * @api {get} /menus/ Recover Menus information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName GetMenus
  * @apiGroup Menus
  * 
@@ -49,7 +49,7 @@ router.get('/', function(req, res)
 
 /**
  * @api {get} /menus/:id Recover specific Menu information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName GetMenu
  * @apiGroup Menus
  * 
@@ -81,7 +81,7 @@ router.get('/:id', function(req, res)
 
 /**
  * @api {post} /menus/ Create Menu information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName PostMenus
  * @apiGroup Menus
  * 
@@ -124,7 +124,7 @@ router.post('/', function(req, res)
 
 /**
  * @api {put} /menus/:id Update Menu information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName PutMenus
  * @apiGroup Menus
  * 
@@ -168,7 +168,7 @@ router.put('/:id', function(req, res)
 
 /**
  * @api {delete} /menus/:id Delete Menu information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName DeleteMenus
  * @apiGroup Menus
  * 

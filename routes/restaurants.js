@@ -132,7 +132,7 @@ startConnection();
 
 /**
  * @api {get} /restaurants/ Get Restaurants Information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName GetRestaurants
  * @apiGroup Restaurants
  * 
@@ -157,7 +157,7 @@ router.get('/', function(req, res)
 
 /**
  * @api {get} /restaurants/:id Get specific Restaurant Information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName GetRestaurant
  * @apiGroup Restaurants
  * 
@@ -184,7 +184,7 @@ router.get('/:id', function(req, res)
 
 /**
  * @api {post} /restaurants/ Create Restaurant Information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName PostRestaurants
  * @apiGroup Restaurants
  * 
@@ -209,7 +209,7 @@ router.post('/', function(req, res)
 
 /**
  * @api {put} /restaurants/:id Update Restaurant Information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName PutRestaurants
  * @apiGroup Restaurants
  * 
@@ -235,7 +235,7 @@ router.put('/:id', function(req, res)
 
 /**
  * @api {delete} /restaurants/:id Delete Restaurant Information
- * @apiVersion 1.0
+ * @apiVersion 1.0.0
  * @apiName DeleteRestaurants
  * @apiGroup Restaurants
  * 
