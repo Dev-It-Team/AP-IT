@@ -1,11 +1,11 @@
 var express = require('express');
 var router = express.Router();
 const Users = require('./schema_users');
-var { checkTokenMiddleware } = require('../../jwtMiddleware');
+const { extractBearerToken, checkTokenMiddleware } = require('../../jwtMiddleware');
 const jwt = require('jsonwebtoken');
 
 /**
- * @api {post} /users/ Create Users information
+ * @api {post} /login/ Create Users information
  * @apiVersion 1.0.0
  * @apiName PostLogin
  * @apiGroup Users
@@ -18,7 +18,7 @@ const jwt = require('jsonwebtoken');
  * @apiError UserNotLoggedIn The user cannot be logged in.
  */
 /**
- * @api {post} /users/ Create Users information
+ * @api {post} /login/ Create Users information
  * @apiVersion 1.1.0
  * @apiName PostLogin
  * @apiGroup Users
@@ -40,16 +40,16 @@ router.post('/', (req, res) => {
 
     // Checking
     try {
-        Users.findAll({
+        Users.findOne({
             where: {
                 Email: req.body.Email,
-                MotDePasse: req.body.Password
+                Password: req.body.Password
             }
         }).then(function(user) {
-            console.log(user)
             const token = jwt.sign({
                 IdUser: user.IdUser,
-                Email: user.Email
+                Email: user.Email,
+                UserFlag: user.UserFlag
             }, process.env.TOKEN_SECRET, {
                 expiresIn: '3 hours'
             });
@@ -69,7 +69,8 @@ router.get('/tokeninfo', checkTokenMiddleware, (req, res) => {
     const token = req.headers.authorization && extractBearerToken(req.headers.authorization);
     // Decode token
     const decoded = jwt.decode(token, {
-        complete: false
+        complete: true,
+        json: true,
     });
 
     return res.json({
@@ -78,7 +79,7 @@ router.get('/tokeninfo', checkTokenMiddleware, (req, res) => {
 });
 
 /**
- * @api {post} /users/ Create Users information
+ * @api {post} /login/register/ Create Users information
  * @apiVersion 1.0.0
  * @apiName PostUsers
  * @apiGroup Users
@@ -99,7 +100,7 @@ router.get('/tokeninfo', checkTokenMiddleware, (req, res) => {
  * @apiError UserNotCreated The user cannot be created.
  */
 /**
- * @api {post} /users/ Create Users information
+ * @api {post} /login/register/ Create Users information
  * @apiVersion 1.1.0
  * @apiName PostUsers
  * @apiGroup Users

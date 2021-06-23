@@ -3,7 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var { checkTokenMiddleware } = require('./jwtMiddleware');
+var { checkTokenMiddleware, checkUserRoleFlag } = require('./jwtMiddleware');
 const { Sequelize } = require('sequelize');
 const dotenv = require('dotenv');
 
@@ -32,12 +32,22 @@ const config = new Sequelize('BaseSQL', 'sa', 'Password', {
 exports.configDatabase = config;
 
 //Every routes for the API
+// Roles
+const rolesFlags = {
+    CLIENTS: 0,
+    RESTAURANTS: 1,
+    DELIVERY: 2,
+    MARKETING: 3,
+    TECHNIC: 4,
+    DEVELOPER: 5
+}
+
 //Routes not secured by login
 app.use('/',                require('./routes/index'));
 app.use('/login',           require('./routes/users/login'));
 
-//Routes secured by login
-app.use('/users/', checkTokenMiddleware, require(`./routes/users/users`));
+//Routes secured by login and roles
+app.use('/users/', checkTokenMiddleware, checkUserRoleFlag(rolesFlags.MARKETING), require(`./routes/users/users`));
 [
     '/menus',
     '/products',
