@@ -298,7 +298,7 @@ router.get('/:id', function(req, res)
 /**
  * @api {post} /users/ Create Users information
  * @apiVersion 1.0
- * @apiName PostUser
+ * @apiName PostUsers
  * @apiGroup Users
  * 
  * @apiParam {String} Nom User's name.
@@ -328,7 +328,7 @@ router.post('/', function(req, res)
 /**
  * @api {put} /users/ Update Users information
  * @apiVersion 1.0
- * @apiName PutUser
+ * @apiName PutUsers
  * @apiGroup Users
  * 
  * @apiParam {Number} IdUser  Unique id of the user.
@@ -360,7 +360,7 @@ router.put('/:id', function(req, res)
 /**
  * @api {delete} /users/ Delete Users information
  * @apiVersion 1.0
- * @apiName DeleteUser
+ * @apiName DeleteUsers
  * @apiGroup Users
  * 
  * @apiParam {Number} IdUser  Unique id of the user.

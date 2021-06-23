@@ -14,6 +14,7 @@ const Component = mongoose.model('Component', componentScheam);
 
 /**
  * @api {get} /components Request Components information
+ * @apiVersion 1.0
  * @apiName GetComponents
  * @apiGroup Component
  *
@@ -40,6 +41,7 @@ router.get('/', function(req, res)
 
 /**
  * @api {get} /components/:id Request specific Component information
+ * @apiVersion 1.0
  * @apiName GetComponent
  * @apiGroup Component
  *
@@ -67,6 +69,7 @@ router.get('/:id', function(req, res)
 
 /**
  * @api {post} /components/ Create a new Component
+ * @apiVersion 1.0
  * @apiName PostComponent
  * @apiGroup Component
  *
@@ -100,6 +103,7 @@ router.post('/', function(req, res)
 
 /**
  * @api {put} /components/:id Update a Component
+ * @apiVersion 1.0
  * @apiName PutComponent
  * @apiGroup Component
  *
@@ -135,6 +139,7 @@ router.put('/:id', function(req, res)
 
 /**
  * @api {deleted} /components/:id Delete a Component
+ * @apiVersion 1.0
  * @apiName DeletedComponent
  * @apiGroup Component
  *
