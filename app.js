@@ -43,7 +43,6 @@ app.use('/users/', checkTokenMiddleware, require(`./routes/users/users`));
     '/products',
     '/orders',
     '/components',
-    '/clients',
     '/restaurants',
     '/deliveryDrivers',
     '/logsConnection',
