@@ -44,7 +44,7 @@ app.use('/users/', checkTokenMiddleware, require(`./routes/users/users`));
 [
     '/menus',
     '/products',
-    '/commands',
+    '/orders',
     '/components',
     '/clients',
     '/restaurants',
