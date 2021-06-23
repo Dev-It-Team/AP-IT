@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var sequelize = require('../../app.js').configDatabase;
-const entityName = "Utilisateurs";
+const entityName = "Users";
 
-const Utilisateurs = require('./schema_users');
+const Users = require('./schema_users');
 
 async function authentification()
 {
@@ -17,31 +17,9 @@ async function authentification()
 async function synchronisation()
 {
   try {
-    await Utilisateurs.sync();
+    await Users.sync();
   } catch(error) {
     console.log(entityName + " could not synchronize");
-  }
-}
-
-async function creation(body)
-{
-  try 
-  {
-    await Utilisateurs.create({
-      Nom: body.Nom,
-      Prenom: body.Prenom,
-      Email: body.Email,
-      Adresse: body.Adresse,
-      MotDePasse: body.MotDePasse,
-      DateDeNaissance: body.DateDeNaissance,
-      DateInscription: body.DateInscription,
-      UserFlag: body.UserFlag,
-      CodeParainage: body.CodeParainage,
-      NbParainages: body.NbParainages,
-    });
-    return true;
-  } catch(error) {
-    return null;
   }
 }
 
@@ -49,12 +27,13 @@ async function update(body, idUser)
 {
   try 
   {
-    await Utilisateurs.update(body, {
+    return Users.update(body, {
       where: {
         IdUser: idUser
-      }
+      },
+      returning: true,
+      plain: true
     });
-    return true;
   } catch(error) {
     return null;
   }
@@ -64,7 +43,7 @@ async function deletion(idUser)
 {
   try 
   {
-    await Utilisateurs.destroy({ 
+    await Users.destroy({ 
       where: {
         IdUser: idUser
     }});
@@ -78,7 +57,7 @@ async function getAll()
 {
   try 
   {
-      return await Utilisateurs.findAll();
+      return await Users.findAll();
   } catch(error) {
     return null;
   }
@@ -88,7 +67,7 @@ async function getOne(idUser)
 {
   try 
   {
-      return await Utilisateurs.findAll({ 
+      return await Users.findAll({ 
         where: {
           IdUser: idUser
       }});
@@ -131,10 +110,11 @@ router.get('/:id', function(req, res, next)
 /* PUT */
 router.put('/:id', function(req, res, next) 
 {
-  if (update(req.body, req.params.id) !== null)
-    res.status(202).json({ message: entityName + " updated"});
-  else 
-    res.status(401).json({ message: "Could not update " + entityName });
+  update(req.body, req.params.id).then((user) => {
+      return res.status(200).json(user);
+  }).catch(() => {
+      return res.status(401).json({ message: "Could not update " + entityName });
+  });
 });
 
 

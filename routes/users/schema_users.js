@@ -1,18 +1,18 @@
 var sequelize = require('../../app.js').configDatabase;
 const { DataTypes } = require('sequelize');
-const entityName = "Utilisateurs";
+const entityName = "Users";
 
-const Utilisateurs = sequelize.define(entityName, {
+const Users = sequelize.define(entityName, {
   IdUser: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
   },
-  Nom: {
+  Name: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  Prenom: {
+  FirstName: {
     type: DataTypes.STRING,
     allowNull: false
   },
@@ -20,37 +20,39 @@ const Utilisateurs = sequelize.define(entityName, {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  Adresse: {
+  Password: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  MotDePasse: {
+  Address: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  DateDeNaissance: {
-    type: DataTypes.DATE,
+  BirthDate: {
+    type: DataTypes.DATEONLY,
     allowNull: false
   },
-  DateInscription: {
-    type: DataTypes.DATE,
+  InscriptionDate: {
+    type: DataTypes.DATEONLY,
     allowNull: false,
   },
   UserFlag: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  CodeParainage: {
+  PatronageCode: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  NbParainages: {
+  PatronageNb: {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0
   },
   }, {
-    tableName: entityName
+    tableName: entityName,
+    createdAt: false,
+    updatedAt: false,
 });
 
-module.exports = Utilisateurs;
+module.exports = Users;

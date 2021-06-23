@@ -1,30 +1,30 @@
 var express = require('express');
 var router = express.Router();
-const Utilisateurs = require('./schema_users');
+const Users = require('./schema_users');
 var { checkTokenMiddleware } = require('../../jwtMiddleware');
 const jwt = require('jsonwebtoken');
 
 
 router.post('/', (req, res) => {
-    // Missing password or username
-    if (!req.body.username || !req.body.password) {
+    // Missing Password or Email
+    if (!req.body.Email || !req.body.Password) {
         return res.status(400).json({
-            message: 'Error. Please enter the correct username and password'
+            message: 'Error. Please enter the correct Email and Password'
         });
     }
 
     // Checking
     try {
-        Utilisateurs.findAll({
+        Users.findAll({
             where: {
-                Email: req.body.username,
-                MotDePasse: req.body.password
+                Email: req.body.Email,
+                MotDePasse: req.body.Password
             }
         }).then(function(user) {
             console.log(user)
             const token = jwt.sign({
                 IdUser: user.IdUser,
-                username: user.Email
+                Email: user.Email
             }, process.env.TOKEN_SECRET, {
                 expiresIn: '3 hours'
             });
@@ -34,7 +34,7 @@ router.post('/', (req, res) => {
 
     } catch (error) {
         return res.status(400).json({
-            message: 'Error. Wrong login or password'
+            message: 'Error. Wrong login or Password'
         });
     }
 });
@@ -53,40 +53,35 @@ router.get('/tokeninfo', checkTokenMiddleware, (req, res) => {
 });
 
 router.post('/register', (req, res) => {
-    // Missing password or username
-    if (!req.body.username || !req.body.password) {
+    // Missing Password or Email
+    if (!req.body.Email || !req.body.Password) {
         return res.status(400).json({
-            message: 'Error. Please enter username and password'
+            message: 'Error. Please enter Email and Password'
         });
     }
 
-    // Utilisateurs.findAll({
-    //     where: {
-    //         Email: req.body.username
-    //     }
-    // }).then((user) => { console.log(user) });
-
-    Utilisateurs.findAll({
+    Users.findOne({
         where: {
-            Email: req.body.username
+            Email: req.body.Email
         }
     }).then(function(user){
+        console.log(user)
         if (user) {
             return res.status(403).json({
-                message: `Error. User ${req.body.username} already exists`
+                message: `Error. User ${req.body.Email} already exists`
             });
         }
-        Utilisateurs.create({
-            Nom: req.body.Nom,
-            Prenom: req.body.Prenom,
-            Email: req.body.username,
-            Adresse: req.body.Adresse,
-            MotDePasse: req.body.password,
-            DateDeNaissance: req.body.DateDeNaissance,
-            DateInscription: new Date(), //today
+        Users.create({
+            Name: req.body.Name,
+            FirstName: req.body.FirstName,
+            Email: req.body.Email,
+            Address: req.body.Address,
+            Password: req.body.Password,
+            BirthDate: req.body.BirthDate,
+            InscriptionDate: new Date(), //today
             UserFlag: req.body.UserFlag,
-            CodeParainage: Date.now() + Math.random().toString(36).substr(2, 9), //unique code based on timestamp
-            NbParainages: 0,
+            PatronageCode: Date.now() + Math.random().toString(36).substr(2, 9), //unique code based on timestamp
+            PatronageNb: 0,
         }).then((response) => {
             console.log(response)
             return res.status(201).json({
@@ -97,6 +92,11 @@ router.post('/register', (req, res) => {
                 message: `User couldn't be created`,
                 stackTrace: error
             });
+        });
+    }).catch((error) => {
+        return res.status(401).json({
+            message: `User couldn't be created`,
+            stackTrace: error
         });
     });
 });
