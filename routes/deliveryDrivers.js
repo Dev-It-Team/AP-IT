@@ -10,15 +10,11 @@ const DeliveryDrivers = sequelize.define(entityName, {
     allowNull: false,
     primaryKey: true
   },
-  idUser: {
+  IdUser: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  AdresseFacturation: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  TypeVehicule: {
+  VehiculeType: {
     type: DataTypes.STRING,
     allowNull: false
   },
@@ -27,7 +23,7 @@ const DeliveryDrivers = sequelize.define(entityName, {
     allowNull: false,
     defaultValue: 0
   },
-  NbVotes: {
+  VoteNb: {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0
@@ -59,11 +55,10 @@ async function creation(body)
   try 
   {
     await DeliveryDrivers.create({
-      idUser: body.idUser,
-      AdresseFacturation: body.AdresseFacturation,
-      TypeVehicule: body.TypeVehicule,
+      IdUser: body.IdUser,
+      VehiculeType: body.VehiculeType,
       Note: body.Note,
-      NbVotes: body.NbVotes,
+      VoteNb: body.VoteNb,
     });
     return true;
   } catch(error) {
@@ -76,11 +71,10 @@ async function update(body, idDeliveryDriver)
   try 
   {
     await DeliveryDrivers.update({
-      idUser: body.idUser,
-      AdresseFacturation: body.AdresseFacturation,
-      TypeVehicule: body.TypeVehicule,
+      IdUser: body.IdUser,
+      VehiculeType: body.VehiculeType,
       Note: body.Note,
-      NbVotes: body.NbVotes,
+      VoteNb: body.VoteNb,
     }, {
       where: {
         IdDeliveryDriver: idDeliveryDriver
@@ -140,6 +134,7 @@ startConnection();
 
 /**
  * @api {get} /deliveryDrivers/ Request Delivery Drivers information
+ * @apiVersion 1.0.0
  * @apiName GetDeliveryDrivers
  * @apiGroup DeliveryDrivers
  *
@@ -149,6 +144,20 @@ startConnection();
  * @apiSuccess {String} TypeVehicule  Type of vehicule used.
  * @apiSuccess {Number} Note  Total votes on this delivery driver.
  * @apiSuccess {Number} NbVotes  Number of votes on this delivery driver.
+ *
+ * @apiError DeliveryDriversNotAccessible The table is inaccessible due to server fault.
+ */
+/**
+ * @api {get} /deliveryDrivers/ Request Delivery Drivers information
+ * @apiVersion 1.1.0
+ * @apiName GetDeliveryDrivers
+ * @apiGroup DeliveryDrivers
+ *
+ * @apiSuccess {Number} IdDeliveryDriver  Unique id of the delivery driver.
+ * @apiSuccess {Number} IdUser  Unique id of the user related to this delivery driver.
+ * @apiSuccess {String} VehiculeType  Type of vehicule used.
+ * @apiSuccess {Number} Note  Total votes on this delivery driver.
+ * @apiSuccess {Number} VoteNb   Number of votes on this delivery driver.
  *
  * @apiError DeliveryDriversNotAccessible The table is inaccessible due to server fault.
  */
@@ -165,6 +174,7 @@ router.get('/', function(req, res)
 
 /**
  * @api {get} /deliveryDrivers/:id Request specific delivery driver information
+ * @apiVersion 1.0.0
  * @apiName GetDeliveryDriver
  * @apiGroup DeliveryDrivers
  *
@@ -176,6 +186,22 @@ router.get('/', function(req, res)
  * @apiSuccess {String} TypeVehicule  Type of vehicule used.
  * @apiSuccess {Number} Note  Total votes on this delivery driver.
  * @apiSuccess {Number} NbVotes  Number of votes on this delivery driver.
+ *
+ * @apiError DeliveryDriverNotFound The delivery driver wanted was not found.
+ */
+/**
+ * @api {get} /deliveryDrivers/:id Request specific delivery driver information
+ * @apiVersion 1.1.0
+ * @apiName GetDeliveryDriver
+ * @apiGroup DeliveryDrivers
+ *
+ * @apiParam {Number} IdDeliveryDriver  Unique id of the delivery driver.
+ * 
+ * @apiSuccess {Number} IdDeliveryDriver  Unique id of the delivery driver.
+ * @apiSuccess {Number} IdUser  Unique id of the user related to this delivery driver.
+ * @apiSuccess {String} VehiculeType  Type of vehicule used.
+ * @apiSuccess {Number} Note  Total votes on this delivery driver.
+ * @apiSuccess {Number} VoteNb  Number of votes on this delivery driver.
  *
  * @apiError DeliveryDriverNotFound The delivery driver wanted was not found.
  */
@@ -192,6 +218,7 @@ router.get('/:id', function(req, res)
 
 /**
  * @api {post} /deliveryDrivers/ Create delivery driver information
+ * @apiVersion 1.0.0
  * @apiName PostDeliveryDriver
  * @apiGroup DeliveryDrivers
  *
@@ -200,6 +227,21 @@ router.get('/:id', function(req, res)
  * @apiParam {String} TypeVehicule  Type of vehicule used.
  * @apiParam {Number} Note  Total votes on this delivery driver.
  * @apiParam {Number} NbVotes  Number of votes on this delivery driver.
+ * 
+ * @apiSuccess {String} message  Delivery Driver created.
+ *
+ * @apiError DeliveryDriverNotCreated The delivery driver was not created.
+ */
+/**
+ * @api {post} /deliveryDrivers/ Create delivery driver information
+ * @apiVersion 1.1.0
+ * @apiName PostDeliveryDriver
+ * @apiGroup DeliveryDrivers
+ *
+ * @apiParam {Number} IdUser  Unique id of the user related to this delivery driver.
+ * @apiParam {String} VehiculeType  Type of vehicule used.
+ * @apiParam {Number} Note  Total votes on this delivery driver.
+ * @apiParam {Number} VoteNb  Number of votes on this delivery driver.
  * 
  * @apiSuccess {String} message  Delivery Driver created.
  *
@@ -216,6 +258,7 @@ router.post('/', function(req, res)
 
 /**
  * @api {put} /deliveryDrivers/:id Update delivery driver information
+ * @apiVersion 1.1.0
  * @apiName PutDeliveryDriver
  * @apiGroup DeliveryDrivers
  *
@@ -226,6 +269,23 @@ router.post('/', function(req, res)
  * @apiParam {String} TypeVehicule  Type of vehicule used.
  * @apiParam {Number} Note  Total votes on this delivery driver.
  * @apiParam {Number} NbVotes  Number of votes on this delivery driver.
+ * 
+ * @apiSuccess {String} message  Delivery Drivers updated.
+ *
+ * @apiError DeliveryDriverNotUpdated The delivery driver was not updated.
+ */
+/**
+ * @api {put} /deliveryDrivers/:id Update delivery driver information
+ * @apiVersion 1.1.0
+ * @apiName PutDeliveryDriver
+ * @apiGroup DeliveryDrivers
+ *
+ * @apiParam {Number} id  Unique id of the delivery driver.
+ * 
+ * @apiParam {Number} IdUser  Unique id of the user related to this delivery driver.
+ * @apiParam {String} VehiculeType  Type of vehicule used.
+ * @apiParam {Number} Note  Total votes on this delivery driver.
+ * @apiParam {Number} VoteNb  Number of votes on this delivery driver.
  * 
  * @apiSuccess {String} message  Delivery Drivers updated.
  *
@@ -242,6 +302,19 @@ router.put('/:id', function(req, res)
 
 /**
  * @api {delete} /deliveryDrivers/:id Delete delivery driver information
+ * @apiVersion 1.1.0
+ * @apiName DeleteDeliveryDriver
+ * @apiGroup DeliveryDrivers
+ *
+ * @apiParam {Number} id  Unique id of the delivery driver.
+ * 
+ * @apiSuccess {String} message delivery driver deleted.
+ *
+ * @apiError DeliveryDriverNotDeleted The delivery driver was not deleted.
+ */
+/**
+ * @api {delete} /deliveryDrivers/:id Delete delivery driver information
+ * @apiVersion 1.0.0
  * @apiName DeleteDeliveryDriver
  * @apiGroup DeliveryDrivers
  *

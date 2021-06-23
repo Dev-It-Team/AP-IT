@@ -85,7 +85,46 @@ async function startConnection()
 startConnection();
 
 
-/* GET commands listing. */
+/**
+ * @api {get} /users/ Recover Users information
+ * @apiVersion 1.0.0
+ * @apiName GetUsers
+ * @apiGroup Users
+ *
+ * @apiSuccess {Number} IdUser  Unique id of the user.
+ * @apiSuccess {String} Nom User's name.
+ * @apiSuccess {String} Prenom  User's firstname.
+ * @apiSuccess {String} Email  Email of the user.
+ * @apiSuccess {String} MotDePasse User's password.
+ * @apiSuccess {Date} DateDeNaissance  Birthdate of the user.
+ * @apiSuccess {String} Adresse  User's address.
+ * @apiSuccess {Date} DateInscription Date when the user create its account.
+ * @apiSuccess {String} CodeParainage  Unique code that permits the user to patron someone.
+ * @apiSuccess {Number} NbParainages Number of patronage.
+ * @apiSuccess {String} UserFlag  Type of user.
+ *
+ * @apiError UsersNotAccessible The table is inaccessible due to server fault.
+ */
+/**
+ * @api {get} /users/ Recover Users information
+ * @apiVersion 1.1.0
+ * @apiName GetUsers
+ * @apiGroup Users
+ *
+ * @apiSuccess {Number} IdUser  Unique id of the user.
+ * @apiSuccess {String} Name User's name.
+ * @apiSuccess {String} FirstName  User's firstname.
+ * @apiSuccess {String} Email  Email of the user.
+ * @apiSuccess {String} Password User's password.
+ * @apiSuccess {Date} BirthDate  Birthdate of the user.
+ * @apiSuccess {String} Address  User's address.
+ * @apiSuccess {Date} InscriptionDate Date when the user create its account.
+ * @apiSuccess {String} PatronageCode  Unique code that permits the user to patron someone.
+ * @apiSuccess {Number} PatronageNb Number of patronage.
+ * @apiSuccess {String} UserFlag  Type of user.
+ *
+ * @apiError UsersNotAccessible The table is inaccessible due to server fault.
+ */
 router.get('/', function(req, res, next) 
 {
   getAll().then((users) => {
@@ -96,7 +135,50 @@ router.get('/', function(req, res, next)
 });
 
 
-/* GET commands listing by id. */
+/**
+ * @api {get} /users/ Recover specific Users information
+ * @apiVersion 1.0.0
+ * @apiName GetUser
+ * @apiGroup Users
+ *
+ * @apiParam {Number} id  User's unique id.
+ * 
+ * @apiSuccess {Number} IdUser  Unique id of the user.
+ * @apiSuccess {String} Nom User's name.
+ * @apiSuccess {String} Prenom  User's firstname.
+ * @apiSuccess {String} Email  Email of the user.
+ * @apiSuccess {String} MotDePasse User's password.
+ * @apiSuccess {Date} DateDeNaissance  Birthdate of the user.
+ * @apiSuccess {String} Adresse  User's address.
+ * @apiSuccess {Date} DateInscription Date when the user create its account.
+ * @apiSuccess {String} CodeParainage  Unique code that permits the user to patron someone.
+ * @apiSuccess {Number} NbParainages Number of patronage.
+ * @apiSuccess {String} UserFlag  Type of user.
+ *
+ * @apiError UserNotFound The wanted user was not found.
+ */
+/**
+ * @api {get} /users/ Recover specific Users information
+ * @apiVersion 1.1.0
+ * @apiName GetUser
+ * @apiGroup Users
+ *
+ * @apiParam {Number} id  User's unique id.
+ * 
+ * @apiSuccess {Number} IdUser  Unique id of the user.
+ * @apiSuccess {String} Name User's name.
+ * @apiSuccess {String} FirstName  User's firstname.
+ * @apiSuccess {String} Email  Email of the user.
+ * @apiSuccess {String} Password User's password.
+ * @apiSuccess {Date} BirthDate  Birthdate of the user.
+ * @apiSuccess {String} Address  User's address.
+ * @apiSuccess {Date} InscriptionDate Date when the user create its account.
+ * @apiSuccess {String} PatronageCode  Unique code that permits the user to patron someone.
+ * @apiSuccess {Number} PatronageNb Number of patronage.
+ * @apiSuccess {String} UserFlag  Type of user.
+ *
+ * @apiError UserNotFound The wanted user was not found.
+ */
 router.get('/:id', function(req, res, next) 
 {
   getOne(req.params.id).then((user) => {
@@ -107,7 +189,52 @@ router.get('/:id', function(req, res, next)
 });
 
 
-/* PUT */
+/**
+ * @api {put} /users/ Update Users information
+ * @apiVersion 1.0.0
+ * @apiName PutUsers
+ * @apiGroup Users
+ * 
+ * @apiParam {Number} IdUser  Unique id of the user.
+ * 
+ * @apiParam {String} Nom User's name.
+ * @apiParam {String} Prenom  User's firstname.
+ * @apiParam {String} Email  Email of the user.
+ * @apiParam {String} MotDePasse User's password.
+ * @apiParam {Date} DateDeNaissance  Birthdate of the user.
+ * @apiParam {String} Adresse  User's address.
+ * @apiParam {Date} DateInscription Date when the user create its account.
+ * @apiParam {String} CodeParainage  Unique code that permits the user to patron someone.
+ * @apiParam {Number} NbParainages Number of patronage.
+ * @apiParam {String} UserFlag  Type of user.
+ * 
+ * @apiSuccess {String} message  Users updated.
+ *
+ * @apiError UserNotUpdated The user cannot be updated.
+ */
+/**
+ * @api {put} /users/ Update Users information
+ * @apiVersion 1.1.0
+ * @apiName PutUsers
+ * @apiGroup Users
+ * 
+ * @apiParam {Number} IdUser  Unique id of the user.
+ * 
+ * @apiParam {String} Name User's name.
+ * @apiParam {String} FirstName  User's firstname.
+ * @apiParam {String} Email  Email of the user.
+ * @apiParam {String} Password User's password.
+ * @apiParam {Date} BirthDate  Birthdate of the user.
+ * @apiParam {String} Address  User's address.
+ * @apiParam {Date} InscriptionDate Date when the user create its account.
+ * @apiParam {String} PatronageCode  Unique code that permits the user to patron someone.
+ * @apiParam {Number} PatronageNb Number of patronage.
+ * @apiParam {String} UserFlag  Type of user.
+ * 
+ * @apiSuccess {String} message  Users updated.
+ *
+ * @apiError UserNotUpdated The user cannot be updated.
+ */
 router.put('/:id', function(req, res, next) 
 {
   update(req.body, req.params.id).then((user) => {
@@ -118,7 +245,30 @@ router.put('/:id', function(req, res, next)
 });
 
 
-/* DELETE */
+/**
+ * @api {delete} /users/ Delete Users information
+ * @apiVersion 1.0.0
+ * @apiName DeleteUsers
+ * @apiGroup Users
+ * 
+ * @apiParam {Number} IdUser  Unique id of the user.
+ * 
+ * @apiSuccess {String} message  Users deleted.
+ *
+ * @apiError UserNotDeleted The user cannot be deleted.
+ */
+/**
+ * @api {delete} /users/ Delete Users information
+ * @apiVersion 1.1.0
+ * @apiName DeleteUsers
+ * @apiGroup Users
+ * 
+ * @apiParam {Number} IdUser  Unique id of the user.
+ * 
+ * @apiSuccess {String} message  Users deleted.
+ *
+ * @apiError UserNotDeleted The user cannot be deleted.
+ */
 router.delete('/:id', function(req, res, next)
 {
   if (deletion(req.params.id) !== null)

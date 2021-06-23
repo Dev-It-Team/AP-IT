@@ -14,9 +14,6 @@ require('mongoose').connect("mongodb+srv://admin:admin@js-project.rztwo.mongodb.
 dotenv.config();
 var app = express();
 
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -44,17 +41,16 @@ app.use('/users/', checkTokenMiddleware, require(`./routes/users/users`));
 [
     '/menus',
     '/products',
-    '/commands',
+    '/orders',
     '/components',
-    '/clients',
     '/restaurants',
     '/deliveryDrivers',
-    '/connectionLogs',
-    '/downloadLogs',
+    '/logsConnection',
+    '/logsDownload',
 ].forEach((protectedRoute) => app.use(protectedRoute, checkTokenMiddleware, require(`./routes${protectedRoute}`)));
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) 
+app.use(function(req, res) 
 {
   res.status(404);
   res.send({ "error": "Route not found" });
@@ -71,7 +67,7 @@ app.use(function(err, req, res, next)
   
     // render the error page
     res.status(err.status || 500);
-    res.render('error');
+    res.send({ "error": err.message });
   }
   else 
   {

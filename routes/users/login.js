@@ -4,7 +4,32 @@ const Users = require('./schema_users');
 var { checkTokenMiddleware } = require('../../jwtMiddleware');
 const jwt = require('jsonwebtoken');
 
-
+/**
+ * @api {post} /users/ Create Users information
+ * @apiVersion 1.0.0
+ * @apiName PostLogin
+ * @apiGroup Users
+ * 
+ * @apiParam {String} Email User's email.
+ * @apiParam {String} MotDePasse  User's password.
+ * 
+ * @apiSuccess {String} token  User authentication token.
+ *
+ * @apiError UserNotLoggedIn The user cannot be logged in.
+ */
+/**
+ * @api {post} /users/ Create Users information
+ * @apiVersion 1.1.0
+ * @apiName PostLogin
+ * @apiGroup Users
+ * 
+ * @apiParam {String} Email User's email.
+ * @apiParam {String} Password  User's password.
+ * 
+ * @apiSuccess {String} token  User authentication token.
+ *
+ * @apiError UserNotLoggedIn The user cannot be logged in.
+ */
 router.post('/', (req, res) => {
     // Missing Password or Email
     if (!req.body.Email || !req.body.Password) {
@@ -52,6 +77,48 @@ router.get('/tokeninfo', checkTokenMiddleware, (req, res) => {
     });
 });
 
+/**
+ * @api {post} /users/ Create Users information
+ * @apiVersion 1.0.0
+ * @apiName PostUsers
+ * @apiGroup Users
+ * 
+ * @apiParam {String} Nom User's name.
+ * @apiParam {String} Prenom  User's firstname.
+ * @apiParam {String} Email  Email of the user.
+ * @apiParam {String} MotDePasse User's password.
+ * @apiParam {Date} DateDeNaissance  Birthdate of the user.
+ * @apiParam {String} Adresse  User's address.
+ * @apiParam {Date} DateInscription Date when the user create its account.
+ * @apiParam {String} CodeParainage  Unique code that permits the user to patron someone.
+ * @apiParam {Number} NbParainages Number of patronage.
+ * @apiParam {String} UserFlag  Type of user.
+ * 
+ * @apiSuccess {String} message  Users created.
+ *
+ * @apiError UserNotCreated The user cannot be created.
+ */
+/**
+ * @api {post} /users/ Create Users information
+ * @apiVersion 1.1.0
+ * @apiName PostUsers
+ * @apiGroup Users
+ * 
+ * @apiParam {String} Name User's name.
+ * @apiParam {String} FirstName  User's firstname.
+ * @apiParam {String} Email  Email of the user.
+ * @apiParam {String} Password User's password.
+ * @apiParam {Date} BirthDate  Birthdate of the user.
+ * @apiParam {String} Address  User's address.
+ * @apiParam {Date} InscriptionDate Date when the user create its account.
+ * @apiParam {String} PatronageCode  Unique code that permits the user to patron someone.
+ * @apiParam {Number} PatronageNb Number of patronage.
+ * @apiParam {String} UserFlag  Type of user.
+ * 
+ * @apiSuccess {String} message  Users created.
+ *
+ * @apiError UserNotCreated The user cannot be created.
+ */
 router.post('/register', (req, res) => {
     // Missing Password or Email
     if (!req.body.Email || !req.body.Password) {
