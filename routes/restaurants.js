@@ -130,57 +130,127 @@ async function startConnection()
 startConnection();
 
 
-/* GET commands listing. */
-router.get('/', function(req, res, next) 
+/**
+ * @api {get} /restaurants/ Get Restaurants Information
+ * @apiVersion 1.0
+ * @apiName GetRestaurants
+ * @apiGroup Restaurants
+ * 
+ * @apiSuccess {Number} IdRestaurant  Restaurant's unique id.
+ * @apiSuccess {Number} idUser  User's id related to this restaurant.
+ * @apiSuccess {String} Nom  Name of this restaurant.
+ * @apiSuccess {String} AdresseRestaurant  Address of this restaurant.
+ * @apiSuccess {String} image_banniere  Pictures of the restaurant.
+ *
+ * @apiError RestaurantsNotAccessible The table is inaccessible due to server fault.
+ */
+router.get('/', function(req, res) 
 {
   const allDocs = getAll();
 
   if (allDocs !== null)
     res.status(200).json(allDocs);
   else 
-    res.status(401).json({ message: "Could not get " + entityName });
+    res.status(500).json({ message: "RestaurantsNotAccessible" });
 });
 
 
-/* GET commands listing by id. */
-router.get('/:id', function(req, res, next) 
+/**
+ * @api {get} /restaurants/:id Get specific Restaurant Information
+ * @apiVersion 1.0
+ * @apiName GetRestaurant
+ * @apiGroup Restaurants
+ * 
+ * @apiParam {Number} IdRestaurant  Restaurant's unique id.
+ * 
+ * @apiSuccess {Number} IdRestaurant  Restaurant's unique id.
+ * @apiSuccess {Number} idUser  User's id related to this restaurant.
+ * @apiSuccess {String} Nom  Name of this restaurant.
+ * @apiSuccess {String} AdresseRestaurant  Address of this restaurant.
+ * @apiSuccess {String} image_banniere  Pictures of the restaurant.
+ *
+ * @apiError RestaurantNotFound The wanted restaurant cannot be found.
+ */
+router.get('/:id', function(req, res) 
 {
   const doc = getOne(req.params.id);
 
   if (doc !== null)
     res.status(200).json(doc);
   else 
-    res.status(401).json({ message: "Could not get one " + entityName });
+    res.status(401).json({ message: "RestaurantNotFound" });
 });
 
 
-/* POST */
-router.post('/', function(req, res, next) 
+/**
+ * @api {post} /restaurants/ Create Restaurant Information
+ * @apiVersion 1.0
+ * @apiName PostRestaurants
+ * @apiGroup Restaurants
+ * 
+ * @apiParam {Number} IdRestaurant  Restaurant's unique id.
+ * @apiParam {Number} idUser  User's id related to this restaurant.
+ * @apiParam {String} Nom  Name of this restaurant.
+ * @apiParam {String} AdresseRestaurant  Address of this restaurant.
+ * @apiParam {String} image_banniere  Pictures of the restaurant.
+ * 
+ * @apiSuccess {String} message  Restaurants created.
+ *
+ * @apiError RestaurantNotCreated The restaurant was not created.
+ */
+router.post('/', function(req, res) 
 {
   if (creation(req.body) !== null)
     res.status(201).json({ message: entityName + "created" });
   else 
-    res.status(401).json({ message: "Could not create " + entityName });
+    res.status(401).json({ message: "RestaurantNotCreated" });
 });
 
 
-/* PUT */
-router.put('/:id', function(req, res, next) 
+/**
+ * @api {put} /restaurants/:id Update Restaurant Information
+ * @apiVersion 1.0
+ * @apiName PutRestaurants
+ * @apiGroup Restaurants
+ * 
+ * @apiParam {Number} IdRestaurant  Restaurant's unique id.
+ * 
+ * @apiParam {Number} idUser  User's id related to this restaurant.
+ * @apiParam {String} Nom  Name of this restaurant.
+ * @apiParam {String} AdresseRestaurant  Address of this restaurant.
+ * @apiParam {String} image_banniere  Pictures of the restaurant.
+ * 
+ * @apiSuccess {String} message  Restaurants updated.
+ *
+ * @apiError RestaurantNotUpdated The restaurant was not updated.
+ */
+router.put('/:id', function(req, res) 
 {
   if (update(req.body, req.params.id) !== null)
     res.status(202).json({ message: entityName + "updated" });
   else 
-    res.status(401).json({ message: "Could not update " + entityName });
+    res.status(401).json({ message: "RestaurantNotUpdated" });
 });
 
 
-/* DELETE */
-router.delete('/:id', function(req, res, next)
+/**
+ * @api {delete} /restaurants/:id Delete Restaurant Information
+ * @apiVersion 1.0
+ * @apiName DeleteRestaurants
+ * @apiGroup Restaurants
+ * 
+ * @apiParam {Number} IdRestaurant  Restaurant's unique id.
+ * 
+ * @apiSuccess {String} message  Restaurants deleted.
+ *
+ * @apiError RestaurantNotDeleted The restaurant was not deleted.
+ */
+router.delete('/:id', function(req, res)
 {
   if (deletion(req.params.id) !== null)
     res.status(203).json({ message: entityName + " deleted" });
   else 
-    res.status(401).json({ message: "Could not delete " + entityName });
+    res.status(401).json({ message: "RestaurantNotDeleted" });
 });
 
 module.exports = router;
