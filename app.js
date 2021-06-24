@@ -36,6 +36,101 @@ exports.configDatabase = config;
 app.use('/',                require('./routes/index'));
 app.use('/login',           require('./routes/users/login'));
 
+var restaurantRouter = express.Router();
+var productRouter = express.Router({ mergeParams: true });
+var menusRouter = express.Router({ mergeParams: true });
+
+var userRouter = express.Router();
+var logRouter = express.Router({ mergeParams: true });
+var orderRouter = express.Router({ mergeParams: true });
+
+var componentRouter = express.Router();
+var dlRouter = express.Router({ mergeParams: true });
+
+restaurantRouter.use('/:restauId/products', productRouter);
+restaurantRouter.use('/:restauId/menus', menusRouter);
+
+userRouter.use('/:userId/logs', logRouter);
+userRouter.use('/:userId/orders', orderRouter);
+
+componentRouter.use('/:componentId/logs', dlRouter);
+
+
+restaurantRouter.route('/').get(function (req, res) {
+  res.status(200).send("Restaurants");
+});
+
+restaurantRouter.route('/:restauId').get(function (req, res) {
+  res.status(200).send("Restaurant " + req.params.restauId);
+});
+
+productRouter.route('/').get(function (req, res) {
+  res.status(200).send("Restaurant " + req.params.restauId + " products");
+});
+
+productRouter.route('/:productId').get(function (req, res) {
+  res.status(200).send("Restaurant " + req.params.restauId + " product " + req.params.productId);
+});
+
+menusRouter.route('/').get(function (req, res) {
+  res.status(200).send("Restaurant " + req.params.restauId + " menus");
+});
+
+menusRouter.route('/:menuId').get(function (req, res) {
+  res.status(200).send("Restaurant " + req.params.restauId + " menu " + req.params.menuId);
+});
+
+app.use('/restaurants', restaurantRouter);
+
+
+
+userRouter.route('/').get(function (req, res) {
+  res.status(200).send("Users");
+});
+
+userRouter.route('/:userId').get(function (req, res) {
+  res.status(200).send("User " + req.params.userId);
+});
+
+logRouter.route('/').get(function (req, res) {
+  res.status(200).send("User " + req.params.userId + " log");
+});
+
+logRouter.route('/:logId').get(function (req, res) {
+  res.status(200).send("User " + req.params.userId + " log " + req.params.logId);
+});
+
+orderRouter.route('/').get(function (req, res) {
+  res.status(200).send("User " + req.params.userId + " menus");
+});
+
+orderRouter.route('/:orderId').get(function (req, res) {
+  res.status(200).send("User " + req.params.userId + " menu " + req.params.orderId);
+});
+
+app.use('/users', userRouter);
+
+
+
+componentRouter.route('/').get(function (req, res) {
+  res.status(200).send("Components");
+});
+
+componentRouter.route('/:componentId').get(function (req, res) {
+  res.status(200).send("Component " + req.params.componentId);
+});
+
+dlRouter.route('/').get(function (req, res) {
+  res.status(200).send("Component " + req.params.componentId + " log");
+});
+
+dlRouter.route('/:logId').get(function (req, res) {
+  res.status(200).send("Component " + req.params.componentId + " log " + req.params.logId);
+});
+
+app.use('/components', componentRouter);
+
+/*
 //Routes secured by login
 app.use('/users/', checkTokenMiddleware, require(`./routes/users/users`));
 [
@@ -48,7 +143,7 @@ app.use('/users/', checkTokenMiddleware, require(`./routes/users/users`));
     '/logsConnection',
     '/logsDownload',
 ].forEach((protectedRoute) => app.use(protectedRoute, checkTokenMiddleware, require(`./routes${protectedRoute}`)));
-
+*/
 // catch 404 and forward to error handler
 app.use(function(req, res) 
 {
