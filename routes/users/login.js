@@ -148,7 +148,6 @@ router.post('/register', (req, res) => {
             PatronageCode: Date.now() + Math.random().toString(36).substr(2, 9), //unique code based on timestamp
             PatronageNb: 0,
         }).then((response) => {
-            console.log(response)
             return res.status(201).json({
                 message: `User created`
             });

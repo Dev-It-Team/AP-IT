@@ -52,12 +52,13 @@ const Product = mongoose.model('Product', productSchema);
  */
 router.get('/', function(req, res) 
 {
-    Product.find({}, function (err, docs) 
-    {
-      if (err)
-        res.status(500).json({ message: "ProductsNotAccessible" });
-      else
-        res.status(200).json(docs);
+    Product.find({
+        id_restau: JSON.parse(req.params.idRestaurant)
+    }, (err, docs) => {
+        if (err)
+            res.status(500).json({ message: "ProductsNotAccessible" });
+        else
+            res.status(200).json(docs);
     });
 });
 
@@ -102,12 +103,14 @@ router.get('/', function(req, res)
  */
 router.get('/:id', function(req, res) 
 {
-    Product.find({ IdProduct : req.params.id }, function (err, docs) 
-    {
-      if (err)
-        res.status(401).json({ message: "ProductNotFound" });
-      else
-        res.status(200).json(docs);
+    Product.find({
+        id_restau: JSON.parse(req.params.idRestaurant),
+        id: JSON.parse(req.params.id)
+    }, (err, docs) => {
+        if (err)
+            res.status(401).json({ message: "ProductNotFound" });
+        else
+            res.status(200).json(docs);
     });
 });
 
@@ -211,17 +214,11 @@ router.post('/', function(req, res)
  */
 router.put('/:id', function(req, res) 
 {
-    Product.updateOne({ IdProduct : req.params.id}, 
-    {
-      IdProduct : req.params.id,
-      IdRestaurant : req.body.IdRestaurant,
-      Name : req.body.Name,
-      Description : req.body.Description,
-      Picture : req.body.Picture,
-      Size : req.body.Size,
-      Notes : req.body.Notes,
-      VoteNb : req.body.VoteNb
-    },
+    Product.updateOne({
+        id_restau: JSON.parse(req.params.idRestaurant),
+        id: JSON.parse(req.params.id)
+    }, 
+    req.body,
     function (err, docs) 
     {
       if (err)
@@ -258,7 +255,10 @@ router.put('/:id', function(req, res)
  */
 router.delete('/:id', function(req, res)
 {
-    Product.deleteOne({ IdProduct : req.params.id }, function (err, docs) 
+    Product.deleteOne({
+        id_restau: JSON.parse(req.params.idRestaurant),
+        id: JSON.parse(req.params.id)
+    }, function (err, docs) 
     {
       if (err)
         res.status(401).json({ message: "ProductNotDeleted" });

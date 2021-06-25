@@ -5,25 +5,27 @@ const entityName = "Restaurants";
 const { DataTypes } = require('sequelize');
 
 const Restaurants = sequelize.define(entityName, {
-  IdRestaurant: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    primaryKey: true
-  },
-  IdUser: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
-  NameRestaurant: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  Banner: {
-    type: DataTypes.STRING,
-    allowNull: true
-  },
-  }, {
-    tableName: entityName
+    IdRestaurant: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    IdUser: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    NameRestaurant: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    Banner: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+}, {
+    tableName: entityName,
+    createdAt: false,
+    updatedAt: false,
 });
 
 async function authentification()
@@ -106,7 +108,7 @@ async function getOne(idRestaurant)
 {
   try 
   {
-      return await Restaurants.findAll({ 
+      return await Restaurants.findOne({ 
         where: {
           IdRestaurant: idRestaurant
       }});
@@ -150,14 +152,15 @@ startConnection();
  *
  * @apiError RestaurantsNotAccessible The table is inaccessible due to server fault.
  */
-router.get('/', function(req, res) 
+router.get('/', function(req, res, next) 
 {
-  const allDocs = getAll();
-
-  if (allDocs !== null)
-    res.status(200).json(allDocs);
-  else 
-    res.status(500).json({ message: "RestaurantsNotAccessible" });
+    getAll()
+        .then((restaurants) => {
+            res.status(200).json(restaurants);
+        })
+        .catch(() => {
+            res.status(500).json({ message: "RestaurantsNotAccessible" });
+        });
 });
 
 
@@ -194,12 +197,15 @@ router.get('/', function(req, res)
  */
 router.get('/:id', function(req, res) 
 {
-  const doc = getOne(req.params.id);
-
-  if (doc !== null)
-    res.status(200).json(doc);
-  else 
-    res.status(401).json({ message: "RestaurantNotFound" });
+    getOne(req.params.id)
+        .then((restaurant) => {
+            res.status(200).json(restaurant);
+        })
+        .catch(() => {
+            res.status(500).json({
+                message: "RestaurantNotFound"
+            });
+        });
 });
 
 
@@ -319,7 +325,7 @@ router.delete('/:id', function(req, res)
 
 const productsRouter = require('./products');
 const menusRouter = require('./menus');
-router.use('/:restauId/products', productsRouter);
-router.use('/:restauId/menus', menusRouter);
+router.use('/:idRestaurant/products', productsRouter);
+router.use('/:idRestaurant/menus', menusRouter);
 
 module.exports = router;
