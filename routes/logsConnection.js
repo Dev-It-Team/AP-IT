@@ -40,7 +40,7 @@ async function synchronisation()
   try {
     await LogsConnection.sync();
   } catch(error) {
-    console.log(entityName + " could not synchronize");
+    console.error(entityName + " could not synchronize");
   }
 }
 

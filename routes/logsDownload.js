@@ -36,7 +36,7 @@ async function synchronisation()
   try {
     await DownLoagLogs.sync();
   } catch(error) {
-    console.log(entityName + " could not synchronize");
+    console.error(entityName + " could not synchronize");
   }
 }
 

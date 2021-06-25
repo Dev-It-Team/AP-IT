@@ -3,7 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var { checkTokenMiddleware } = require('./jwtMiddleware');
+var { checkTokenMiddleware, checkUserRoleFlag } = require('./jwtMiddleware');
 const { Sequelize } = require('sequelize');
 const dotenv = require('dotenv');
 
@@ -34,6 +34,16 @@ const config = new Sequelize('BaseSQL', 'sa', 'Password', {
 //Export here because of routes
 exports.configDatabase = config;
 
+// Roles
+const rolesFlags = {
+    CLIENTS: 0,
+    RESTAURANTS: 1,
+    DELIVERY: 2,
+    MARKETING: 3,
+    TECHNIC: 4,
+    DEVELOPER: 5
+}
+
 //Every routes for the API
 const restaurantsRouter = require('./routes/restaurants/restaurants');
 const usersRouter = require('./routes/users/users');
@@ -44,10 +54,10 @@ const componentsRouter = require('./routes/components');
 app.use('/', require('./routes/index'));
 app.use('/login', require('./routes/users/login'));
 //Protected routes
-app.use('/restaurants', checkTokenMiddleware, restaurantsRouter);
-app.use('/users', checkTokenMiddleware, usersRouter);
-app.use('/deliveryDrivers', checkTokenMiddleware, deliveryDriversRouter);
-app.use('/components', checkTokenMiddleware, componentsRouter);
+app.use('/restaurants',     checkTokenMiddleware,   restaurantsRouter);
+app.use('/users',           checkTokenMiddleware,   usersRouter);
+app.use('/deliveryDrivers', checkTokenMiddleware,   deliveryDriversRouter);
+app.use('/components',      checkTokenMiddleware,   componentsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res) {

@@ -1,11 +1,11 @@
 var express = require('express');
 var router = express.Router();
 const Users = require('./schema_users');
-var { checkTokenMiddleware } = require('../../jwtMiddleware');
+const { extractBearerToken, checkTokenMiddleware } = require('../../jwtMiddleware');
 const jwt = require('jsonwebtoken');
 
 /**
- * @api {post} /users/ Create Users information
+ * @api {post} /login/ Create Users information
  * @apiVersion 1.0.0
  * @apiName PostLogin
  * @apiGroup Users
@@ -18,7 +18,7 @@ const jwt = require('jsonwebtoken');
  * @apiError UserNotLoggedIn The user cannot be logged in.
  */
 /**
- * @api {post} /users/ Create Users information
+ * @api {post} /login/ Create Users information
  * @apiVersion 1.1.0
  * @apiName PostLogin
  * @apiGroup Users
@@ -46,7 +46,6 @@ router.post('/', (req, res) => {
                 Password: req.body.Password
             }
         }).then(function(user) {
-            console.log(user)
             const token = jwt.sign({
                 IdUser: user.IdUser,
                 Email: user.Email,
@@ -74,9 +73,7 @@ router.get('/tokeninfo', checkTokenMiddleware, (req, res) => {
         json: true,
     });
 
-    return res.json({
-        content: decoded
-    });
+    return res.json(decoded.payload);
 });
 
 /**
@@ -134,7 +131,6 @@ router.post('/register', (req, res) => {
             Email: req.body.Email
         }
     }).then(function(user){
-        console.log(user)
         if (user) {
             return res.status(403).json({
                 message: `Error. User ${req.body.Email} already exists`
