@@ -1,5 +1,5 @@
 var express = require('express');
-var router = express.Router();
+var router = express.Router({ mergeParams: true });
 var sequelize = require('../app.js').configDatabase;
 const entityName = "LogsConnection";
 const { DataTypes } = require('sequelize');

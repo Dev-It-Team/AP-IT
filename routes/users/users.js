@@ -277,4 +277,10 @@ router.delete('/:id', function(req, res, next)
     res.status(401).json({ message: "Could not delete " + entityName });
 });
 
+
+const logsConnectionRouter = require('../logsConnection');
+const ordersRouter = require('./orders');
+router.use('/:userId/logs', logsConnectionRouter);
+router.use('/:userId/orders', ordersRouter);
+
 module.exports = router;

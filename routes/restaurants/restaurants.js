@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var sequelize = require('../app.js').configDatabase;
+var sequelize = require('../../app.js').configDatabase;
 const entityName = "Restaurants";
 const { DataTypes } = require('sequelize');
 
@@ -316,5 +316,10 @@ router.delete('/:id', function(req, res)
   else 
     res.status(401).json({ message: "RestaurantNotDeleted" });
 });
+
+const productsRouter = require('./products');
+const menusRouter = require('./menus');
+router.use('/:restauId/products', productsRouter);
+router.use('/:restauId/menus', menusRouter);
 
 module.exports = router;
