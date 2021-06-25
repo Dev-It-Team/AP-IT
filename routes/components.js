@@ -235,4 +235,7 @@ router.delete('/:id', function(req, res)
     });
 });
 
+const logsDownloadRouter = require('./logsDownload');
+router.use('/:componentId/logs', logsDownloadRouter);
+
 module.exports = router;
