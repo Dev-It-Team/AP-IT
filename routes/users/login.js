@@ -39,29 +39,26 @@ router.post('/', (req, res) => {
     }
 
     // Checking
-    try {
-        Users.findOne({
-            where: {
-                Email: req.body.Email,
-                Password: req.body.Password
-            }
-        }).then(function(user) {
-            const token = jwt.sign({
-                IdUser: user.IdUser,
-                Email: user.Email,
-                UserFlag: user.UserFlag
-            }, process.env.TOKEN_SECRET, {
-                expiresIn: '3 hours'
-            });
-
-            return res.json({ access_token: token });
-        });
-
-    } catch (error) {
-        return res.status(400).json({
+    Users.findOne({
+        where: {
+            Email: req.body.Email,
+            Password: req.body.Password
+        }
+    }).then(function(user) {
+        if (!user) return res.status(401).json({
             message: 'Error. Wrong login or Password'
         });
-    }
+
+        const token = jwt.sign({
+            IdUser: user.IdUser,
+            Email: user.Email,
+            UserFlag: user.UserFlag
+        }, process.env.TOKEN_SECRET, {
+            expiresIn: '3 hours'
+        });
+
+        return res.status(201).json({ access_token: token });
+    });
 });
 
 router.get('/tokeninfo', checkTokenMiddleware, (req, res) => {

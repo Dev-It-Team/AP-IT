@@ -23,6 +23,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// CORS Handling (requests from external network and web browsers)
+app.use(function(req, res, next) {
+    // Allow everyone
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', '*');
+    next();
+});
+
 //Config for SQL ORM
 const config = new Sequelize('BaseSQL', 'sa', 'Password', {
     host: 'localhost',
