@@ -58,9 +58,33 @@ router.post('/', (req, res) => {
         });
 
         return res.status(201).json({ access_token: token });
+    }).catch(error => {
+        console.error(error);
     });
 });
 
+
+/**
+ * @api {post} /login/register/ Create Users information
+ * @apiVersion 1.0.0
+ * @apiName PostUsers
+ * @apiGroup Users
+ * 
+ * @apiParam {String} Nom User's name.
+ * @apiParam {String} Prenom  User's firstname.
+ * @apiParam {String} Email  Email of the user.
+ * @apiParam {String} MotDePasse User's password.
+ * @apiParam {Date} DateDeNaissance  Birthdate of the user.
+ * @apiParam {String} Adresse  User's address.
+ * @apiParam {Date} DateInscription Date when the user create its account.
+ * @apiParam {String} CodeParainage  Unique code that permits the user to patron someone.
+ * @apiParam {Number} NbParainages Number of patronage.
+ * @apiParam {String} UserFlag  Type of user.
+ * 
+ * @apiSuccess {String} message  Users created.
+ *
+ * @apiError UserNotCreated The user cannot be created.
+ */
 router.get('/tokeninfo', checkTokenMiddleware, (req, res) => {
     // Fetch token
     const token = req.headers.authorization && extractBearerToken(req.headers.authorization);
