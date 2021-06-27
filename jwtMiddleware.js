@@ -12,6 +12,7 @@ const extractBearerToken = headerValue => {
         return false
     }
     const matches = headerValue.match(/(bearer)\s+(\S+)/i)
+    
     return matches && matches[2]
 }
 
@@ -19,12 +20,12 @@ const extractBearerToken = headerValue => {
 const checkTokenMiddleware = (req, res, next) => {
     // Récupération du token
     const token = getToken(req);
-    if (!token) return res.status(401).json({ message: 'Error. Need a token' })
+    if (!token) return res.status(401).json({ message: 'TokenEmpty' })
     
     // Véracité du token
     jwt.verify(token, process.env.TOKEN_SECRET, (err, decodedToken) => {
         if (err) {
-            res.status(401).json({ message: 'Error. Bad token' })
+            res.status(401).json({ message: 'BadToken' })
         } else {
             return next()
         }
@@ -36,16 +37,16 @@ const checkUserRoleFlag = userFlag => {
         try {
             // Récupération du token
             const token = getToken(req);
-            if (!token) return res.status(401).json({ message: 'Error. Need a token' })
+            if (!token) return res.status(401).json({ message: 'TokenEmpty' })
 
             // Véracité du token
             jwt.verify(token, process.env.TOKEN_SECRET, (err, decodedToken) => {
                 if (err) {
-                    res.status(401).json({ message: 'Error. Bad token' })
+                    res.status(401).json({ message: 'BadToken' })
                 } else {
                     if (decodedToken.UserFlag == userFlag)
                         return next();
-                    return res.status(401).json({ message: 'Error. Wrong permission.' })
+                    return res.status(401).json({ message: 'WrongPermission' })
                 }
             });
         } catch (error) {
