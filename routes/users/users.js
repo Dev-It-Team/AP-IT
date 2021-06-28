@@ -221,7 +221,7 @@ router.put('/:IdUser', function(req, res)
         IdUser: req.params.IdUser
       }
     }).then(response => {
-      return res.status(201).json({
+      return res.status(202).json({
         message: 'User updated'
       });
     }).catch(error => {
@@ -283,7 +283,7 @@ router.delete('/:IdUser', function(req, res)
         IdUser: req.params.IdUser
       }
     }).then(response => {
-      return res.status(201).json({
+      return res.status(203).json({
         message: 'User deleted'
       });
     }).catch(error => {

@@ -289,7 +289,7 @@ router.put('/:IdDeliveryDriver', function(req, res)
         IdDeliveryDriver: req.params.IdDeliveryDriver
       }
     }).then(response => {
-      return res.status(201).json({
+      return res.status(202).json({
         message: 'DeliveryDriver updated'
       });
     }).catch(error => {
@@ -348,7 +348,7 @@ router.delete('/:IdDeliveryDriver', function(req, res)
         IdDeliveryDriver: req.params.IdDeliveryDriver
       }
     }).then(response => {
-      return res.status(201).json({
+      return res.status(203).json({
         message: 'DeliveryDriver deleted'
       });
     }).catch(error => {

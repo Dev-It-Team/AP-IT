@@ -218,7 +218,7 @@ router.put('/:IdComponent', function(req, res)
       Link : req.body.Link,
       Files : req.body.Files
     }).then((response) => {
-      return res.status(201).json({
+      return res.status(202).json({
         message: 'Component updated'
       });
     }).catch((error) => {
@@ -272,7 +272,7 @@ router.delete('/:IdComponent', function(req, res)
     }
 
     Components.deleteOne({ _id : req.params.IdComponent }).then((response) => {
-      return res.status(201).json({
+      return res.status(203).json({
         message: 'Component deleted'
       });
     }).catch((error) => {

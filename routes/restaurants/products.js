@@ -255,7 +255,7 @@ router.put('/:IdProduct', function(req, res)
             Notes: req.body.Notes,
             VoteNb: req.body.VoteNb
         }).then((response) => {
-            return res.status(201).json({
+            return res.status(202).json({
                 message: 'Product updated'
             });
         }).catch((error) => {
@@ -312,7 +312,7 @@ router.delete('/:IdProduct', function(req, res)
             _id: req.params.IdProduct,
             IdRestaurant: req.params.IdRestaurant,
         }).then((response) => {
-            return res.status(201).json({
+            return res.status(203).json({
                 message: 'Product deleted'
             });
         }).catch((error) => {

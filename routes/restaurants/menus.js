@@ -267,7 +267,7 @@ router.put('/:IdMenu', function(req, res)
       Notes : req.body.Notes,
       VoteNb : req.body.VoteNb
     }).then((response) => {
-      return res.status(201).json({
+      return res.status(202).json({
         message: 'Menu updated'
       });
     }).catch((error) => {

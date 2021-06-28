@@ -87,7 +87,7 @@ startConnection();
 router.get('/', function(req, res) 
 {
   LogsConnection.findAll().then(function(logs) {
-    return res.status(201).json(logs);
+    return res.status(200).json(logs);
   }).catch(error => {
     return res.status(500).json({
       message: "ConnectionNotAccessible",
@@ -240,7 +240,7 @@ router.delete('/:id', function(req, res)
         IdLog: req.params.id,
       }
     }).then(response => {
-      return res.status(201).json({
+      return res.status(203).json({
         message: 'Connection deleted'
       });
     }).catch(error => {

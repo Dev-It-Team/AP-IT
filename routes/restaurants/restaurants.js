@@ -188,7 +188,7 @@ router.post('/', function(req, res)
     }
   }).then(function(restaurant) {
     if (restaurant) {
-      return res.status(401).json({
+      return res.status(403).json({
         message: 'DuplicateRestaurant'
       });
     }
@@ -258,7 +258,7 @@ router.put('/:IdRestaurant', function(req, res)
     }
   }).then(function(restaurant) {
     if (!restaurant) {
-      return res.status(401).json({
+      return res.status(403).json({
         message: 'RestaurantNotFound'
       });
     }
@@ -273,7 +273,7 @@ router.put('/:IdRestaurant', function(req, res)
         IdRestaurant: req.params.IdRestaurant
       }
     }).then(response => {
-      return res.status(201).json({
+      return res.status(202).json({
         message: 'Restaurants updated'
       });
     }).catch(error => {
@@ -324,7 +324,7 @@ router.delete('/:IdRestaurant', function(req, res)
     }
   }).then(function(restaurant) {
     if (!restaurant) {
-      return res.status(401).json({
+      return res.status(403).json({
         message: 'RestaurantNotFound'
       });
     }
@@ -334,7 +334,7 @@ router.delete('/:IdRestaurant', function(req, res)
         IdRestaurant: req.params.IdRestaurant
       }
     }).then(response => {
-      return res.status(201).json({
+      return res.status(203).json({
         message: 'Restaurants deleted'
       });
     }).catch(error => {

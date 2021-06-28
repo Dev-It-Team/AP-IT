@@ -137,7 +137,7 @@ router.post('/register', (req, res) => {
     // Missing Password or Email
     if (!req.body.Email || !req.body.Password) {
         return res.status(400).json({
-            message: 'EmailPasswordError. Please enter Email and Password'
+            message: 'EmailPasswordError'
         });
     }
 
@@ -148,7 +148,7 @@ router.post('/register', (req, res) => {
     }).then(function(user){
         if (user) {
             return res.status(403).json({
-                message: `DuplicateUser. User ${req.body.Email} already exists`
+                message: `DuplicateUser`
             });
         }
         Users.create({

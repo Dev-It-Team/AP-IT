@@ -66,7 +66,7 @@ startDownload();
 router.get('/', function(req, res) 
 {
   LogsDownload.findAll().then(function(logs) {
-    return res.status(201).json(logs);
+    return res.status(200).json(logs);
   }).catch(error => {
     return res.status(500).json({
       message: "DownloadsNotAccessible",
@@ -98,7 +98,7 @@ router.get('/:id', function(req, res)
       Component: req.params.IdComponent
     }
   }).then(function(logs) {
-    return res.status(201).json(logs);
+    return res.status(200).json(logs);
   }).catch(error => {
     return res.status(401).json({
       message: "DownloadLogNotFound",
@@ -172,7 +172,7 @@ router.delete('/:id', function(req, res)
         Component: req.params.IdComponent
       }
     }).then(response => {
-      return res.status(201).json({
+      return res.status(203).json({
         message: 'LogsDownload deleted'
       });
     }).catch(error => {

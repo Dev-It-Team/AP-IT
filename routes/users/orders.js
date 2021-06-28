@@ -221,15 +221,10 @@ router.post('/', function(req, res)
  * @apiDescription Was PutCommands in 1.0.0
  *
  * @apiParam {String} id  Unique id of the order.
- * @apiParam {Number} IdRestaurant  Unique id of the restaurant related to this order.
- * @apiParam {Number} IdUser  Unique id of the user related to this order.
  * @apiParam {Number} IdDeliveryDriver  Unique id of the delivery driver related to this order.
  * @apiParam {Date} StartDateTime  Start date time of the order.
  * @apiParam {Date} EndDateTime  End date time of the order.
- * @apiParam {Number} Price  Price of the order.
- * @apiParam {Array} Products List of products inside this order.
  * @apiParam {String} Status  Current order status.
- * @apiParam {Boolean} CouponUsed  Does a coupon was used?
  * 
  * @apiSuccess {String} message  Orders updated.
  *
@@ -248,16 +243,12 @@ router.put('/:id', function(req, res)
 
     Orders.updateOne({ _id : req.params.id}, 
     {
-      IdRestaurant : req.body.IdRestaurant,
       IdDeliveryDriver : req.body.IdDeliveryDriver,
       StartDateTime : req.body.StartDateTime,
       EndDateTime : req.body.EndDateTime,
-      Price : req.body.Price,
-      Products : req.body.Products,
       Status : req.body.Status,
-      CouponUsed: req.body.CouponUsed
     }).then((response) => {
-      return res.status(201).json({
+      return res.status(202).json({
         mesage: 'Orders updated'
       });
     }).catch((error) => {
@@ -316,7 +307,7 @@ router.delete('/:id', function(req, res)
       _id: req.params.id,
       IdUser: req.params.IdUser
     }).then((response) => {
-      return res.status(201).json({
+      return res.status(203).json({
         message: 'Orders deleted'
       });
     }).catch((error) => {
