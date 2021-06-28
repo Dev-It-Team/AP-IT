@@ -4,6 +4,7 @@ var sequelize = require('../../app.js').configDatabase;
 const entityName = "Restaurants";
 const { DataTypes } = require('sequelize');
 
+const Users = require('../users/schema_users');
 const Restaurants = sequelize.define(entityName, {
     IdRestaurant: {
         type: DataTypes.INTEGER,
@@ -12,7 +13,9 @@ const Restaurants = sequelize.define(entityName, {
     },
     IdUser: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: 'Users',
+        referencesKey: 'IdUser'
     },
     NameRestaurant: {
         type: DataTypes.STRING,
@@ -27,6 +30,11 @@ const Restaurants = sequelize.define(entityName, {
     createdAt: false,
     updatedAt: false,
 });
+
+Users.hasOne(Restaurants, {
+  onDelete: 'cascade'
+});
+Restaurants.belongsTo(Users);
 
 async function authentification()
 {
@@ -43,77 +51,6 @@ async function synchronisation()
     await Restaurants.sync();
   } catch(error) {
     console.error(entityName + " could not synchronize");
-  }
-}
-
-async function creation(body)
-{
-  try 
-  {
-    await Restaurants.create({
-      IdUser: body.IdUser,
-      Name: body.Name,
-      Banner: body.Banner,
-    });
-    return true;
-  } catch(error) {
-    return null;
-  }
-}
-
-async function update(body, idRestaurant)
-{
-  try 
-  {
-    await Restaurants.update({
-      IdUser: body.IdUser,
-      Name: body.Name,
-      Banner: body.Banner,
-    }, {
-      where: {
-        IdRestaurant: idRestaurant
-      }
-    });
-    return true;
-  } catch(error) {
-    return null;
-  }
-}
-
-async function deletion(idRestaurant)
-{
-  try 
-  {
-    await Restaurants.destroy({ 
-      where: {
-        IdRestaurant: idRestaurant
-    }});
-    return true;
-  } catch(error) {
-    return null;
-  }
-}
-
-async function getAll()
-{
-  try 
-  {
-      return await Restaurants.findAll();
-  } catch(error) {
-    return null;
-  }
-}
-
-async function getOne(idRestaurant)
-{
-  try 
-  {
-      return await Restaurants.findOne({ 
-        where: {
-          IdRestaurant: idRestaurant
-      }});
-  } catch(error) {
-    return null;
   }
 }
 
@@ -152,15 +89,15 @@ startConnection();
  *
  * @apiError RestaurantsNotAccessible The table is inaccessible due to server fault.
  */
-router.get('/', function(req, res, next) 
+router.get('/', function(req, res) 
 {
-    getAll()
-        .then((restaurants) => {
-            res.status(200).json(restaurants);
-        })
-        .catch(() => {
-            res.status(500).json({ message: "RestaurantsNotAccessible" });
-        });
+  Restaurants.findAll().then((restaurants) => {
+    return res.status(200).json(restaurants);
+  }).catch(error => {
+    return res.status(500).json({ 
+      message: "RestaurantsNotAccessible" 
+    });
+  });
 });
 
 
@@ -195,17 +132,19 @@ router.get('/', function(req, res, next)
  *
  * @apiError RestaurantNotFound The wanted restaurant cannot be found.
  */
-router.get('/:id', function(req, res) 
+router.get('/:IdRestaurant', function(req, res) 
 {
-    getOne(req.params.id)
-        .then((restaurant) => {
-            res.status(200).json(restaurant);
-        })
-        .catch(() => {
-            res.status(500).json({
-                message: "RestaurantNotFound"
-            });
-        });
+  Restaurants.findOne({
+    where: {
+      IdRestaurant: req.params.IdRestaurant
+    }
+  }).then(function(restaurant) {
+    return res.status(200).json(restaurant);
+  }).catch(error => {
+    return res.status(401).json({
+      message: 'RestaurantNotFound'
+    });
+  });
 });
 
 
@@ -231,7 +170,6 @@ router.get('/:id', function(req, res)
  * @apiName PostRestaurants
  * @apiGroup Restaurants
  * 
- * @apiParam {Number} IdRestaurant  Restaurant's unique id.
  * @apiParam {Number} IdUser  User's id related to this restaurant.
  * @apiParam {String} NameRestaurant  Name of this restaurant.
  * @apiParam {String} Banner  Pictures of the restaurant.
@@ -239,13 +177,41 @@ router.get('/:id', function(req, res)
  * @apiSuccess {String} message  Restaurants created.
  *
  * @apiError RestaurantNotCreated The restaurant was not created.
+ * @apiError DuplicateRestaurant Restaurant already created.
+ * @apiError DatabaseError Database issues.
  */
 router.post('/', function(req, res) 
 {
-  if (creation(req.body) !== null)
-    res.status(201).json({ message: entityName + "created" });
-  else 
-    res.status(401).json({ message: "RestaurantNotCreated" });
+  Restaurants.findOne({
+    where: {
+      IdUser: req.body.IdUser
+    }
+  }).then(function(restaurant) {
+    if (restaurant) {
+      return res.status(401).json({
+        message: 'DuplicateRestaurant'
+      });
+    }
+
+    Restaurants.create({
+      IdUser: req.body.IdUser,
+      NameRestaurant: req.body.NameRestaurant,
+      Banner: req.body.Banner
+    }).then(response => {
+      return res.status(201).json({
+        message: 'Restaurants created'
+      });
+    }).catch(error => {
+      return res.status(401).json({
+        message: 'RestaurantNotCreated',
+        stackTrace: error
+      });
+    });
+  }).catch(error => {
+    return res.status(500).json({
+      message: 'DatabaseError'
+    });
+  });
 });
 
 
@@ -281,13 +247,46 @@ router.post('/', function(req, res)
  * @apiSuccess {String} message  Restaurants updated.
  *
  * @apiError RestaurantNotUpdated The restaurant was not updated.
+ * @apiError RestaurantNotFound The restaurant was not found.
+ * @apiError DatabaseError Database issues.
  */
-router.put('/:id', function(req, res) 
+router.put('/:IdRestaurant', function(req, res) 
 {
-  if (update(req.body, req.params.id) !== null)
-    res.status(202).json({ message: entityName + "updated" });
-  else 
-    res.status(401).json({ message: "RestaurantNotUpdated" });
+  Restaurants.findOne({
+    where: {
+      IdRestaurant: req.params.IdRestaurant
+    }
+  }).then(function(restaurant) {
+    if (!restaurant) {
+      return res.status(401).json({
+        message: 'RestaurantNotFound'
+      });
+    }
+
+    Restaurants.update({
+      IdUser: req.body.IdUser,
+      NameRestaurant: req.body.NameRestaurant,
+      Banner: req.body.Banner
+    },
+    {
+      where: {
+        IdRestaurant: req.params.IdRestaurant
+      }
+    }).then(response => {
+      return res.status(201).json({
+        message: 'Restaurants updated'
+      });
+    }).catch(error => {
+      return res.status(401).json({
+        message: 'RestaurantNotUpdated',
+        stackTrace: error
+      });
+    });
+  }).catch(error => {
+    return res.status(500).json({
+      message: 'DatabaseError'
+    });
+  });
 });
 
 
@@ -314,18 +313,46 @@ router.put('/:id', function(req, res)
  * @apiSuccess {String} message  Restaurants deleted.
  *
  * @apiError RestaurantNotDeleted The restaurant was not deleted.
+ * @apiError RestaurantNotFound The restaurant was not found.
+ * @apiError DatabaseError Database issues.
  */
-router.delete('/:id', function(req, res)
+router.delete('/:IdRestaurant', function(req, res)
 {
-  if (deletion(req.params.id) !== null)
-    res.status(203).json({ message: entityName + " deleted" });
-  else 
-    res.status(401).json({ message: "RestaurantNotDeleted" });
+  Restaurants.findOne({
+    where: {
+      IdRestaurant: req.params.IdRestaurant
+    }
+  }).then(function(restaurant) {
+    if (!restaurant) {
+      return res.status(401).json({
+        message: 'RestaurantNotFound'
+      });
+    }
+
+    Restaurants.destroy({
+      where: {
+        IdRestaurant: req.params.IdRestaurant
+      }
+    }).then(response => {
+      return res.status(201).json({
+        message: 'Restaurants deleted'
+      });
+    }).catch(error => {
+      return res.status(401).json({
+        message: 'RestaurantNotDeleted',
+        stackTrace: error
+      });
+    });
+  }).catch(error => {
+    return res.status(500).json({
+      message: 'DatabaseError'
+    });
+  });
 });
 
 const productsRouter = require('./products');
 const menusRouter = require('./menus');
-router.use('/:idRestaurant/products', productsRouter);
-router.use('/:idRestaurant/menus', menusRouter);
+router.use('/:IdRestaurant/products', productsRouter);
+router.use('/:IdRestaurant/menus', menusRouter);
 
 module.exports = router;

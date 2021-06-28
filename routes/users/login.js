@@ -58,7 +58,7 @@ router.post('/', (req, res) => {
             expiresIn: '3 hours'
         });
 
-        return res.status(201).json({ access_token: token });
+        return res.status(200).json({ access_token: token });
     }).catch(error => {
         console.error(error);
     });

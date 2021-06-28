@@ -7,7 +7,7 @@ const { DataTypes } = require('sequelize');
 const LogsDownload = sequelize.define(entityName, {
   IdLog: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    autoIncrement: true,
     primaryKey: true
   },
   Date: {
@@ -15,11 +15,13 @@ const LogsDownload = sequelize.define(entityName, {
     allowNull: false
   },
   Component: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false
   },
 }, {
-    tableName: entityName
+    tableName: entityName,
+    createdAt: false,
+    updatedAt: false,
 });
 
 async function authentification()
@@ -34,78 +36,9 @@ async function authentification()
 async function synchronisation()
 {
   try {
-    await DownLoagLogs.sync();
+    await LogsDownload.sync();
   } catch(error) {
     console.error(entityName + " could not synchronize");
-  }
-}
-
-async function creation(body)
-{
-  try 
-  {
-    await LogsDownload.create({
-      Date: body.Date,
-      Component: body.Component
-    });
-    return true;
-  } catch(error) {
-    return null;
-  }
-}
-
-async function update(body, idLog)
-{
-  try 
-  {
-    await LogsDownload.update({
-      Date: body.Date,
-      Component: body.Component
-    }, {
-      where: {
-        IdLog: idLog
-      }
-    });
-    return true;
-  } catch(error) {
-    return null;
-  }
-}
-
-async function deletion(idLog)
-{
-  try 
-  {
-    await LogsDownload.destroy({ 
-      where: {
-        IdLog: idLog
-    }});
-    return true;
-  } catch(error) {
-    return null;
-  }
-}
-
-async function getAll()
-{
-  try 
-  {
-      return await LogsDownload.findAll();
-  } catch(error) {
-    return null;
-  }
-}
-
-async function getOne(idLog)
-{
-  try 
-  {
-      return await LogsDownload.findAll({ 
-        where: {
-          IdLog: idLog
-      }});
-  } catch(error) {
-    return null;
   }
 }
 
@@ -119,31 +52,32 @@ startDownload();
 
 
 /**
- * @api {get} /downloadLogs/ Request Download Logs information
+ * @api {get} /components/:IdComponent/logs Request Download Logs information
  * @apiVersion 1.1.0
  * @apiName GetDownloadLogs
  * @apiGroup LogsDownload
  *
  * @apiSuccess {Number} IdLog  Unique id of the log.
  * @apiSuccess {Date} Date  Date at which the log was issued.
- * @apiSuccess {Number} Component's id.
- * @apiSuccess {String} Description  Description of the log.
+ * @apiSuccess {Number} ComponentId Component's id.
  *
  * @apiError DownloadsNotAccessible The table is inaccessible due to server fault.
  */
 router.get('/', function(req, res) 
 {
-  const allDocs = getAll();
-
-  if (allDocs !== null)
-    res.status(200).json(allDocs);
-  else 
-    res.status(500).json({ message: "DownloadsNotAccessible" });
+  LogsDownload.findAll().then(function(logs) {
+    return res.status(201).json(logs);
+  }).catch(error => {
+    return res.status(500).json({
+      message: "DownloadsNotAccessible",
+      stackTrace: error
+    });
+  });
 });
 
 
 /**
- * @api {get} /downloadLogs/:id Request specific Download Logs information
+ * @api {get} /components/:IdComponent/downloadLogs/:id Request specific Download Logs information
  * @apiVersion 1.1.0
  * @apiName GetDownloadLogs
  * @apiGroup LogsDownload
@@ -152,30 +86,35 @@ router.get('/', function(req, res)
  * 
  * @apiSuccess {Number} IdLog  Unique id of the log.
  * @apiSuccess {Date} Date  Date at which the log was issued.
- * @apiSuccess {Number} Component's id.
- * @apiSuccess {String} Description  Description of the log.
+ * @apiSuccess {Number} IdComponent Component's id.
  *
- * @apiError DownloadNotFound The log was not found.
+ * @apiError DownloadLogNotFound The log was not found.
  */
 router.get('/:id', function(req, res) 
 {
-  const doc = getOne(req.params.id);
-
-  if (doc !== null)
-    res.status(200).json(doc);
-  else 
-    res.status(401).json({ message: "DownloadNotFound" });
+  LogsDownload.findOne({
+    where: {
+      IdLog: req.params.id,
+      Component: req.params.IdComponent
+    }
+  }).then(function(logs) {
+    return res.status(201).json(logs);
+  }).catch(error => {
+    return res.status(401).json({
+      message: "DownloadLogNotFound",
+      stackTrace: error
+    });
+  });
 });
 
 
 /**
- * @api {post} /downloadLogs/ Create Download Logs information
+ * @api {post} /components/:IdComponent/downloadLogs/ Create Download Logs information
  * @apiVersion 1.1.0
  * @apiName PostDownloadLogs
  * @apiGroup LogsDownload
  *
- * @apiParam {Number} Component's id.
- * @apiParam {String} Description  Description of the log.
+ * @apiParam {Number} IdComponent Component's id.
  * 
  * @apiSuccess {String} message  LogsDownload created.
  *
@@ -183,38 +122,24 @@ router.get('/:id', function(req, res)
  */
 router.post('/', function(req, res) 
 {
-  if (creation(req.body) !== null)
-    res.status(201).json({ message: entityName + "created" });
-  else 
-    res.status(401).json({ message: "DownloadNotCreated" });
+  LogsDownload.create({
+    Date: Date.now(),
+    Component: req.params.IdComponent
+  }).then(response => {
+    return res.status(201).json({
+      message: 'LogsDownload created'
+    });
+  }).catch(error => {
+    return res.status(401).json({
+      message: 'DownloadNotCreated',
+      stackTrace: error
+    });
+  });
 });
 
 
 /**
- * @api {put} /downloadLogs/:id Update Download Logs information
- * @apiVersion 1.1.0
- * @apiName PutDownloadLogs
- * @apiGroup LogsDownload
- *
- * @apiParam {Number} IdLog  Unique id of the log.
- * @apiParam {Number} Component's id.
- * @apiParam {String} Description  Description of the log.
- * 
- * @apiSuccess {String} message  LogsDownload updated.
- *
- * @apiError DownloadNotUpdated The log was not updated.
- */
-router.put('/:id', function(req, res) 
-{
-  if (update(req.body, req.params.id) !== null)
-    res.status(202).json({ message: entityName + "updated" });
-  else 
-    res.status(401).json({ message: "DownloadNotUpdated" });
-});
-
-
-/**
- * @api {delete} /downloadLogs/:id Delete Download Logs information
+ * @api {delete} /components/:IdComponent/downloadLogs/:id Delete Download Logs information
  * @apiVersion 1.1.0
  * @apiName DeleteDownloadLogs
  * @apiGroup LogsDownload
@@ -224,13 +149,44 @@ router.put('/:id', function(req, res)
  * @apiSuccess {String} message  LogsDownload deleted.
  *
  * @apiError DownloadNotDeleted The log was not deleted.
+ * @apiError LogsNotExisting The log does not exists.
+ * @apiError DatabaseError Database issues.
  */
 router.delete('/:id', function(req, res)
 {
-  if (deletion(req.params.id) !== null)
-    res.status(203).json({ message: entityName + "deleted" });
-  else 
-    res.status(401).json({ message: "DownloadNotDeleted" });
+  LogsDownload.findOne({
+    where: {
+      IdLog: req.params.id,
+      Component: req.params.IdComponent
+    }
+  }).then(function(log) {
+    if (!log) {
+      return res.status(403).json({
+        message: 'LogsNotExisting'
+      });
+    }
+
+    LogsDownload.destroy({
+      where: {
+        IdLog: req.params.id,
+        Component: req.params.IdComponent
+      }
+    }).then(response => {
+      return res.status(201).json({
+        message: 'LogsDownload deleted'
+      });
+    }).catch(error => {
+      return res.status(401).json({
+        message: 'DownloadNotDeleted',
+        stackTrace: error
+      });
+    });
+  }).catch(error => {
+    return res.status(500).json({
+      message: 'DatabaseError',
+      stackTrace: error
+    });
+  });
 });
 
 module.exports = router;

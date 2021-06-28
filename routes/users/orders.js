@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 const orderSchema = new Schema({
-    IdOrder : Number,
     IdRestaurant: Number,
     IdUser: Number,
     IdDeliveryDriver: Number,
@@ -37,14 +36,14 @@ const Orders = mongoose.model('Orders', orderSchema);
  * @apiError CommandsNotAccessible The model is inaccessible due to server fault.
  */
 /**
- * @api {get} /orders/ Request Orders information
+ * @api {get} /users/:IdUser/orders/ Request Orders information
  * @apiVersion 1.1.0
  * @apiName GetOrders
  * @apiGroup Orders
  * 
  * @apiDescription Was GetCommands in 1.0.0
  *
- * @apiSuccess {Number} IdOrder  Unique id of the order.
+ * @apiSuccess {String} _id  Unique id of the order.
  * @apiSuccess {Number} IdRestaurant  Unique id of the restaurant related to this order.
  * @apiSuccess {Number} IdUser  Unique id of the user related to this order.
  * @apiSuccess {Number} IdDeliveryDriver  Unique id of the delivery driver related to this order.
@@ -59,9 +58,9 @@ const Orders = mongoose.model('Orders', orderSchema);
  */
 router.get('/', function(req, res) 
 {
-    Orders.find({}, function (err, docs) 
+    Orders.find(function (err, docs) 
     {
-      if (err || docs.length == 0)
+      if (err)
         res.status(500).json({ message: "OrdersNotAccessible" });
       else
         res.status(200).json(docs);
@@ -90,16 +89,16 @@ router.get('/', function(req, res)
  * @apiError CommandNotFound The order was not found.
  */
 /**
- * @api {get} /orders/:id Request specific Orders information
+ * @api {get} /users/:IdUser/orders/:id Request specific Orders information
  * @apiVersion 1.1.0
  * @apiName GetOrder
  * @apiGroup Orders
  * 
  * @apiDescription Was GetCommand in 1.0.0
  *
- * @apiParam {Number} id  Unique id of the order.
+ * @apiParam {String} id  Unique id of the order.
  * 
- * @apiSuccess {Number} id  Unique id of the order.
+ * @apiSuccess {String} _id  Unique id of the order.
  * @apiSuccess {Number} IdRestaurant  Unique id of the restaurant related to this order.
  * @apiSuccess {Number} IdUser  Unique id of the user related to this order.
  * @apiSuccess {Number} IdDeliveryDriver  Unique id of the delivery driver related to this order.
@@ -110,14 +109,17 @@ router.get('/', function(req, res)
  * @apiSuccess {String} Status  Current order status.
  * @apiSuccess {Boolean} CouponUsed  Does a coupon was used?
  *
- * @apiError CommandNotFound The order was not found.
+ * @apiError OrderNotFound The order was not found.
  */
 router.get('/:id', function(req, res) 
 {
-    Orders.find({ IdOrder : req.params.id }, function (err, docs) 
+    Orders.find({ 
+      _id : req.params.id,
+      IdUser: req.params.IdUser
+     }, function (err, docs) 
     {
-      if (err || docs.length == 0)
-        res.status(401).json({ message: "CommandNotFound" });
+      if (err)
+        res.status(401).json({ message: "OrderNotFound" });
       else
         res.status(200).json(docs);
     });
@@ -144,7 +146,7 @@ router.get('/:id', function(req, res)
  * @apiError CommandsNotCreated The order can not be created.
  */
 /**
- * @api {post} /orders/ Create Orders information
+ * @api {post} /users/:IdUser/orders/ Create Orders information
  * @apiVersion 1.1.0
  * @apiName PostOrders
  * @apiGroup Orders
@@ -167,25 +169,25 @@ router.get('/:id', function(req, res)
  */
 router.post('/', function(req, res) 
 {
-    const newCommand = new Orders();
-
-    newCommand.IdOrder = req.body.id;
-    newCommand.IdRestaurant = req.body.IdRestaurant;
-    newCommand.IdUser = req.body.IdUser;
-    newCommand.IdDeliveryDriver = req.body.IdDeliveryDriver;
-    newCommand.StartDateTime = req.body.StartDateTime;
-    newCommand.EndDateTime = req.body.EndDateTime;
-    newCommand.Price = req.body.Price;
-    newCommand.Products = req.body.Products;
-    newCommand.Status = req.body.Status;
-    newCommand.CouponUsed = req.body.CouponUsed;
-
-    newCommand.save(function (err, docs) 
-    {
-      if (err)
-        res.status(401).json({ message: "OrdersNotCreated" });
-      else
-        res.status(201).json({ message: "Orders created" });
+    Orders.create({
+      IdRestaurant: req.body.IdRestaurant,
+      IdUser: req.params.IdUser,
+      IdDeliveryDriver: req.body.IdDeliveryDriver,
+      StartDateTime: req.body.StartDateTime,
+      EndDateTime: req.body.EndDateTime,
+      Price: req.body.Price,
+      Products: req.body.Products,
+      Status: req.body.Status,
+      CouponUsed: req.body.CouponUsed,
+    }).then((response) => {
+      return res.status(201).json({
+        message: 'Order created'
+      });
+    }).catch((error) => {
+      return res.status(401).json({
+        message: 'OrdersNotCreated',
+        stackTrace: error
+      });
     });
 });
 
@@ -211,14 +213,14 @@ router.post('/', function(req, res)
  * @apiError CommandsNotUpdated The order can not be updated.
  */
 /**
- * @api {put} /orders/:id Update Orders information
+ * @api {put} /users/:IdUser/orders/:id Update Orders information
  * @apiVersion 1.1.0
  * @apiName PutOrders
  * @apiGroup Orders
  * 
  * @apiDescription Was PutCommands in 1.0.0
  *
- * @apiParam {Number} id  Unique id of the order.
+ * @apiParam {String} id  Unique id of the order.
  * @apiParam {Number} IdRestaurant  Unique id of the restaurant related to this order.
  * @apiParam {Number} IdUser  Unique id of the user related to this order.
  * @apiParam {Number} IdDeliveryDriver  Unique id of the delivery driver related to this order.
@@ -232,28 +234,44 @@ router.post('/', function(req, res)
  * @apiSuccess {String} message  Orders updated.
  *
  * @apiError OrdersNotUpdated The order can not be updated.
+ * @apiError OrderNotExisting The order does not exists.
+ * @apiError DatabaseError Database issues.
  */
 router.put('/:id', function(req, res) 
 {
-    Orders.updateOne({ IdOrder : req.params.id}, 
+  Orders.findById(req.params.id).then(function(order) {
+    if (!order) {
+      return res.status(403).json({
+        message: 'OrderNotExisting'
+      });
+    }
+
+    Orders.updateOne({ _id : req.params.id}, 
     {
       IdRestaurant : req.body.IdRestaurant,
-      IdUser : req.body.IdUser,
       IdDeliveryDriver : req.body.IdDeliveryDriver,
       StartDateTime : req.body.StartDateTime,
       EndDateTime : req.body.EndDateTime,
       Price : req.body.Price,
-      Products : req.body.products,
+      Products : req.body.Products,
       Status : req.body.Status,
       CouponUsed: req.body.CouponUsed
-    },
-    function (err, docs) 
-    {
-      if (err)
-        res.status(401).json({ message: "OrdersNotUpdated" });
-      else
-        res.status(202).json({ message: "Orders updated" });
+    }).then((response) => {
+      return res.status(201).json({
+        mesage: 'Orders updated'
+      });
+    }).catch((error) => {
+      return res.status(401).json({
+        message: 'OrdersNotUpdated',
+        stackTrace: error
+      });
     });
+  }).catch((error) => {
+    return res.status(500).json({
+      message: 'DatabaseError',
+      stackTrace: error
+    })
+  })
 });
 
 
@@ -270,28 +288,49 @@ router.put('/:id', function(req, res)
  * @apiError CommandsNotDeleted The order can not be deleted.
  */
 /**
- * @api {delete} /orders/:id Delete Orders information
+ * @api {delete} /users/:IdUser/orders/:id Delete Orders information
  * @apiVersion 1.1.0
  * @apiName DeleteOrders
  * @apiGroup Orders
  * 
  * @apiDescription Was DeleteCommands in 1.0.0
  *
- * @apiParam {Number} id  Unique id of the order.
+ * @apiParam {String} id  Unique id of the order.
  * 
  * @apiSuccess {String} message  Orders deleted.
  *
  * @apiError OrdersNotDeleted The order can not be deleted.
+ * @apiError OrderNotExisting The order is not found.
+ * @apiError DatabaseError Database issues.
  */
 router.delete('/:id', function(req, res)
 {
-    Orders.deleteOne({ IdOrder : req.params.id }, function (err, docs) 
-    {
-      if (err)
-        res.status(401).json({ message: "OrdersNotDeleted" });
-      else
-        res.status(203).json({ message: "Orders deleted" });
+  Orders.findById(req.params.id).then(order => {
+    if (!order) {
+      return res.status(403).json({
+        message: 'OrderNotExisting'
+      });
+    }
+
+    Orders.deleteOne({ 
+      _id: req.params.id,
+      IdUser: req.params.IdUser
+    }).then((response) => {
+      return res.status(201).json({
+        message: 'Orders deleted'
+      });
+    }).catch((error) => {
+      return res.status(401).json({
+        message: 'OrdersNotDeleted',
+        stackTrace: error
+      });
     });
+  }).catch((error) => {
+    return res.status(500).json({
+      message: 'DatabaseError',
+      stackTrace: error
+    })
+  })
 });
 
 module.exports = router;

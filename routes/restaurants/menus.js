@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 const menuSchema = new Schema({
-    IdMenu : Number,
     IdRestaurant: Number,
     Name: String,
     Description: String,
@@ -45,7 +44,7 @@ const Menu = mongoose.model('Menu', menuSchema);
  * 
  * @apiDescription Returns an array of menus.
  * 
- * @apiSuccess {Number} IdMenu  Menu's unique id.
+ * @apiSuccess {Number} _id  Menu's unique id.
  * @apiSuccess {Number} IdRestaurant  Restaurant's id related to this menu.
  * @apiSuccess {String} Name  Name of this menu.
  * @apiSuccess {String} Description  Menu's description.
@@ -59,7 +58,9 @@ const Menu = mongoose.model('Menu', menuSchema);
  */
 router.get('/', function(req, res) 
 {
-    Menu.find({}, function (err, docs) 
+    Menu.find({
+      IdRestaurant: req.params.IdRestaurant
+    }, function (err, docs) 
     {
       if (err)
         res.status(500).json({ message: "MenusNotAccessible" });  
@@ -95,9 +96,9 @@ router.get('/', function(req, res)
  * @apiName GetMenu
  * @apiGroup Menus
  * 
- * @apiParam {Number} id  Menu's unique id.
+ * @apiParam {Number} IdMenu  Menu's unique id.
  * 
- * @apiSuccess {Number} IdMenu  Menu's unique id.
+ * @apiSuccess {Number} _id  Menu's unique id.
  * @apiSuccess {Number} IdRestaurant  Restaurant's id related to this menu.
  * @apiSuccess {String} Name  Name of this menu.
  * @apiSuccess {String} Description  Menu's description.
@@ -109,9 +110,12 @@ router.get('/', function(req, res)
  *
  * @apiError MenuNotFound The wanted menu was not found.
  */
-router.get('/:id', function(req, res) 
+router.get('/:IdMenu', function(req, res) 
 {
-    Menu.find({ IdMenu : req.params.id }, function (err, docs) 
+    Menu.findOne({ 
+      _id : req.params.IdMenu,
+      IdRestaurant: req.params.IdRestaurant
+    }, function (err, docs) 
     {
       if (err)
         res.status(401).json({ message: "MenuNotFound" });
@@ -154,39 +158,36 @@ router.get('/:id', function(req, res)
  * @apiParam {Array} Products  List of products inside this menu.
  * @apiParam {Array} Picture List of pictures for this menu.
  * @apiParam {Number} Price  Menu's price.
- * @apiParam {Number} Notes  Total of every notes on this menu.
- * @apiParam {Number} VoteNb Number of notes for this menu.
  * 
  * @apiSuccess {String} message  Menus added.
  *
  * @apiError MenuNotCreated The menu cannot be created.
- * @apiError MenuAlreadyExists The menu created already exists.
+ * @apiError DuplicateMenu The menu created already exists.
  * @apiError DatabaseError Database issues.
  */
 router.post('/', function(req, res) 
 {
-  Menu.findOne({
+  Menu.find({
     where: {
-      IdRestaurant: req.body.IdRestaurant,
+      IdRestaurant: req.params.IdRestaurant,
       Name: req.body.Name
     }
   }).then(function(menu) {
     if (menu) {
       return res.status(403).json({ 
-        message: "MenuAlreadyExists",
-        stackTrace: error 
+        message: "DuplicateMenu"
       });
     }
 
     Menu.create({
-      IdRestaurant: req.body.IdRestaurant,
+      IdRestaurant: req.params.IdRestaurant,
       Name: req.body.Name,
       Description: req.body.Description,
       Products: req.body.Products,
       Picture: req.body.Picture,
       Price: req.body.Price,
-      Notes: req.body.Notes,
-      VoteNb: req.body.VoteNb
+      Notes: 0,
+      VoteNb: 0
     }).then((response) => {
       return res.status(201).json({ message: "Menus added" });
     }).catch((error) => {
@@ -230,7 +231,7 @@ router.post('/', function(req, res)
  * @apiName PutMenus
  * @apiGroup Menus
  * 
- * @apiParam {Number} id  Menu's unique id.
+ * @apiParam {String} IdMenu  Menu's unique id.
  * @apiParam {Number} IdRestaurant  Restaurant's id related to this menu.
  * @apiParam {String} Name  Name of this menu.
  * @apiParam {String} Description  Menu's description.
@@ -246,22 +247,18 @@ router.post('/', function(req, res)
  * @apiError MenuNotExisting The menu wanted is not existing.
  * @apiError DatabaseError Database issues.
  */
-router.put('/:id', function(req, res) 
+router.put('/:IdMenu', function(req, res) 
 {
-  Menu.findOne({
-    where: {
-      IdMenu: req.body.id
-    }
-  }).then(function(menu) {
+  Menu.findById(req.params.IdMenu).then(function(menu) {
     if (!menu) {
       return res.status(403).json({
         message: 'MenuNotExisting'
       })
     }
 
-    Menu.updateOne({ IdMenu : req.params.id}, 
+    Menu.updateOne({ _id : req.params.IdMenu}, 
     {
-      IdRestaurant : req.body.IdRestaurant,
+      IdRestaurant : req.params.IdRestaurant,
       Name : req.body.Name,
       Description : req.body.Description,
       Products : req.body.Products,
@@ -305,7 +302,7 @@ router.put('/:id', function(req, res)
  * @apiName DeleteMenus
  * @apiGroup Menus
  * 
- * @apiParam {Number} id  Menu's unique id.
+ * @apiParam {String} IdMenu  Menu's unique id.
  * 
  * @apiSuccess {String} message  Menus deleted.
  *
@@ -313,20 +310,18 @@ router.put('/:id', function(req, res)
  * @apiError MenuNotExisting The menu wanted does not exists.
  * @apiError DatabaseError Database issues.
  */
-router.delete('/:id', function(req, res)
+router.delete('/:IdMenu', function(req, res)
 {
-  Menu.findOne({
-    where: {
-      IdMenu: req.params.id
-    }
-  }).then(function(menu) {
+  Menu.findById(req.params.IdMenu).then(function(menu) {
     if (!menu) {
       return res.status(403).json({
         message: 'MenuNotExisting'
       })
     }
   
-    Menu.deleteOne({ IdMenu : req.params.id }).then((response) => {
+    Menu.deleteOne({ 
+      _id : req.params.IdMenu 
+    }).then((response) => {
       return res.status(203).json({ message: "Menus deleted" });
     }).catch((error) => {
       return res.status(401).json({

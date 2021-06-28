@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 const componentScheam = new Schema({
-    IdComponent : Number,
     Name: String,
     Description: String,
     Link: String,
@@ -33,7 +32,7 @@ const Components = mongoose.model('Components', componentScheam);
  * @apiName GetComponents
  * @apiGroup Component
  *
- * @apiSuccess {Number} IdComponent id of the component.
+ * @apiSuccess {String} IdComponent id of the component.
  * @apiSuccess {String} Name  Name of the component.
  * @apiSuccess {String} Description Description of the component.
  * @apiSuccess {String} Link  Link of the component.
@@ -44,7 +43,7 @@ const Components = mongoose.model('Components', componentScheam);
  */
 router.get('/', function(req, res) 
 {
-    Components.find({}, function (err, docs) 
+    Components.find(function (err, docs) 
     {
       if (err)
         res.status(500).json({ message: "ComponentNotAccessible" });
@@ -76,9 +75,9 @@ router.get('/', function(req, res)
  * @apiName GetComponent
  * @apiGroup Component
  *
- * @apiParam {Number} id Component unique ID.
+ * @apiParam {String} id Component unique ID.
  *
- * @apiSuccess {Number} IdComponent id of the component.
+ * @apiSuccess {String} IdComponent id of the component.
  * @apiSuccess {String} Name  Name of the component.
  * @apiSuccess {String} Description Description of the component.
  * @apiSuccess {String} Link  Link of the component.
@@ -86,11 +85,11 @@ router.get('/', function(req, res)
  *
  * @apiError ComponentNotFound The component was not found.
  */
-router.get('/:id', function(req, res) 
+router.get('/:IdComponent', function(req, res) 
 {
-    Components.find({ IdComponent : req.params.id }, function (err, docs) 
+    Components.findById(req.params.IdComponent, function (err, docs) 
     {
-      if (err || docs.length == 0)
+      if (err)
         res.status(401).json({ message: "ComponentNotFound" });
       else
         res.status(200).json(docs);
@@ -124,26 +123,46 @@ router.get('/:id', function(req, res)
  * @apiParam {String} Link  Link of the component.
  * @apiParam {Array} Files  Files inside this component.
  * 
- * @apiSuccess {String} message  Components created.
+ * @apiSuccess {String} message  Component created.
  *
  * @apiError ComponentNotCreated The component cannot be created.
+ * @apiError DuplicateComponent Already existinc component.
+ * @apiError DatabaseError Database issues.
  */
 router.post('/', function(req, res) 
 {
-    const newComponent = new Components();
+  Components.findOne({
+    where: {
+      Name: req.body.Name
+    }
+  }).then(function(component) {
+    if (component) {
+      return res.status(403).json({
+        message: 'DuplicateComponent'
+      });
+    }
 
-    newComponent.Name = req.body.Name;
-    newComponent.Description = req.body.Description;
-    newComponent.Link = req.body.Link;
-    newComponent.Files = req.body.Files;
-
-    newComponent.save(function (err, docs) 
-    {
-      if (err)
-        res.status(401).json({ message: "ComponentNotCreated" });
-      else
-        res.status(201).json({ message: "Components created" });
+    Components.create({
+      Name: req.body.Name,
+      Description: req.body.Description,
+      Link: req.body.Link,
+      Files: req.body.Files
+    }).then((response) => {
+      return res.status(201).json({
+        message: 'Component created'
+      });
+    }).catch((error) => {
+      return res.status(401).json({
+        message: 'ComponentNotCreated',
+        stackTrace: error
+      });
     });
+  }).catch((error) => {
+    return res.status(500).json({
+      message: 'DatabaseError',
+      stackTrace: error
+    })
+  });
 });
 
 
@@ -170,7 +189,7 @@ router.post('/', function(req, res)
  * @apiName PutComponent
  * @apiGroup Component
  *
- * @apiParam {Number} id id of the component.
+ * @apiParam {String} IdComponent id of the component.
  * 
  * @apiParam {String} Name  Name of the component.
  * @apiParam {String} Description Description of the component.
@@ -180,23 +199,40 @@ router.post('/', function(req, res)
  * @apiSuccess {String} message  Components updated.
  *
  * @apiError ComponentNotUpdated The component cannot be updated.
+ * @apiError ComponentNotExisting The component does not exists.
+ * @apiError DatabaseError Database issues.
  */
-router.put('/:id', function(req, res) 
+router.put('/:IdComponent', function(req, res) 
 {
-    Components.updateOne({ IdComponent : req.params.id}, 
+  Components.findById(req.params.IdComponent).then(function(component) {
+    if (!component) {
+      return res.status(403).json({
+        message: 'ComponentNotExisting'
+      });
+    }
+
+    Components.updateOne({ _id : req.params.IdComponent}, 
     {
       Name : req.body.Name,
       Description : req.body.Description,
       Link : req.body.Link,
       Files : req.body.Files
-    },
-    function (err, docs) 
-    {
-      if (err)
-        res.status(401).json({ message: "ComponentNotUpdated" });
-      else
-        res.status(202).json({ message: "Components updated" });
+    }).then((response) => {
+      return res.status(201).json({
+        message: 'Component updated'
+      });
+    }).catch((error) => {
+      return res.status(401).json({
+        message: 'ComponentNotUpdated',
+        stackTrace: error
+      });
     });
+  }).catch((error) => {
+    return res.status(500).json({
+      message: 'DatabaseError',
+      stackTrace: error
+    });
+  });
 });
 
 
@@ -218,24 +254,42 @@ router.put('/:id', function(req, res)
  * @apiName DeletedComponent
  * @apiGroup Component
  *
- * @apiParam {Number} id id of the component.
+ * @apiParam {String} IdComponent id of the component.
  * 
  * @apiSuccess {String} message  Components deleted.
  *
  * @apiError ComponentNotDeleted The component cannot be deleted.
+ * @apiError ComponentNotExisting The component does not exists.
+ * @apiError DatabaseError Database issues.
  */
-router.delete('/:id', function(req, res)
+router.delete('/:IdComponent', function(req, res)
 {
-    Components.deleteOne({ IdComponent : req.params.id }, function (err, docs) 
-    {
-      if (err)
-        res.status(401).json({ message: "ComponentNotDeleted" });
-      else
-        res.status(203).json({ message: "Components deleted" });
+  Components.findById(req.params.IdComponent).then(component => {
+    if (!component) {
+      return res.status(403).json({
+        message: 'ComponentNotExisting'
+      });
+    }
+
+    Components.deleteOne({ _id : req.params.IdComponent }).then((response) => {
+      return res.status(201).json({
+        message: 'Component deleted'
+      });
+    }).catch((error) => {
+      return res.status(401).json({
+        message: 'ComponentNotDeleted',
+        stackTrace: error
+      });
     });
+  }).catch(error => {
+    return res.status(500).json({
+      message: 'DatabaseError',
+      stackTrace: error
+    });
+  });
 });
 
 const logsDownloadRouter = require('./logsDownload');
-router.use('/:componentId/logs', logsDownloadRouter);
+router.use('/:IdComponent/logs', logsDownloadRouter);
 
 module.exports = router;
