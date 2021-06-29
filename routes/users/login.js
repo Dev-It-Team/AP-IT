@@ -3,6 +3,7 @@ var router = express.Router();
 const Users = require('./schema_users');
 const { extractBearerToken, checkTokenMiddleware } = require('../../jwtMiddleware');
 const jwt = require('jsonwebtoken');
+var sequelize = require('../../app.js').configDatabase;
 
 /**
  * @api {post} /login/ Create Users information
@@ -145,12 +146,22 @@ router.post('/register', (req, res) => {
         where: {
             Email: req.body.Email
         }
-    }).then(function(user){
+    }).then(async(user) => {
         if (user) {
             return res.status(403).json({
                 message: `DuplicateUser`
             });
         }
+
+        let patronageNb = 0;
+        // Add one to referrer user patronages counter
+        await Users.increment(
+            { PatronageNb: 1 },
+            { where: { PatronageCode: req.body.PatronageCode } }
+        ).then((user) => {
+            if (user) patronageNb++;
+        }).catch();
+
         Users.create({
             Name: req.body.Name,
             FirstName: req.body.FirstName,
@@ -161,7 +172,7 @@ router.post('/register', (req, res) => {
             InscriptionDate: new Date(), //today
             UserFlag: req.body.UserFlag,
             PatronageCode: Date.now() + Math.random().toString(36).substr(2, 9), //unique code based on timestamp
-            PatronageNb: 0,
+            PatronageNb: patronageNb,
         }).then((response) => {
             return res.status(201).json({
                 message: `User created`
