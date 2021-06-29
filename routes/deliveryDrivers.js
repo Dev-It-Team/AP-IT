@@ -4,15 +4,18 @@ var sequelize = require('../app.js').configDatabase;
 const entityName = "DeliveryDrivers";
 const { DataTypes } = require('sequelize');
 
+const Users = require('./users/schema_users');
 const DeliveryDrivers = sequelize.define(entityName, {
   IdDeliveryDriver: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    autoIncrement: true,
     primaryKey: true
   },
   IdUser: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: false,
+    references: 'Users',
+    referencesKey: 'IdUser'
   },
   VehiculeType: {
     type: DataTypes.STRING,
@@ -29,8 +32,15 @@ const DeliveryDrivers = sequelize.define(entityName, {
     defaultValue: 0
   },
 }, {
-    tableName: entityName
+    tableName: entityName,
+    createdAt: false,
+    updatedAt: false,
 });
+
+Users.hasOne(DeliveryDrivers, {
+  onDelete: 'cascade'
+});
+DeliveryDrivers.belongsTo(Users);
 
 async function authentification()
 {
@@ -47,79 +57,6 @@ async function synchronisation()
     await DeliveryDrivers.sync();
   } catch(error) {
     console.error(entityName + " could not synchronize");
-  }
-}
-
-async function creation(body)
-{
-  try 
-  {
-    await DeliveryDrivers.create({
-      IdUser: body.IdUser,
-      VehiculeType: body.VehiculeType,
-      Note: body.Note,
-      VoteNb: body.VoteNb,
-    });
-    return true;
-  } catch(error) {
-    return null;
-  }
-}
-
-async function update(body, idDeliveryDriver)
-{
-  try 
-  {
-    await DeliveryDrivers.update({
-      IdUser: body.IdUser,
-      VehiculeType: body.VehiculeType,
-      Note: body.Note,
-      VoteNb: body.VoteNb,
-    }, {
-      where: {
-        IdDeliveryDriver: idDeliveryDriver
-      }
-    });
-    return true;
-  } catch(error) {
-    return null;
-  }
-}
-
-async function deletion(idDeliveryDriver)
-{
-  try 
-  {
-    await DeliveryDrivers.destroy({ 
-      where: {
-        IdDeliveryDriver: idDeliveryDriver
-    }});
-    return true;
-  } catch(error) {
-    return null;
-  }
-}
-
-async function getAll()
-{
-  try 
-  {
-      return await DeliveryDrivers.findAll();
-  } catch(error) {
-    return null;
-  }
-}
-
-async function getOne(idDeliveryDriver)
-{
-  try 
-  {
-      return await DeliveryDrivers.findAll({ 
-        where: {
-          IdDeliveryDriver: idDeliveryDriver
-      }});
-  } catch(error) {
-    return null;
   }
 }
 
@@ -163,12 +100,13 @@ startConnection();
  */
 router.get('/', function(req, res) 
 {
-  const allDocs = getAll();
-
-  if (allDocs !== null || allDocs.length == 0)
-    res.status(200).json(allDocs);
-  else 
-    res.status(500).json({ message: "DeliveryDriversNotAccessible" });
+  DeliveryDrivers.findAll().then((delivers) => {
+    return res.status(200).json(delivers);
+  }).catch(error => {
+    return res.status(500).json({ 
+      message: "DeliveryDriversNotAccessible" 
+    });
+  });
 });
 
 
@@ -205,14 +143,19 @@ router.get('/', function(req, res)
  *
  * @apiError DeliveryDriverNotFound The delivery driver wanted was not found.
  */
-router.get('/:id', function(req, res) 
+router.get('/:IdDeliveryDriver', function(req, res) 
 {
-  const doc = getOne(req.params.id);
-
-  if (doc !== null || doc.length == 0)
-    res.status(200).json(doc);
-  else 
-    res.status(401).json({ message: "DeliveryDriverNotFound" });
+  DeliveryDrivers.findOne({
+    where: {
+      IdDeliveryDriver: req.params.IdDeliveryDriver
+    }
+  }).then(function(delivers) {
+    return res.status(200).json(delivers);
+  }).catch(error => {
+    return res.status(401).json({
+      message: 'DeliveryDriverNotFound'
+    });
+  });
 });
 
 
@@ -246,13 +189,42 @@ router.get('/:id', function(req, res)
  * @apiSuccess {String} message  Delivery Driver created.
  *
  * @apiError DeliveryDriverNotCreated The delivery driver was not created.
+ * @apiError DuplicateDeliveryDriver The delivery driver is already created.
+ * @apiError DatabaseError Database issues.
  */
 router.post('/', function(req, res) 
 {
-  if (creation(req.body) !== null)
-    res.status(201).json({ message: entityName + " created" });
-  else 
-    res.status(401).json({ message: "DeliveryDriverNotCreated" });
+  DeliveryDrivers.findOne({
+    where: {
+      IdUser: req.body.IdUser
+    }
+  }).then(function(delivers) {
+    if (delivers) {
+      return res.status(401).json({
+        message: 'DuplicateDeliveryDriver'
+      });
+    }
+
+    DeliveryDrivers.create({
+      IdUser: req.body.IdUser,
+      VehiculeType: req.body.VehiculeType,
+      Note: 0,
+      VoteNb: 0
+    }).then(response => {
+      return res.status(201).json({
+        message: 'DeliveryDriver created'
+      });
+    }).catch(error => {
+      return res.status(401).json({
+        message: 'DeliveryDriverNotCreated',
+        stackTrace: error
+      });
+    });
+  }).catch(error => {
+    return res.status(500).json({
+      message: 'DatabaseError'
+    });
+  });
 });
 
 
@@ -280,7 +252,7 @@ router.post('/', function(req, res)
  * @apiName PutDeliveryDriver
  * @apiGroup DeliveryDrivers
  *
- * @apiParam {Number} id  Unique id of the delivery driver.
+ * @apiParam {Number} IdDeliveryDriver  Unique id of the delivery driver.
  * 
  * @apiParam {Number} IdUser  Unique id of the user related to this delivery driver.
  * @apiParam {String} VehiculeType  Type of vehicule used.
@@ -290,13 +262,47 @@ router.post('/', function(req, res)
  * @apiSuccess {String} message  Delivery Drivers updated.
  *
  * @apiError DeliveryDriverNotUpdated The delivery driver was not updated.
+ * @apiError DeliveryDriverNotFound The delivery driver does not exists.
+ * @apiError DatabaseError Database issues.
  */
-router.put('/:id', function(req, res) 
+router.put('/:IdDeliveryDriver', function(req, res) 
 {
-  if (update(req.body, req.params.id) !== null)
-    res.status(202).json({ message: entityName + "updated" });
-  else 
-    res.status(401).json({ message: "DeliveryDriverNotUpdated" });
+  DeliveryDrivers.findOne({
+    where: {
+      IdDeliveryDriver: req.params.IdDeliveryDriver
+    }
+  }).then(function(delivers) {
+    if (!delivers) {
+      return res.status(401).json({
+        message: 'DeliveryDriverNotFound'
+      });
+    }
+
+    DeliveryDrivers.update({
+      IdUser: req.body.IdUser,
+      VehiculeType: req.body.VehiculeType,
+      Note: req.body.Note,
+      VoteNb: req.body.VoteNb
+    },
+    {
+      where: {
+        IdDeliveryDriver: req.params.IdDeliveryDriver
+      }
+    }).then(response => {
+      return res.status(202).json({
+        message: 'DeliveryDriver updated'
+      });
+    }).catch(error => {
+      return res.status(401).json({
+        message: 'DeliveryDriverNotUpdated',
+        stackTrace: error
+      });
+    });
+  }).catch(error => {
+    return res.status(500).json({
+      message: 'DatabaseError'
+    });
+  });
 });
 
 
@@ -318,18 +324,44 @@ router.put('/:id', function(req, res)
  * @apiName DeleteDeliveryDriver
  * @apiGroup DeliveryDrivers
  *
- * @apiParam {Number} id  Unique id of the delivery driver.
+ * @apiParam {Number} IdDeliveryDriver  Unique id of the delivery driver.
  * 
  * @apiSuccess {String} message delivery driver deleted.
  *
  * @apiError DeliveryDriverNotDeleted The delivery driver was not deleted.
  */
-router.delete('/:id', function(req, res)
+router.delete('/:IdDeliveryDriver', function(req, res)
 {
-  if (deletion(req.params.id) !== null)
-    res.status(203).json({ message: entityName + "deleted" });
-  else 
-    res.status(401).json({ message: "DeliveryDriverNotDeleted" });
+  DeliveryDrivers.findOne({
+    where: {
+      IdDeliveryDriver: req.params.IdDeliveryDriver
+    }
+  }).then(function(delivers) {
+    if (!delivers) {
+      return res.status(401).json({
+        message: 'DeliveryDriverNotFound'
+      });
+    }
+
+    DeliveryDrivers.destroy({
+      where: {
+        IdDeliveryDriver: req.params.IdDeliveryDriver
+      }
+    }).then(response => {
+      return res.status(203).json({
+        message: 'DeliveryDriver deleted'
+      });
+    }).catch(error => {
+      return res.status(401).json({
+        message: 'DeliveryDriverNotDeleted',
+        stackTrace: error
+      });
+    });
+  }).catch(error => {
+    return res.status(500).json({
+      message: 'DatabaseError'
+    });
+  });
 });
 
 module.exports = router;

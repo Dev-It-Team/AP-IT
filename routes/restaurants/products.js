@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 const productSchema = new Schema({
-    IdProduct : Number,
     IdRestaurant: Number,
     Name: String,
     Description: String,
@@ -34,12 +33,14 @@ const Product = mongoose.model('Product', productSchema);
  * @apiError ProductsNotAccessible The table is inaccessible due to server fault.
  */
 /**
- * @api {get} /products/ Recover Products Information
+ * @api {get} /restaurants/:IdRestaurant/products/ Recover Products Information
  * @apiVersion 1.1.0
  * @apiName GetProducts
  * @apiGroup Products
  * 
- * @apiSuccess {Number} IdProduct  Product's unique id.
+ * @apiDescription Returns an array of information.
+ * 
+ * @apiSuccess {String} _id  Product's unique id.
  * @apiSuccess {Number} IdRestaurant  Restaurants's id related to this product.
  * @apiSuccess {String} Name  Name of this product.
  * @apiSuccess {String} Description  Description of this product.
@@ -53,7 +54,7 @@ const Product = mongoose.model('Product', productSchema);
 router.get('/', function(req, res) 
 {
     Product.find({
-        id_restau: JSON.parse(req.params.idRestaurant)
+        IdRestaurant: JSON.parse(req.params.IdRestaurant)
     }, (err, docs) => {
         if (err)
             res.status(500).json({ message: "ProductsNotAccessible" });
@@ -83,14 +84,14 @@ router.get('/', function(req, res)
  * @apiError ProductNotFound The products was not found.
  */
 /**
- * @api {get} /products/:id Recover specific Product Information
+ * @api {get} /restaurants/:IdRestaurant/products/:id Recover specific Product Information
  * @apiVersion 1.1.0
  * @apiName GetProduct
  * @apiGroup Products
  * 
- * @apiParam {Number} id  Product's unique id.
+ * @apiParam {String} IdProduct  Product's unique id.
  * 
- * @apiSuccess {Number} IdProduct  Product's unique id.
+ * @apiSuccess {String} _id  Product's unique id.
  * @apiSuccess {Number} IdRestaurant  Restaurants's id related to this product.
  * @apiSuccess {String} Name  Name of this product.
  * @apiSuccess {String} Description  Description of this product.
@@ -101,16 +102,20 @@ router.get('/', function(req, res)
  *
  * @apiError ProductNotFound The products was not found.
  */
-router.get('/:id', function(req, res) 
+router.get('/:IdProduct', function(req, res) 
 {
-    Product.find({
-        id_restau: JSON.parse(req.params.idRestaurant),
-        id: JSON.parse(req.params.id)
-    }, (err, docs) => {
-        if (err)
-            res.status(401).json({ message: "ProductNotFound" });
-        else
-            res.status(200).json(docs);
+    Product.findOne({
+        IdRestaurant: req.params.IdRestaurant,
+        _id: req.params.IdProduct
+    }).then(function(product) {
+        if (product) {
+            return res.status(200).json(product);
+        }
+    }).catch((error) => {
+        return res.status(401).json({ 
+            message: "ProductNotFound",
+            stackTrace : error
+        });
     });
 });
 
@@ -134,7 +139,7 @@ router.get('/:id', function(req, res)
  * @apiError ProductNotCreated The product cannot be created.
  */
 /**
- * @api {post} /products/ Create Product Information
+ * @api {post} /restaurants/:IdRestaurant/products/ Create Product Information
  * @apiVersion 1.1.0
  * @apiName PostProducts
  * @apiGroup Products
@@ -144,33 +149,51 @@ router.get('/:id', function(req, res)
  * @apiParam {String} Description  Description of this product.
  * @apiParam {Array} Picture  Pictures of the product.
  * @apiParam {Array} Size  Sizes available for this product.
- * @apiParam {Number} Notes  Notes of this product.
- * @apiParam {Number} VoteNb  Number of notes.
  * 
  * @apiSuccess {String} message Products added.
  *
  * @apiError ProductNotCreated The product cannot be created.
+ * @apiError DuplicateProduct Product already present.
+ * @apiError DatabaseError Database issues.
  */
 router.post('/', function(req, res) 
 {
-    const newProduct = new Product();
+    Product.findOne({
+        where:  {
+            IdRestaurant: req.params.IdRestaurant,
+            Name: req.body.Name
+        }
+    }).then(function(product) {
+        if (product) {
+            return res.status(403).json({
+                message: 'DuplicateProduct'
+            });
+        }
 
-    newProduct.IdProduct = req.body.IdProduct;
-    newProduct.IdRestaurant = req.body.IdRestaurant;
-    newProduct.Name = req.body.Name;
-    newProduct.Description = req.body.Description;
-    newProduct.Picture = req.body.Picture;
-    newProduct.Size = req.body.Size;
-    newProduct.Notes = req.body.Notes;
-    newProduct.VoteNb = req.body.VoteNb;
-
-    newProduct.save(function (err, docs) 
-    {
-      if (err)
-        res.status(401).json({ message: "ProductNotCreated" });
-      else
-        res.status(201).json({ message: "Products added" });
-    });
+        Product.create({
+            IdRestaurant: req.params.IdRestaurant,
+            Name: req.body.Name,
+            Description: req.body.Description,
+            Picture: req.body.Picture,
+            Size: req.body.Size,
+            Notes: 0,
+            VoteNb: 0
+        }).then((response) => {
+            return res.status(201).json({
+                message: 'Product created'
+            });
+        }).catch((error) => {
+            return res.status(401).json({
+                message: 'ProductNotCreated',
+                stackTrace: error
+            })
+        })
+    }).catch((error) => {
+        return res.status(500).json({
+            message: 'DatabaseError',
+            stackTrace: error
+        });
+    })
 });
 
 
@@ -194,12 +217,12 @@ router.post('/', function(req, res)
  * @apiError ProductNotUpdated The product cannot be updated.
  */
 /**
- * @api {put} /products/:id Update Product Information
+ * @api {put} /restaurants/:IdRestaurant/products/:id Update Product Information
  * @apiVersion 1.1.0
  * @apiName PutProducts
  * @apiGroup Products
  * 
- * @apiParam {Number} id  Product's unique id.
+ * @apiParam {String} IdProduct  Product's unique id.
  * @apiParam {Number} IdRestaurant  Restaurants's id related to this product.
  * @apiParam {String} Name  Name of this product.
  * @apiParam {String} Description  Description of this product.
@@ -211,20 +234,44 @@ router.post('/', function(req, res)
  * @apiSuccess {String} message Products updated.
  *
  * @apiError ProductNotUpdated The product cannot be updated.
+ * @apiError ProductNotExisting The product does not exists.
+ * @apiError DatabaseError Database issues.
  */
-router.put('/:id', function(req, res) 
+router.put('/:IdProduct', function(req, res) 
 {
-    Product.updateOne({
-        id_restau: JSON.parse(req.params.idRestaurant),
-        id: JSON.parse(req.params.id)
-    }, 
-    req.body,
-    function (err, docs) 
-    {
-      if (err)
-        res.status(401).json({ message: "ProductNotUpdated" });
-      else
-        res.status(202).json({ message: "Products updated" });
+    Product.findById(req.params.IdProduct).then(function(product) {
+        if (!product) {
+            return res.status(403).json({
+                message: 'ProductNotExisting'
+            });
+        }
+
+        Product.updateOne({
+            _id: req.params.IdProduct,
+            IdRestaurant: req.params.IdRestaurant,
+          }, {
+            IdRestaurant: req.params.IdRestaurant,
+            Name: req.body.Name,
+            Description: req.body.Description,
+            Picture: req.body.Picture,
+            Size: req.body.Size,
+            Notes: req.body.Notes,
+            VoteNb: req.body.VoteNb
+        }).then((response) => {
+            return res.status(202).json({
+                message: 'Product updated'
+            });
+        }).catch((error) => {
+            return res.status(401).json({
+                message: 'ProductNotUpdated',
+                stackTrace: error
+            });
+        });
+    }).catch((error) => {
+        return res.status(500).json({
+            message: 'DatabaseError',
+            stackTrace: error
+        })
     });
 });
 
@@ -242,28 +289,46 @@ router.put('/:id', function(req, res)
  * @apiError ProductNotDeleted The product cannot be deleted.
  */
 /**
- * @api {delete} /products/:id Delete Product Information
+ * @api {delete} /restaurants/:IdRestaurant/products/:id Delete Product Information
  * @apiVersion 1.1.0
  * @apiName DeleteProducts
  * @apiGroup Products
  * 
- * @apiParam {Number} id  Product's unique id.
+ * @apiParam {Number} IdProduct  Product's unique id.
  * 
  * @apiSuccess {String} message Products deleted.
  *
  * @apiError ProductNotDeleted The product cannot be deleted.
+ * @apiError ProductNotExisting The product cannot be found.
+ * @apiError DatabaseError Database issues.
  */
-router.delete('/:id', function(req, res)
+router.delete('/:IdProduct', function(req, res)
 {
-    Product.deleteOne({
-        id_restau: JSON.parse(req.params.idRestaurant),
-        id: JSON.parse(req.params.id)
-    }, function (err, docs) 
-    {
-      if (err)
-        res.status(401).json({ message: "ProductNotDeleted" });
-      else
-        res.status(203).json({ message: "Products deleted" });
+    Product.findById(req.params.IdProduct).then(function(product) {
+        if (!product) {
+            return res.status(403).json({
+                message: 'ProductNotExisting'
+            });
+        }
+
+        Product.deleteOne({
+            _id: req.params.IdProduct,
+            IdRestaurant: req.params.IdRestaurant,
+        }).then((response) => {
+            return res.status(203).json({
+                message: 'Product deleted'
+            });
+        }).catch((error) => {
+            return res.status(401).json({
+                message: 'ProductNotDeleted',
+                stackTrace: error
+            });
+        });
+    }).catch((error) => {
+        return res.status(500).json({
+            message: 'DatabaseError',
+            stackTrace: error
+        })
     });
 });
 

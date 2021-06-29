@@ -53,8 +53,8 @@ const rolesFlags = {
 }
 
 //Every routes for the API
-const restaurantsRouter = require('./routes/restaurants/restaurants');
 const usersRouter = require('./routes/users/users');
+const restaurantsRouter = require('./routes/restaurants/restaurants');
 const deliveryDriversRouter = require('./routes/deliveryDrivers');
 const componentsRouter = require('./routes/components');
 

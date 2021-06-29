@@ -26,15 +26,16 @@ const jwt = require('jsonwebtoken');
  * @apiParam {String} Email User's email.
  * @apiParam {String} Password  User's password.
  * 
- * @apiSuccess {String} token  User authentication token.
+ * @apiSuccess {String} access_token  User authentication token.
  *
- * @apiError UserNotLoggedIn The user cannot be logged in.
+ * @apiError EmailPasswordError Either the password or email is not in the request.
+ * @apiError WrongAuthentification The authentification is not possible.
  */
 router.post('/', (req, res) => {
     // Missing Password or Email
     if (!req.body.Email || !req.body.Password) {
         return res.status(400).json({
-            message: 'Error. Please enter the correct Email and Password'
+            message: 'EmailPasswordError. Please enter the correct Email and Password'
         });
     }
 
@@ -46,7 +47,7 @@ router.post('/', (req, res) => {
         }
     }).then(function(user) {
         if (!user) return res.status(401).json({
-            message: 'Error. Wrong login or Password'
+            message: 'WrongAuthentification. Wrong login or Password'
         });
 
         const token = jwt.sign({
@@ -57,7 +58,7 @@ router.post('/', (req, res) => {
             expiresIn: '3 hours'
         });
 
-        return res.status(201).json({ access_token: token });
+        return res.status(200).json({ access_token: token });
     }).catch(error => {
         console.error(error);
     });
@@ -65,25 +66,18 @@ router.post('/', (req, res) => {
 
 
 /**
- * @api {post} /login/register/ Create Users information
- * @apiVersion 1.0.0
- * @apiName PostUsers
+ * @api {get} /login/tokeninfo/ Recover user information from token
+ * @apiVersion 1.1.0
+ * @apiName GetTokenInfo
  * @apiGroup Users
  * 
- * @apiParam {String} Nom User's name.
- * @apiParam {String} Prenom  User's firstname.
- * @apiParam {String} Email  Email of the user.
- * @apiParam {String} MotDePasse User's password.
- * @apiParam {Date} DateDeNaissance  Birthdate of the user.
- * @apiParam {String} Adresse  User's address.
- * @apiParam {Date} DateInscription Date when the user create its account.
- * @apiParam {String} CodeParainage  Unique code that permits the user to patron someone.
- * @apiParam {Number} NbParainages Number of patronage.
- * @apiParam {String} UserFlag  Type of user.
+ * @apiParam {String} authorization User's token.
  * 
- * @apiSuccess {String} message  Users created.
+ * @apiSuccess {Object} User  User information.
  *
- * @apiError UserNotCreated The user cannot be created.
+ * @apiError TokenEmpty The token is empty.
+ * @apiError BadToken The token is not right.
+ * @apiError WrongPermission The permission accorded is not sufficient.
  */
 router.get('/tokeninfo', checkTokenMiddleware, (req, res) => {
     // Fetch token
@@ -130,20 +124,20 @@ router.get('/tokeninfo', checkTokenMiddleware, (req, res) => {
  * @apiParam {String} Password User's password.
  * @apiParam {Date} BirthDate  Birthdate of the user.
  * @apiParam {String} Address  User's address.
- * @apiParam {Date} InscriptionDate Date when the user create its account.
- * @apiParam {String} PatronageCode  Unique code that permits the user to patron someone.
- * @apiParam {Number} PatronageNb Number of patronage.
  * @apiParam {String} UserFlag  Type of user.
  * 
  * @apiSuccess {String} message  Users created.
  *
  * @apiError UserNotCreated The user cannot be created.
+ * @apiError EmailPasswordError Either the email or password is empty.
+ * @apiError DuplicateUser User already exists.
+ * @apiError DatabaseError Database issues.
  */
 router.post('/register', (req, res) => {
     // Missing Password or Email
     if (!req.body.Email || !req.body.Password) {
         return res.status(400).json({
-            message: 'Error. Please enter Email and Password'
+            message: 'EmailPasswordError'
         });
     }
 
@@ -154,7 +148,7 @@ router.post('/register', (req, res) => {
     }).then(function(user){
         if (user) {
             return res.status(403).json({
-                message: `Error. User ${req.body.Email} already exists`
+                message: `DuplicateUser`
             });
         }
         Users.create({
@@ -174,13 +168,13 @@ router.post('/register', (req, res) => {
             });
         }).catch((error) => {
             return res.status(401).json({
-                message: `User couldn't be created`,
+                message: `UserNotCreated`,
                 stackTrace: error
             });
         });
     }).catch((error) => {
-        return res.status(401).json({
-            message: `User couldn't be created`,
+        return res.status(500).json({
+            message: `DatabaseError`,
             stackTrace: error
         });
     });

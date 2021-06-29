@@ -23,59 +23,6 @@ async function synchronisation()
   }
 }
 
-async function update(body, idUser)
-{
-  try 
-  {
-    return Users.update(body, {
-      where: {
-        IdUser: idUser
-      },
-      returning: true,
-      plain: true
-    });
-  } catch(error) {
-    return null;
-  }
-}
-
-async function deletion(idUser)
-{
-  try 
-  {
-    await Users.destroy({ 
-      where: {
-        IdUser: idUser
-    }});
-    return true;
-  } catch(error) {
-    return null;
-  }
-}
-
-async function getAll()
-{
-  try 
-  {
-      return await Users.findAll();
-  } catch(error) {
-    return null;
-  }
-}
-
-async function getOne(idUser)
-{
-  try 
-  {
-      return await Users.findAll({ 
-        where: {
-          IdUser: idUser
-      }});
-  } catch(error) {
-    return null;
-  }
-}
-
 async function startConnection()
 {
   await authentification();
@@ -125,12 +72,15 @@ startConnection();
  *
  * @apiError UsersNotAccessible The table is inaccessible due to server fault.
  */
-router.get('/', function(req, res, next) 
+router.get('/', function(req, res) 
 {
-  getAll().then((users) => {
-      return res.status(200).json(users);
-  }).catch(() => {
-      return res.status(401).json({ message: "Could not get " + entityName });
+  Users.findAll().then((users) => {
+    return res.status(200).json(users);
+  }).catch(error => {
+    return res.status(500).json({ 
+      message: "UsersNotAccessible",
+      stackTrace: error 
+    });
   });
 });
 
@@ -163,7 +113,7 @@ router.get('/', function(req, res, next)
  * @apiName GetUser
  * @apiGroup Users
  *
- * @apiParam {Number} id  User's unique id.
+ * @apiParam {Number} IdUser  User's unique id.
  * 
  * @apiSuccess {Number} IdUser  Unique id of the user.
  * @apiSuccess {String} Name User's name.
@@ -179,12 +129,19 @@ router.get('/', function(req, res, next)
  *
  * @apiError UserNotFound The wanted user was not found.
  */
-router.get('/:id', function(req, res, next) 
+router.get('/:IdUser', function(req, res) 
 {
-  getOne(req.params.id).then((user) => {
+  Users.findOne({
+    where: {
+      IdUser: req.params.IdUser
+    }
+  }).then(function(user) {
       return res.status(200).json(user);
-  }).catch(() => {
-      return res.status(401).json({ message: "Could not get " + entityName });
+  }).catch(error => {
+    return res.status(401).json({ 
+      message: "Could not get " + entityName,
+      stackTrace: error 
+    });
   });
 });
 
@@ -213,7 +170,7 @@ router.get('/:id', function(req, res, next)
  * @apiError UserNotUpdated The user cannot be updated.
  */
 /**
- * @api {put} /users/ Update Users information
+ * @api {put} /users/:IdUser Update Users information
  * @apiVersion 1.1.0
  * @apiName PutUsers
  * @apiGroup Users
@@ -234,13 +191,50 @@ router.get('/:id', function(req, res, next)
  * @apiSuccess {String} message  Users updated.
  *
  * @apiError UserNotUpdated The user cannot be updated.
+ * @apiError UserNotExisting The user does not exists.
+ * @apiError DatabaseError Database issues.
  */
-router.put('/:id', function(req, res, next) 
+router.put('/:IdUser', function(req, res) 
 {
-  update(req.body, req.params.id).then((user) => {
-      return res.status(200).json(user);
-  }).catch(() => {
-      return res.status(401).json({ message: "Could not update " + entityName });
+  Users.findOne({
+    where: {
+      IdUser: req.params.IdUser
+    }
+  }).then(function(user) {
+    if (!user) {
+      return res.status(403).json({
+        message: 'UserNotExisting'
+      });
+    }
+
+    Users.update({
+      Name: req.body.Name,
+      FirstName: req.body.FirstName,
+      Email: req.body.Email,
+      Password: req.body.Password,
+      Address: req.body.Address,
+      BirthDate: req.body.BirthDate,
+      PatronageNb: req.body.PatronageNb
+    },
+    {
+      where: {
+        IdUser: req.params.IdUser
+      }
+    }).then(response => {
+      return res.status(202).json({
+        message: 'User updated'
+      });
+    }).catch(error => {
+      return res.status(401).json({
+        message: 'UserNotUpdated',
+        stackTrace: error
+      });
+    });
+  }).catch(error => {
+    return res.status(500).json({
+      message: 'DatabaseError',
+      stackTrace: error
+    });
   });
 });
 
@@ -258,7 +252,7 @@ router.put('/:id', function(req, res, next)
  * @apiError UserNotDeleted The user cannot be deleted.
  */
 /**
- * @api {delete} /users/ Delete Users information
+ * @api {delete} /users/:IdUser Delete Users information
  * @apiVersion 1.1.0
  * @apiName DeleteUsers
  * @apiGroup Users
@@ -268,19 +262,48 @@ router.put('/:id', function(req, res, next)
  * @apiSuccess {String} message  Users deleted.
  *
  * @apiError UserNotDeleted The user cannot be deleted.
+ * @apiError UserNotExisting The user does not exists.
+ * @apiError DatabaseError Database issues.
  */
-router.delete('/:id', function(req, res, next)
+router.delete('/:IdUser', function(req, res)
 {
-  if (deletion(req.params.id) !== null)
-    res.status(203).json({ message: entityName + " deleted" });
-  else 
-    res.status(401).json({ message: "Could not delete " + entityName });
+  Users.findOne({
+    where: {
+      IdUser: req.params.IdUser
+    }
+  }).then(function(user) {
+    if (!user) {
+      return res.status(403).json({
+        message: 'UserNotExisting'
+      });
+    }
+
+    Users.destroy({
+      where: {
+        IdUser: req.params.IdUser
+      }
+    }).then(response => {
+      return res.status(203).json({
+        message: 'User deleted'
+      });
+    }).catch(error => {
+      return res.status(401).json({
+        message: 'UserNotDeleted',
+        stackTrace: error
+      });
+    });
+  }).catch(error => {
+    return res.status(500).json({
+      message: 'DatabaseError',
+      stackTrace: error
+    });
+  });
 });
 
 
 const logsConnectionRouter = require('../logsConnection');
 const ordersRouter = require('./orders');
-router.use('/:userId/logs', logsConnectionRouter);
-router.use('/:userId/orders', ordersRouter);
+router.use('/:IdUser/logs', logsConnectionRouter);
+router.use('/:IdUser/orders', ordersRouter);
 
 module.exports = router;
