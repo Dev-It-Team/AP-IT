@@ -211,7 +211,9 @@ router.put('/:IdComponent', function(req, res)
       });
     }
 
-    Components.updateOne({ _id : req.params.IdComponent}, 
+    Components.updateOne({ 
+      _id : req.params.IdComponent
+    }, 
     {
       Name : req.body.Name,
       Description : req.body.Description,
@@ -271,7 +273,9 @@ router.delete('/:IdComponent', function(req, res)
       });
     }
 
-    Components.deleteOne({ _id : req.params.IdComponent }).then((response) => {
+    Components.deleteOne({ 
+      _id : req.params.IdComponent 
+    }).then((response) => {
       return res.status(203).json({
         message: 'Component deleted'
       });

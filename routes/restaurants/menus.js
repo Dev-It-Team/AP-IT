@@ -256,7 +256,10 @@ router.put('/:IdMenu', function(req, res)
       })
     }
 
-    Menu.updateOne({ _id : req.params.IdMenu}, 
+    Menu.updateOne({
+      _id : req.params.IdMenu,
+      IdRestaurant: req.params.IdRestaurant
+    }, 
     {
       IdRestaurant : req.params.IdRestaurant,
       Name : req.body.Name,
@@ -320,7 +323,8 @@ router.delete('/:IdMenu', function(req, res)
     }
   
     Menu.deleteOne({ 
-      _id : req.params.IdMenu 
+      _id : req.params.IdMenu,
+      IdRestaurant: req.params.IdRestaurant 
     }).then((response) => {
       return res.status(203).json({ message: "Menus deleted" });
     }).catch((error) => {

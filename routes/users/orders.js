@@ -241,7 +241,10 @@ router.put('/:id', function(req, res)
       });
     }
 
-    Orders.updateOne({ _id : req.params.id}, 
+    Orders.updateOne({
+      _id: req.params.id,
+      IdUser: req.params.IdUser
+    }, 
     {
       IdDeliveryDriver : req.body.IdDeliveryDriver,
       StartDateTime : req.body.StartDateTime,

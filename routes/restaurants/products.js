@@ -247,6 +247,9 @@ router.put('/:IdProduct', function(req, res)
         }
 
         Product.updateOne({
+            _id: req.params.IdProduct,
+            IdRestaurant: req.params.IdRestaurant,
+          }, {
             IdRestaurant: req.params.IdRestaurant,
             Name: req.body.Name,
             Description: req.body.Description,

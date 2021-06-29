@@ -226,7 +226,8 @@ router.delete('/:id', function(req, res)
 {
   LogsConnection.findOne({
     where: {
-      IdLog: req.params.id
+      IdLog: req.params.IdLog,
+      IdUser: req.params.IdUser
     }
   }).then(function(log) {
     if (!log) {
@@ -237,7 +238,8 @@ router.delete('/:id', function(req, res)
 
     LogsConnection.destroy({
       where: {
-        IdLog: req.params.id,
+        IdLog: req.params.IdLog,
+        IdUser: req.params.IdUser
       }
     }).then(response => {
       return res.status(203).json({
