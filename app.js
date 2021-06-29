@@ -7,6 +7,12 @@ var { checkTokenMiddleware, checkUserRoleFlag } = require('./jwtMiddleware');
 const { Sequelize } = require('sequelize');
 const dotenv = require('dotenv');
 
+var cors = require('cors')
+const corsOptions = {
+  origin: true,
+  credentials: true
+}
+
 //Config for NoSQL ORM
 require('mongoose').connect("mongodb+srv://admin:admin@js-project.rztwo.mongodb.net/project", {
     useNewUrlParser: true,
@@ -17,6 +23,7 @@ require('mongoose').connect("mongodb+srv://admin:admin@js-project.rztwo.mongodb.
 dotenv.config();
 var app = express();
 
+app.options('*', cors(corsOptions)); // preflight OPTIONS; put before other routes
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -28,6 +35,8 @@ app.use(function(req, res, next) {
     // Allow everyone
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', '*');
+    res.header('Access-Control-Request-Headers', '*');
+    res.header('Access-Control-Request-Methods', '*');
     next();
 });
 
