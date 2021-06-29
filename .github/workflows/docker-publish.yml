@@ -26,7 +26,7 @@ jobs:
         uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
         with:
           username: antoninjcb
-          password: b5f2437b-daf9-423b-ba4e-121898a93b79
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       # Build and push Docker image with Buildx (don't push on PR)
       - name: Build Docker image (latest)
