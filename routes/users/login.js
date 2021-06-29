@@ -54,7 +54,8 @@ router.post('/', (req, res) => {
         const token = jwt.sign({
             IdUser: user.IdUser,
             Email: user.Email,
-            UserFlag: user.UserFlag
+            UserFlag: user.UserFlag,
+            PatronageCode: user.PatronageCode,
         }, process.env.TOKEN_SECRET, {
             expiresIn: '3 hours'
         });
