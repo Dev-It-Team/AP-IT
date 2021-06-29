@@ -14,8 +14,8 @@ const DeliveryDrivers = sequelize.define(entityName, {
   IdUser: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references: 'Users',
-    referencesKey: 'IdUser'
+    foreignKey: 'Users',
+    sourceKey: 'IdUser'
   },
   VehiculeType: {
     type: DataTypes.STRING,
@@ -36,11 +36,6 @@ const DeliveryDrivers = sequelize.define(entityName, {
     createdAt: false,
     updatedAt: false,
 });
-
-Users.hasOne(DeliveryDrivers, {
-  onDelete: 'cascade'
-});
-DeliveryDrivers.belongsTo(Users);
 
 async function authentification()
 {

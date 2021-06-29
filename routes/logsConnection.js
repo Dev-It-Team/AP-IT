@@ -22,8 +22,8 @@ const LogsConnection = sequelize.define(entityName, {
   IdUser: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references: 'Users',
-    referencesKey: 'IdUser'
+    foreignKey: 'Users',
+    sourceKey: 'IdUser'
   },
 }, {
     tableName: entityName,

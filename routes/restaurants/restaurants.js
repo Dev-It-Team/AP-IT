@@ -4,7 +4,6 @@ var sequelize = require('../../app.js').configDatabase;
 const entityName = "Restaurants";
 const { DataTypes } = require('sequelize');
 
-const Users = require('../users/schema_users');
 const Restaurants = sequelize.define(entityName, {
     IdRestaurant: {
         type: DataTypes.INTEGER,
@@ -14,8 +13,8 @@ const Restaurants = sequelize.define(entityName, {
     IdUser: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: 'Users',
-        referencesKey: 'IdUser'
+        foreignKey: 'Users',
+        sourceKey: 'IdUser'
     },
     NameRestaurant: {
         type: DataTypes.STRING,
@@ -30,11 +29,6 @@ const Restaurants = sequelize.define(entityName, {
     createdAt: false,
     updatedAt: false,
 });
-
-Users.hasOne(Restaurants, {
-  onDelete: 'cascade'
-});
-Restaurants.belongsTo(Users);
 
 async function authentification()
 {
