@@ -6,6 +6,7 @@ var logger = require('morgan');
 var { checkTokenMiddleware, checkUserRoleFlag } = require('./jwtMiddleware');
 const { Sequelize } = require('sequelize');
 const dotenv = require('dotenv');
+var busboy = require('connect-busboy');
 
 var cors = require('cors')
 const corsOptions = {
