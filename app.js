@@ -67,12 +67,14 @@ const usersRouter = require('./routes/users/users');
 const restaurantsRouter = require('./routes/restaurants/restaurants');
 const deliveryDriversRouter = require('./routes/deliveryDrivers');
 const componentsRouter = require('./routes/components');
+const uploadRouter = require('./routes/uploadFiles');
 
 //Routes not secured by login
 app.use('/', require('./routes/index'));
 app.use('/login', require('./routes/users/login'));
 //Protected routes
-app.use('/restaurants',     checkTokenMiddleware,   restaurantsRouter);
+app.use('/restaurants',     checkTokenMiddleware,    restaurantsRouter);
+app.use('/upload',     checkTokenMiddleware, busboy(),  uploadRouter);
 app.use('/users',           checkTokenMiddleware,   usersRouter);
 app.use('/deliveryDrivers', checkTokenMiddleware,   deliveryDriversRouter);
 app.use('/components',      checkTokenMiddleware,   componentsRouter);
@@ -104,5 +106,6 @@ app.use(function (err, req, res, next) {
         });
     }
 });
+
 
 module.exports = app;
