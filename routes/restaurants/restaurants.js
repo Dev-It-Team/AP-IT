@@ -203,7 +203,8 @@ router.post('/', function(req, res)
     });
   }).catch(error => {
     return res.status(500).json({
-      message: 'DatabaseError'
+      message: 'DatabaseError',
+      stackTrace: error
     });
   });
 });
@@ -278,7 +279,8 @@ router.put('/:IdRestaurant', function(req, res)
     });
   }).catch(error => {
     return res.status(500).json({
-      message: 'DatabaseError'
+      message: 'DatabaseError',
+      stackTrace: error
     });
   });
 });
