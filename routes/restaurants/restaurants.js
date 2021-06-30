@@ -97,53 +97,6 @@ router.get('/', function(req, res)
 
 /**
  * @api {get} /restaurants/:id Get specific Restaurant Information
- * @apiVersion 1.0.0
- * @apiName GetRestaurant
- * @apiGroup Restaurants
- * 
- * @apiParam {Number} IdRestaurant  Restaurant's unique id.
- * 
- * @apiSuccess {Number} IdRestaurant  Restaurant's unique id.
- * @apiSuccess {Number} idUser  User's id related to this restaurant.
- * @apiSuccess {String} Nom  Name of this restaurant.
- * @apiSuccess {String} AdresseRestaurant  Address of this restaurant.
- * @apiSuccess {String} image_banniere  Pictures of the restaurant.
- *
- * @apiError RestaurantNotFound The wanted restaurant cannot be found.
- */
-/**
- * @api {get} /restaurants/:id Get specific Restaurant Information
- * @apiVersion 1.1.0
- * @apiName GetRestaurant
- * @apiGroup Restaurants
- * 
- * @apiParam {Number} IdRestaurant  Restaurant's unique id.
- * 
- * @apiSuccess {Number} IdRestaurant  Restaurant's unique id.
- * @apiSuccess {Number} IdUser  User's id related to this restaurant.
- * @apiSuccess {String} NameRestaurant  Name of this restaurant.
- * @apiSuccess {String} Banner  Pictures of the restaurant.
- *
- * @apiError RestaurantNotFound The wanted restaurant cannot be found.
- */
-router.get('/:IdRestaurant', function(req, res) 
-{
-  Restaurants.findOne({
-    where: {
-      IdRestaurant: req.params.IdRestaurant
-    }
-  }).then(function(restaurant) {
-    return res.status(200).json(restaurant);
-  }).catch(error => {
-    return res.status(401).json({
-      message: 'RestaurantNotFound'
-    });
-  });
-});
-
-
-/**
- * @api {get} /restaurants/:id Get specific Restaurant Information
  * @apiVersion 1.1.0
  * @apiName GetRestaurant
  * @apiGroup Restaurants
@@ -265,7 +218,6 @@ router.post('/', function(req, res)
  * 
  * @apiParam {Number} IdRestaurant  Restaurant's unique id.
  * 
- * @apiParam {Number} IdUser  User's id related to this restaurant.
  * @apiParam {String} NameRestaurant  Name of this restaurant.
  * @apiParam {String} Banner  Pictures of the restaurant.
  * 
@@ -289,7 +241,6 @@ router.put('/:IdRestaurant', function(req, res)
     }
 
     Restaurants.update({
-      IdUser: req.body.IdUser,
       NameRestaurant: req.body.NameRestaurant,
       Banner: req.body.Banner
     },

@@ -7,7 +7,7 @@ const productSchema = new Schema({
     IdRestaurant: Number,
     Name: String,
     Description: String,
-    Picture: Array,
+    Picture: String,
     Sizes: Array,
     Notes: Number,
     VoteNb: Number
@@ -44,7 +44,7 @@ const Product = mongoose.model('Product', productSchema);
  * @apiSuccess {Number} IdRestaurant  Restaurants's id related to this product.
  * @apiSuccess {String} Name  Name of this product.
  * @apiSuccess {String} Description  Description of this product.
- * @apiSuccess {Array} Picture  Pictures of the product.
+ * @apiSuccess {String} Picture  Pictures of the product.
  * @apiSuccess {Array} Sizes  Sizes available for this product.
  * @apiSuccess {Number} Notes  Notes of this product.
  * @apiSuccess {Number} VoteNb  Number of notes.
@@ -56,8 +56,9 @@ router.get('/', function(req, res)
     Product.find({
         IdRestaurant: JSON.parse(req.params.IdRestaurant)
     }, (err, docs) => {
-        if (err)
+        if (err) {
             res.status(500).json({ message: "ProductsNotAccessible" });
+        }
         else
             res.status(200).json(docs);
     });
@@ -95,7 +96,7 @@ router.get('/', function(req, res)
  * @apiSuccess {Number} IdRestaurant  Restaurants's id related to this product.
  * @apiSuccess {String} Name  Name of this product.
  * @apiSuccess {String} Description  Description of this product.
- * @apiSuccess {Array} Picture  Pictures of the product.
+ * @apiSuccess {String} Picture  Pictures of the product.
  * @apiSuccess {Array} Sizes  Sizes available for this product.
  * @apiSuccess {Number} Notes  Notes of this product.
  * @apiSuccess {Number} VoteNb  Number of notes.
@@ -147,7 +148,7 @@ router.get('/:IdProduct', function(req, res)
  * @apiParam {Number} IdRestaurant  Restaurants's id related to this product.
  * @apiParam {String} Name  Name of this product.
  * @apiParam {String} Description  Description of this product.
- * @apiParam {Array} Picture  Pictures of the product.
+ * @apiParam {String} Picture  Pictures of the product.
  * @apiParam {Array} Size  Sizes available for this product.
  * 
  * @apiSuccess {String} message Products added.
@@ -226,7 +227,7 @@ router.post('/', function(req, res)
  * @apiParam {Number} IdRestaurant  Restaurants's id related to this product.
  * @apiParam {String} Name  Name of this product.
  * @apiParam {String} Description  Description of this product.
- * @apiParam {Array} Picture  Pictures of the product.
+ * @apiParam {String} Picture  Pictures of the product.
  * @apiParam {Array} Size  Sizes available for this product.
  * @apiParam {Number} Notes  Notes of this product.
  * @apiParam {Number} VoteNb  Number of notes.

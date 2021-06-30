@@ -104,31 +104,13 @@ router.get('/', function(req, res)
   });
 });
 
-
 /**
- * @api {get} /deliveryDrivers/:id Request specific delivery driver information
- * @apiVersion 1.0.0
- * @apiName GetDeliveryDriver
- * @apiGroup DeliveryDrivers
- *
- * @apiParam {Number} IdDeliveryDriver  Unique id of the delivery driver.
- * 
- * @apiSuccess {Number} IdDeliveryDriver  Unique id of the delivery driver.
- * @apiSuccess {Number} IdUser  Unique id of the user related to this delivery driver.
- * @apiSuccess {String} AdresseFacturation  Adress of facturation.
- * @apiSuccess {String} TypeVehicule  Type of vehicule used.
- * @apiSuccess {Number} Note  Total votes on this delivery driver.
- * @apiSuccess {Number} NbVotes  Number of votes on this delivery driver.
- *
- * @apiError DeliveryDriverNotFound The delivery driver wanted was not found.
- */
-/**
- * @api {get} /deliveryDrivers/:id Request specific delivery driver information
+ * @api {get} /deliveryDrivers/users/:IdUser Request specific delivery driver information
  * @apiVersion 1.1.0
  * @apiName GetDeliveryDriver
  * @apiGroup DeliveryDrivers
  *
- * @apiParam {Number} IdDeliveryDriver  Unique id of the delivery driver.
+ * @apiParam {Number} IdUser  Unique id of the user related.
  * 
  * @apiSuccess {Number} IdDeliveryDriver  Unique id of the delivery driver.
  * @apiSuccess {Number} IdUser  Unique id of the user related to this delivery driver.
@@ -138,11 +120,11 @@ router.get('/', function(req, res)
  *
  * @apiError DeliveryDriverNotFound The delivery driver wanted was not found.
  */
-router.get('/:IdDeliveryDriver', function(req, res) 
+router.get('/:IdUser', function(req, res) 
 {
   DeliveryDrivers.findOne({
     where: {
-      IdDeliveryDriver: req.params.IdDeliveryDriver
+      IdUser: req.params.IdUser
     }
   }).then(function(delivers) {
     return res.status(200).json(delivers);
@@ -178,8 +160,6 @@ router.get('/:IdDeliveryDriver', function(req, res)
  *
  * @apiParam {Number} IdUser  Unique id of the user related to this delivery driver.
  * @apiParam {String} VehiculeType  Type of vehicule used.
- * @apiParam {Number} Note  Total votes on this delivery driver.
- * @apiParam {Number} VoteNb  Number of votes on this delivery driver.
  * 
  * @apiSuccess {String} message  Delivery Driver created.
  *

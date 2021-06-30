@@ -8,7 +8,7 @@ const menuSchema = new Schema({
     Name: String,
     Description: String,
     Products: Array,
-    Picture: Array,
+    Picture: String,
     Price: Number,
     Notes: Number,
     VoteNb: Number
@@ -49,7 +49,7 @@ const Menu = mongoose.model('Menu', menuSchema);
  * @apiSuccess {String} Name  Name of this menu.
  * @apiSuccess {String} Description  Menu's description.
  * @apiSuccess {Array} Products  List of products inside this menu.
- * @apiSuccess {Array} Picture List of pictures for this menu.
+ * @apiSuccess {String} Picture Picture for this menu.
  * @apiSuccess {Number} Price  Menu's price.
  * @apiSuccess {Number} Notes  Total of every notes on this menu.
  * @apiSuccess {Number} VoteNb Number of notes for this menu.
@@ -103,7 +103,7 @@ router.get('/', function(req, res)
  * @apiSuccess {String} Name  Name of this menu.
  * @apiSuccess {String} Description  Menu's description.
  * @apiSuccess {Array} Products  List of products inside this menu.
- * @apiSuccess {Array} Picture List of pictures for this menu.
+ * @apiSuccess {String} Picture List of pictures for this menu.
  * @apiSuccess {Number} Price  Menu's price.
  * @apiSuccess {Number} Notes  Total of every notes on this menu.
  * @apiSuccess {Number} VoteNb Number of notes for this menu.
@@ -156,7 +156,7 @@ router.get('/:IdMenu', function(req, res)
  * @apiParam {String} Name  Name of this menu.
  * @apiParam {String} Description  Menu's description.
  * @apiParam {Array} Products  List of products inside this menu.
- * @apiParam {Array} Picture List of pictures for this menu.
+ * @apiParam {String} Picture List of pictures for this menu.
  * @apiParam {Number} Price  Menu's price.
  * 
  * @apiSuccess {String} message  Menus added.
@@ -236,7 +236,7 @@ router.post('/', function(req, res)
  * @apiParam {String} Name  Name of this menu.
  * @apiParam {String} Description  Menu's description.
  * @apiParam {Array} Products  List of products inside this menu.
- * @apiParam {Array} Picture List of pictures for this menu.
+ * @apiParam {String} Picture List of pictures for this menu.
  * @apiParam {Number} Price  Menu's price.
  * @apiParam {Number} Notes  Total of every notes on this menu.
  * @apiParam {Number} VoteNb Number of notes for this menu.

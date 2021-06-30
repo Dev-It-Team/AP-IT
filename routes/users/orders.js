@@ -58,7 +58,9 @@ const Orders = mongoose.model('Orders', orderSchema);
  */
 router.get('/', function(req, res) 
 {
-    Orders.find(function (err, docs) 
+    Orders.find({
+      IdUser: req.params.IdUser
+     }, function (err, docs) 
     {
       if (err)
         res.status(500).json({ message: "OrdersNotAccessible" });
