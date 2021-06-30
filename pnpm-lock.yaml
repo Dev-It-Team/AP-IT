@@ -1,6 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
+  connect-busboy: ^0.0.2
   cookie-parser: ~1.4.4
   cors: ^2.8.5
   debug: ~2.6.9
@@ -16,6 +17,7 @@ specifiers:
   tedious: ^11.0.9
 
 dependencies:
+  connect-busboy: 0.0.2
   cookie-parser: 1.4.5
   cors: 2.8.5
   debug: 2.6.9
@@ -541,6 +543,13 @@ packages:
       ieee754: 1.2.1
     dev: false
 
+  /busboy/0.3.1:
+    resolution: {integrity: sha512-y7tTxhGKXcyBxRKAni+awqx8uqaJKrSFSNFSeRG5CsWNdmy2BIK+6VGWEW7TZnIO/533mtMEA4rOevQV815YJw==}
+    engines: {node: '>=4.5.0'}
+    dependencies:
+      dicer: 0.3.0
+    dev: false
+
   /bytes/3.0.0:
     resolution: {integrity: sha1-0ygVQE1olpn4Wk6k+odV3ROpYEg=}
     engines: {node: '>= 0.8'}
@@ -695,6 +704,13 @@ packages:
       unique-string: 2.0.0
       write-file-atomic: 3.0.3
       xdg-basedir: 4.0.0
+    dev: false
+
+  /connect-busboy/0.0.2:
+    resolution: {integrity: sha1-rFyclmchcYheV2xmsr/ZXTuxEJc=}
+    engines: {node: '>=0.8.0'}
+    dependencies:
+      busboy: 0.3.1
     dev: false
 
   /console-control-strings/1.1.0:
@@ -866,6 +882,13 @@ packages:
     dev: false
     optional: true
 
+  /dicer/0.3.0:
+    resolution: {integrity: sha512-MdceRRWqltEG2dZqO769g27N/3PXfcKl04VhYnBlo2YhH7zPi88VebsjTKclaOyiuMaGU72hTfw3VkUitGcVCA==}
+    engines: {node: '>=4.5.0'}
+    dependencies:
+      streamsearch: 0.1.2
+    dev: false
+
   /doctypes/1.1.0:
     resolution: {integrity: sha1-6oCxBqh1OHdOijpKWv4pPeSJ4Kk=}
     dev: false
@@ -877,13 +900,13 @@ packages:
       is-obj: 2.0.0
     dev: false
 
-  /dottie/2.0.2:
-    resolution: {integrity: sha512-fmrwR04lsniq/uSr8yikThDTrM7epXHBAAjH9TbeH3rEA8tdCO7mRzB9hdmdGyJCxF8KERo9CITcm3kGuoyMhg==}
-    dev: false
-
   /dotenv/10.0.0:
     resolution: {integrity: sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==}
     engines: {node: '>=10'}
+    dev: false
+
+  /dottie/2.0.2:
+    resolution: {integrity: sha512-fmrwR04lsniq/uSr8yikThDTrM7epXHBAAjH9TbeH3rEA8tdCO7mRzB9hdmdGyJCxF8KERo9CITcm3kGuoyMhg==}
     dev: false
 
   /duplexer3/0.1.4:
@@ -2379,6 +2402,11 @@ packages:
   /stoppable/1.1.0:
     resolution: {integrity: sha512-KXDYZ9dszj6bzvnEMRYvxgeTHU74QBFL54XKtP3nyMuJ81CFYtABZ3bAzL2EdFUaEwJOBOgENyFj3R7oTzDyyw==}
     engines: {node: '>=4', npm: '>=6'}
+    dev: false
+
+  /streamsearch/0.1.2:
+    resolution: {integrity: sha1-gIudDlb8Jz2Am6VzOOkpkZoanxo=}
+    engines: {node: '>=0.8.0'}
     dev: false
 
   /string-width/1.0.2:
