@@ -143,6 +143,36 @@ router.get('/:IdRestaurant', function(req, res)
 
 
 /**
+ * @api {get} /restaurants/:id Get specific Restaurant Information
+ * @apiVersion 1.1.0
+ * @apiName GetRestaurant
+ * @apiGroup Restaurants
+ * 
+ * @apiParam {Number} IdRestaurant  Restaurant's unique id.
+ * 
+ * @apiSuccess {Number} IdRestaurant  Restaurant's unique id.
+ * @apiSuccess {Number} IdUser  User's id related to this restaurant.
+ * @apiSuccess {String} NameRestaurant  Name of this restaurant.
+ * @apiSuccess {String} Banner  Pictures of the restaurant.
+ *
+ * @apiError RestaurantNotFound The wanted restaurant cannot be found.
+ */
+ router.get('/:IdUser', function(req, res) 
+ {
+   Restaurants.findOne({
+     where: {
+      IdUser: req.params.IdUser
+     }
+   }).then(function(restaurant) {
+     return res.status(200).json(restaurant);
+   }).catch(error => {
+     return res.status(401).json({
+       message: 'RestaurantNotFound'
+     });
+   });
+ });
+
+/**
  * @api {post} /restaurants/ Create Restaurant Information
  * @apiVersion 1.0.0
  * @apiName PostRestaurants
