@@ -24,7 +24,9 @@ router.post('/', function(req, res)
       fstream = fs.createWriteStream(process.cwd() + '/uploads/' + filename);
       file.pipe(fstream);
       fstream.on('close', function () {
-        res.status(200);
+        res.status(200).json({
+          message: "File uploaded"
+        });
       });
   });
 });

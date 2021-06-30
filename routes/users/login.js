@@ -155,13 +155,17 @@ router.post('/register', (req, res) => {
         }
 
         let patronageNb = 0;
-        // Add one to referrer user patronages counter
-        await Users.increment(
-            { PatronageNb: 1 },
-            { where: { PatronageCode: req.body.PatronageCode } }
-        ).then((user) => {
-            if (user) patronageNb++;
-        }).catch();
+
+        if (req.body.PatronageCode != null) 
+        {
+            // Add one to referrer user patronages counter
+            await Users.increment(
+                { PatronageNb: 1 },
+                { where: { PatronageCode: req.body.PatronageCode } }
+            ).then((user) => {
+                if (user[0][1] != 0) patronageNb++;
+            }).catch();
+        }
 
         Users.create({
             Name: req.body.Name,
