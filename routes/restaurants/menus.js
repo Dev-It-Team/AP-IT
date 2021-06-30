@@ -167,7 +167,7 @@ router.get('/:IdMenu', function(req, res)
  */
 router.post('/', function(req, res) 
 {
-  Menu.find({
+  Menu.findOne({
     where: {
       IdRestaurant: req.params.IdRestaurant,
       Name: req.body.Name
