@@ -175,7 +175,7 @@ router.post('/', function(req, res)
             Name: req.body.Name,
             Description: req.body.Description,
             Picture: req.body.Picture,
-            Size: req.body.Size,
+            Sizes: req.body.Size,
             Notes: 0,
             VoteNb: 0
         }).then((response) => {
