@@ -4,7 +4,6 @@ var sequelize = require('../app.js').configDatabase;
 const entityName = "LogsConnection";
 const { DataTypes, Sequelize } = require('sequelize');
 
-const Users = require('./users/schema_users');
 const LogsConnection = sequelize.define(entityName, {
   IdLog: {
     type: DataTypes.INTEGER,

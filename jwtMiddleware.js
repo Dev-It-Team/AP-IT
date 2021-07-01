@@ -32,7 +32,7 @@ const checkTokenMiddleware = (req, res, next) => {
     });
 }
 
-const checkUserRoleFlag = userFlag => {
+const checkUserRoleFlag = userFlags => {
     return async (req, res, next) => {
         try {
             // Récupération du token
@@ -44,8 +44,11 @@ const checkUserRoleFlag = userFlag => {
                 if (err) {
                     res.status(401).json({ message: 'BadToken' })
                 } else {
-                    if (decodedToken.UserFlag == userFlag)
-                        return next();
+                    for(flag in userFlags) {
+                        if (decodedToken.UserFlag == flag)
+                            return next();
+                    }
+
                     return res.status(401).json({ message: 'WrongPermission' })
                 }
             });

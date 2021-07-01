@@ -68,6 +68,9 @@ const restaurantsRouter = require('./routes/restaurants/restaurants');
 const deliveryDriversRouter = require('./routes/deliveryDrivers');
 const componentsRouter = require('./routes/components');
 const uploadRouter = require('./routes/uploadFiles');
+const orderRouter = require('./routes/ordersBis');
+const logsConnectionRouter = require('./routes/logsConnectionBis');
+const logsDownloadRouter = require('./routes/logsDownloadBis');
 
 //Routes not secured by login
 app.use('/', require('./routes/index'));
@@ -75,9 +78,12 @@ app.use('/login', require('./routes/users/login'));
 //Protected routes
 app.use('/restaurants',     checkTokenMiddleware,    restaurantsRouter);
 app.use('/upload',     checkTokenMiddleware, busboy(),  uploadRouter);
+app.use('/orders',     checkTokenMiddleware, checkUserRoleFlag([rolesFlags.CLIENTS, rolesFlags.RESTAURANTS, rolesFlags.DELIVERY]), orderRouter);
 app.use('/users',           checkTokenMiddleware,   usersRouter);
 app.use('/deliveryDrivers', checkTokenMiddleware,   deliveryDriversRouter);
-app.use('/components',      checkTokenMiddleware,   componentsRouter);
+app.use('/components',      checkTokenMiddleware, checkUserRoleFlag([rolesFlags.MARKETING, rolesFlags.TECHNIC]),   componentsRouter);
+app.use('/connectionLogs',      checkTokenMiddleware, checkUserRoleFlag([rolesFlags.TECHNIC]),   logsConnectionRouter);
+app.use('/downloadLogs',      checkTokenMiddleware, checkUserRoleFlag([rolesFlags.TECHNIC]),   logsDownloadRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res) {
