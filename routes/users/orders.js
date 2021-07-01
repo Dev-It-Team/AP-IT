@@ -158,11 +158,9 @@ router.get('/:id', function(req, res)
  * @apiParam {Number} IdRestaurant  Unique id of the restaurant related to this order.
  * @apiParam {Number} IdUser  Unique id of the user related to this order.
  * @apiParam {Number} IdDeliveryDriver  Unique id of the delivery driver related to this order.
- * @apiParam {Date} StartDateTime  Start date time of the order.
  * @apiParam {Date} EndDateTime  End date time of the order.
  * @apiParam {Number} Price  Price of the order.
  * @apiParam {Array} Products List of products inside this order.
- * @apiParam {String} Status  Current order status.
  * @apiParam {Boolean} CouponUsed  Does a coupon was used?
  * 
  * @apiSuccess {String} message  Orders created.
@@ -175,11 +173,11 @@ router.post('/', function(req, res)
       IdRestaurant: req.body.IdRestaurant,
       IdUser: req.params.IdUser,
       IdDeliveryDriver: req.body.IdDeliveryDriver,
-      StartDateTime: req.body.StartDateTime,
+      StartDateTime: new Date(),
       EndDateTime: req.body.EndDateTime,
       Price: req.body.Price,
       Products: req.body.Products,
-      Status: req.body.Status,
+      Status: 0,
       CouponUsed: req.body.CouponUsed,
     }).then((response) => {
       return res.status(201).json({
@@ -224,7 +222,6 @@ router.post('/', function(req, res)
  *
  * @apiParam {String} id  Unique id of the order.
  * @apiParam {Number} IdDeliveryDriver  Unique id of the delivery driver related to this order.
- * @apiParam {Date} StartDateTime  Start date time of the order.
  * @apiParam {Date} EndDateTime  End date time of the order.
  * @apiParam {String} Status  Current order status.
  * 
@@ -249,7 +246,6 @@ router.put('/:id', function(req, res)
     }, 
     {
       IdDeliveryDriver : req.body.IdDeliveryDriver,
-      StartDateTime : req.body.StartDateTime,
       EndDateTime : req.body.EndDateTime,
       Status : req.body.Status,
     }).then((response) => {
