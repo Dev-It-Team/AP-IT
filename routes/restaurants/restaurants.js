@@ -124,6 +124,21 @@ router.get('/', function(req, res)
      });
    });
  });
+ 
+ router.get('/id/:IdRestaurant', function(req, res) 
+ {
+   Restaurants.findOne({
+     where: {
+      IdRestaurant: req.params.IdRestaurant
+     }
+   }).then(function(restaurant) {
+     return res.status(200).json(restaurant);
+   }).catch(error => {
+     return res.status(401).json({
+       message: 'RestaurantNotFound'
+     });
+   });
+ });
 
 /**
  * @api {post} /restaurants/ Create Restaurant Information
