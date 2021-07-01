@@ -76,7 +76,7 @@ const logsDownloadRouter = require('./routes/logsDownloadBis');
 app.use('/', require('./routes/index'));
 app.use('/login', require('./routes/users/login'));
 //Protected routes
-app.use('/restaurants',     checkTokenMiddleware, checkUserRoleFlag([rolesFlags.RESTAURANTS, rolesFlags.MARKETING, rolesFlags.DELIVERY? rolesFlags.CLIENTS]),    restaurantsRouter);
+app.use('/restaurants',     checkTokenMiddleware, checkUserRoleFlag([rolesFlags.RESTAURANTS, rolesFlags.MARKETING, rolesFlags.DELIVERY, rolesFlags.CLIENTS]),    restaurantsRouter);
 app.use('/upload',          checkTokenMiddleware, busboy(),  uploadRouter);
 app.use('/orders',          checkTokenMiddleware, checkUserRoleFlag([rolesFlags.CLIENTS, rolesFlags.RESTAURANTS, rolesFlags.DELIVERY]), orderRouter);
 app.use('/users',           checkTokenMiddleware, checkUserRoleFlag([rolesFlags.CLIENTS, rolesFlags.MARKETING, rolesFlags.TECHNIC]),   usersRouter);
