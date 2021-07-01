@@ -110,11 +110,11 @@ router.get('/', function(req, res)
  *
  * @apiError RestaurantNotFound The wanted restaurant cannot be found.
  */
- router.get('/:IdUser', function(req, res) 
+ router.get('/:IdRestaurant', function(req, res) 
  {
    Restaurants.findOne({
      where: {
-      IdUser: req.params.IdUser
+      IdRestaurant: req.params.IdRestaurant
      }
    }).then(function(restaurant) {
      return res.status(200).json(restaurant);
@@ -125,11 +125,11 @@ router.get('/', function(req, res)
    });
  });
  
- router.get('/id/:IdRestaurant', function(req, res) 
+ router.get('/id/:IdUser', function(req, res) 
  {
    Restaurants.findOne({
      where: {
-      IdRestaurant: req.params.IdRestaurant
+      IdUser: req.params.IdUser
      }
    }).then(function(restaurant) {
      return res.status(200).json(restaurant);
