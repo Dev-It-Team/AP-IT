@@ -45,7 +45,7 @@ const checkUserRoleFlag = userFlags => {
                 if (err) {
                     res.status(401).json({ message: 'BadToken' })
                 } else {
-                    for(flag in userFlags) {
+                    for(flag of userFlags) {
                         if (decodedToken.UserFlag == flag)
                             return next();
                     }
