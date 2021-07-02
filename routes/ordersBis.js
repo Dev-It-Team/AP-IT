@@ -41,7 +41,7 @@ router.get('/:id', function(req, res)
         else if (decodedToken.UserFlag == '2') {
           Orders.find({ 
             IdDeliveryDriver: null,
-            Status: 2
+            Status: 1
             }, function (err, docs) 
           {
             if (err)
@@ -49,7 +49,7 @@ router.get('/:id', function(req, res)
             else {
               Orders.find({ 
                 IdDeliveryDriver: req.params.id,
-                Status: 3
+                Status: 2
                 }, function (err, newDocs) 
               {
                 if (err)
