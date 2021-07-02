@@ -2,9 +2,9 @@ name: Docker Build to DockerHub
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches:
+      - main
+      - develop
 
 env:
   # github.repository as <account>/<repo>
@@ -23,19 +23,26 @@ jobs:
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
       - name: Log into Docker Hub
-        if: github.event_name != 'pull_request'
         uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
         with:
           username: antoninjcb
-          password: b5f2437b-daf9-423b-ba4e-121898a93b79
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       # Build and push Docker image with Buildx (don't push on PR)
-      - name: Build Docker image
-        if: github.event_name != 'pull_request'
+      - name: Build Docker image (latest)
+        if: ${{ github.ref == 'refs/heads/main' }}
         run: |
-          docker build ./ -t packit/ap-it:latest
+          docker build ./ -t ${{ env.IMAGE_NAME }}:latest
+      - name: Build Docker image (develop)
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        run: |
+          docker build ./ -t ${{ env.IMAGE_NAME }}:develop
     
-      - name: Push Docker image
-        if: github.event_name != 'pull_request'
+      - name: Push Docker image (latest)
+        if: ${{ github.ref == 'refs/heads/main' }}
         run: |
-          docker push packit/ap-it:latest
+          docker push ${{ env.IMAGE_NAME }}:latest
+      - name: Push Docker image (develop)
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        run: |
+          docker push ${{ env.IMAGE_NAME }}:develop

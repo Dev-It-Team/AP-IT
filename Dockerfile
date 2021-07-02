@@ -13,6 +13,7 @@ RUN npm install -g pnpm && pnpm install
 
 # Bundle app source
 COPY . ./
+RUN chmod +x ./wait-for-it.sh
 
 EXPOSE 3000
 CMD [ "pnpm", "start" ]
